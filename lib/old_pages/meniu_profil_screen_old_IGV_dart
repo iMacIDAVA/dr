@@ -1,0 +1,386 @@
+import 'package:flutter/material.dart';
+//import 'package:sos_bebe_profil_bebe_doctor/profil_medic_screen_old_dart';
+import 'package:sos_bebe_profil_bebe_doctor/reset_password_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/suma_de_incasat_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/termeni_si_conditii_screen.dart';
+//import 'package:google_fonts/google_fonts.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
+
+
+import 'package:intl/intl.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/functions.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
+
+import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
+
+
+List<IncasareMedic> listaIncasariMedic = [];
+
+const ron = EnumTipMoneda.lei;
+
+TotaluriMedic? totaluriDashboardMedic;
+
+class MeniuProfilScreen extends StatefulWidget {
+
+  final ContMedicMobile contMedicMobile;
+
+  const MeniuProfilScreen({super.key, required this.contMedicMobile,});
+
+  @override
+  State<MeniuProfilScreen> createState() => _MeniuProfilScreenState();
+
+}
+
+class _MeniuProfilScreenState extends State<MeniuProfilScreen> {
+
+
+  @override
+  initState(){
+
+    super.initState();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    LocalizationsApp l = LocalizationsApp.of(context)!;
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar( 
+        toolbarHeight: 790,
+        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+        foregroundColor: Colors.white,
+        leading: Transform.translate(
+          offset: const Offset(15, -350),
+          child: const BackButton(
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: false,
+        //titleSpacing: 10.0,
+        //leadingWidth: 0,
+        title:
+        Transform.translate(
+          offset: const Offset(-25, -25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:[ 
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center, 
+                children: [
+                  Center(
+                    child:IconButton(
+                    onPressed: () {},
+                    icon: 
+                      widget.contMedicMobile.linkPozaProfil.isEmpty?
+                      Image.asset( //old IGV
+                        './assets/images/user_fara_poza.png',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ): Image.network(
+                        widget.contMedicMobile.linkPozaProfil,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child:
+                    Text( '${widget.contMedicMobile.titulatura}. ${widget.contMedicMobile.numeComplet}',
+                        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Center(
+                    child:
+                    Text( widget.contMedicMobile.locDeMunca,
+                      //'AIS Clinics & Hospital București',
+                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                  ),
+                  Center(
+                    child:
+                    Text( widget.contMedicMobile.adresaLocDeMunca,
+                      //'AIS Clinics & Hospital București',
+                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                  ),
+                  Center(
+                    child:
+                    Text( '${widget.contMedicMobile.specializarea}, ${widget.contMedicMobile.functia}',
+                        style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w300),
+                    ),
+                  ),    
+                ],
+              ),
+              const SizedBox(height: 25),
+              customPaddingMeniuProfil(),
+              //const IconLinie(iconPath:'./assets/images/profilul_meu_icon.png',textLinie:'Profilul meu', navigarePagina: 1,), //old IGV
+              IconLinie(iconPath:'./assets/images/profilul_meu_icon.png',textLinie:l.meniuProfilProfilulMeu, navigarePagina: 1,),
+              customPaddingMeniuProfil(),
+              //const IconLinie(iconPath:'./assets/images/incasari_icon.png',textLinie:'Încasări', navigarePagina: 2,), //old IGV
+              IconLinie(iconPath:'./assets/images/incasari_icon.png',textLinie:l.meniuProfilIncasari, navigarePagina: 2,),
+              customPaddingMeniuProfil(),
+              //const IconLinie(iconPath:'./assets/images/setari_icon.png',textLinie:'Setări', navigarePagina: 3,), //old IGV
+              IconLinie(iconPath:'./assets/images/setari_icon.png',textLinie:l.meniuProfilSetari, navigarePagina: 3,),
+              customPaddingMeniuProfil(),
+              //const IconLinie(iconPath:'./assets/images/termeni_si_conditii_icon.png',textLinie:'Termeni și Condiții', navigarePagina: 4,), //old IGV
+              IconLinie(iconPath:'./assets/images/termeni_si_conditii_icon.png',textLinie:l.meniuProfilTermeniSiConditii, navigarePagina: 4,),
+              customPaddingMeniuProfil(),
+              const SizedBox(height: 175),
+            ],
+          ),
+        ),   
+      ),
+    );
+  }
+}
+/* class MyScrollbarWidget extends StatefulWidget {  
+  
+  const MyScrollbarWidget({super.key});
+  
+  @override
+  State<MyScrollbarWidget> createState() => _MyScrollbarWidgetState();
+}
+
+class _MyScrollbarWidgetState extends State<MyScrollbarWidget> {
+     
+   final ScrollController scrollControllerHorizontal = ScrollController();
+   final ScrollController scrollControllerVertical = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
+
+    return SizedBox(
+      height: 230,
+      width: 350,
+      child: RawScrollbar(
+        thumbColor: const Color.fromRGBO(240, 242, 246, 1),
+        trackColor: const Color.fromRGBO(240, 242, 246, 1),
+        radius: const Radius.circular(20),
+        thickness: 5,
+        thumbVisibility: true,
+        trackVisibility: true,
+        controller: scrollControllerVertical,
+        child: SingleChildScrollView(
+          controller: scrollControllerVertical,
+          scrollDirection: Axis.vertical,
+          child: Scrollbar(
+            thumbVisibility: true,
+            trackVisibility: true,
+            controller: scrollControllerHorizontal,
+            child: SingleChildScrollView(
+              controller: scrollControllerHorizontal,
+              scrollDirection: Axis.horizontal,
+              child: Wrap(
+                direction: Axis.vertical,
+                children: [
+                  const SizedBox(height: 25),
+                  customPaddingMeniuProfil(),
+                  const IconLinie(iconPath:'./assets/images/profilul_meu_icon.png',textLinie:'Profilul meu'),
+                  customPaddingMeniuProfil(),
+                  const IconLinie(iconPath:'./assets/images/incasari_icon.png',textLinie:'Incasări'),
+                  customPaddingMeniuProfil(),
+                  const IconLinie(iconPath:'./assets/images/setari_icon.png',textLinie:'Setări'),
+                  customPaddingMeniuProfil(),
+                  const IconLinie(iconPath:'./assets/images/termeni_si_conditii_icon.png',textLinie:'Termeni și Condiții'),
+                  customPaddingMeniuProfil(),
+                  const SizedBox(height: 25),
+                ],  
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}*/
+
+class IconLinie extends StatefulWidget {
+
+  
+  final String iconPath;
+  final String textLinie;
+  final int navigarePagina;
+
+  const IconLinie({super.key, required this.iconPath, required this.textLinie, required this.navigarePagina,});
+
+  @override
+  State<IconLinie> createState() => _IconLinieState();
+
+}
+
+class _IconLinieState extends State<IconLinie> {
+
+
+  @override
+  initState(){
+
+    super.initState();
+
+  }
+  
+  getTotaluriDashboardMedicPePerioada() async 
+  {
+  
+    SharedPreferences prefs = await SharedPreferences.getInstance(); 
+    
+    String user = prefs.getString('user')??'';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
+
+    DateFormat inputFormat = DateFormat('ddMMyyyy');
+    DateTime dateTime = DateTime.now();
+
+    totaluriDashboardMedic = await apiCallFunctions.getTotaluriDashboardMedicPePerioada(
+      pUser: user,
+      pParola: userPassMD5,
+      pDataInceputDDMMYYYY: '01010001',
+      pDataSfarsitDDMMYYYY: inputFormat.format(dateTime).toString(),
+    );
+
+    print('totaluriDashboardMedic: $totaluriDashboardMedic');
+
+    return totaluriDashboardMedic;
+
+  }
+
+
+
+  getListaTranzactiiMedicPePerioada() async 
+  {
+  
+    SharedPreferences prefs = await SharedPreferences.getInstance(); 
+    
+    String user = prefs.getString('user')??'';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
+
+    DateFormat inputFormat = DateFormat('ddMMyyyy');
+    DateTime dateTime = DateTime.now();
+
+    listaIncasariMedic = await apiCallFunctions.getListaTranzactiiMedicPePerioada(
+      pUser: user,
+      pParola: userPassMD5,
+      pDataInceputDDMMYYYY: '01010001',
+      pDataSfarsitDDMMYYYY: inputFormat.format(dateTime).toString(),
+    )?? [];
+
+    print('listaIncasariMedic: $listaIncasariMedic');
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return
+    Column(
+      children: [
+        Row(
+          children:[
+            IconButton(
+              onPressed: () async {
+                if (widget.navigarePagina == 1){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const ProfilMedicScreen(isDisponibleForNotifications: true,);
+                      }
+                    ),
+                  );
+                }
+                else if (widget.navigarePagina == 2){
+                  
+                  await getTotaluriDashboardMedicPePerioada();
+                  await getListaTranzactiiMedicPePerioada();
+
+                  if (context.mounted)
+                  {  
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return SumaIncasatScreen(totaluriDashboardMedic: totaluriDashboardMedic!, listaTranzactiiMedicPePerioada: listaIncasariMedic,);
+                        }
+                      ),
+                    );
+                  }
+
+                }
+                else if (widget.navigarePagina == 3){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const ResetPasswordScreen();
+                      }
+                    ),
+                  );
+                }
+                else if (widget.navigarePagina == 4){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const TermeniSiConditiiScreen();
+                      }
+                    ),
+                  );
+                }
+              },
+              icon: Image.asset(widget.iconPath),
+            ),
+            GestureDetector(
+              onTap: () async {
+                if (widget.navigarePagina == 1){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const ProfilMedicScreen(isDisponibleForNotifications: true,);
+                      }
+                    ),
+                  );
+                }
+                else if (widget.navigarePagina == 2){
+
+                    
+                  await getTotaluriDashboardMedicPePerioada();
+                  await getListaTranzactiiMedicPePerioada();
+
+                  if (context.mounted)
+                  {
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return SumaIncasatScreen(totaluriDashboardMedic: totaluriDashboardMedic!, listaTranzactiiMedicPePerioada: listaIncasariMedic,);
+                        }
+                      ),
+                    );
+                  }
+                }
+                else if (widget.navigarePagina == 3){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const ResetPasswordScreen();
+                      }
+                    ),
+                  );
+                }
+                else if (widget.navigarePagina == 4){
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const TermeniSiConditiiScreen();
+                      }
+                    ),
+                  );
+                }
+              },
+              child: Text( widget.textLinie,
+                style: const TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 14, fontWeight: FontWeight.w400),
+              ),
+            ),
+          ],  
+        ),
+      ],
+    );
+  }
+}

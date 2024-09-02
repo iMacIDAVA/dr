@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+import 'package:sos_bebe_profil_bebe_doctor/range_picker_page_old_IGV_dart';
+//import 'package:flutter_localizations/flutter_localizations.dart';
+//import 'package:sos_bebe_profil_bebe_doctor/data_picker_widgets/event.dart';
+
+/// Start page.
+
+//ignore: must_be_immutable
+class MyHomePage extends StatefulWidget {
+  /// Page title.
+  final String title;
+
+  ///
+  const MyHomePage({
+    required this.title,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+
+}
+
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+
+  @override
+  // ignore: prefer_expression_function_bodies
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          widget.title,
+          style: const TextStyle(letterSpacing: 1.15),
+        ),
+      ),
+      body: const RangePickerPage(listaConsultatiiMobileNumarPacienti: [],),
+    );
+  }
+}
+/// Mock events.

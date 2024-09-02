@@ -1,0 +1,432 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
+import 'package:sos_bebe_profil_bebe_doctor/initializare_numar_pacienti_screen.dart';
+//import 'package:sos_bebe_profil_bebe_doctor/range_picker_page.dart';
+//import 'package:sos_bebe_profil_bebe_doctor/range_picker_styled.dart';
+//import 'package:sos_bebe_profil_bebe_doctor/data_picker_widgets/event.dart';
+import 'package:sos_bebe_profil_bebe_doctor/range_picker_page.dart';
+
+
+class NumarPacientiFiltratScreen extends StatefulWidget {
+
+  
+  const NumarPacientiFiltratScreen({super.key});
+
+
+  @override
+  State<NumarPacientiFiltratScreen> createState() => _NumarPacientiFiltratScreenState();
+}
+
+class _NumarPacientiFiltratScreenState extends State<NumarPacientiFiltratScreen> {
+
+  //InitializareNumarPacientiWidget initWidget = InitializareNumarPacientiWidget();
+
+  List<NumarPacientiItem> listaNumarPacienti = []; 
+
+  void callback(bool newIsVisible) {
+    setState(() {
+      isVisible = newIsVisible;
+    });
+  }
+
+  @override
+  void initState() {
+    // Do some other stuff
+    super.initState();
+    listaNumarPacienti = InitializareNumarPacientiWidget().initList();
+  }
+
+  List<NumarPacientiItem> filterListByIndex()
+  {
+    List<NumarPacientiItem> listResult = [];
+    for(int index = 0; index <listaNumarPacienti.length; index++){
+      if (index < 2)
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+    }  
+    return listResult; 
+  }    
+
+  
+  List<NumarPacientiItem> filterListByLowerData(DateTime higherThresholdData)
+  {
+    List<NumarPacientiItem> listResult = [];
+    for(int index = 0; index < listaNumarPacienti.length; index++){
+      var dataStartItem = listaNumarPacienti[index].dataStart;
+      
+      if (dataStartItem.year < higherThresholdData.year)
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      else if ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month < higherThresholdData.month))
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      else if (((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month == higherThresholdData.month))
+             && (dataStartItem.day < higherThresholdData.day))
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      
+    } 
+    return listResult; 
+  }
+  
+  List<NumarPacientiItem> filterListByHigherData(DateTime lowerThresholdData)
+  {
+    List<NumarPacientiItem> listResult = [];
+    for(int index = 0; index <listaNumarPacienti.length; index++){
+      var dataStartItem = listaNumarPacienti[index].dataStart;
+      if (dataStartItem.year > lowerThresholdData.year)
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      else if (dataStartItem.year == lowerThresholdData.year && dataStartItem.month > lowerThresholdData.month)
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      else if (dataStartItem.year == lowerThresholdData.year && dataStartItem.month == lowerThresholdData.month
+             && dataStartItem.day > lowerThresholdData.day)
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+    }  
+    return listResult; 
+  }
+  
+  List<NumarPacientiItem> filterListByIntervalData(DateTime lowerThresholdData, DateTime higherThresholdData)
+  {
+    List<NumarPacientiItem> listResult = [];
+    if (lowerThresholdData.isAfter(higherThresholdData))
+    {
+      return listResult;
+    }
+    
+    for(int index = 0; index <listaNumarPacienti.length; index++){
+      
+      var dataStartItem = listaNumarPacienti[index].dataStart;    
+
+      if ((dataStartItem.year > lowerThresholdData.year) && (dataStartItem.year < higherThresholdData.year))
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      else if (((dataStartItem.year == lowerThresholdData.year) && (dataStartItem.month > lowerThresholdData.month))
+                  || ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month < higherThresholdData.month)))
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }  
+      else if (((dataStartItem.year == lowerThresholdData.year) && (dataStartItem.month == lowerThresholdData.month) && (dataStartItem.day > lowerThresholdData.day))
+      || ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month == higherThresholdData.month) && (dataStartItem.day < higherThresholdData.day)))                  
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+      else if (((dataStartItem.year == lowerThresholdData.year) && (dataStartItem.month == lowerThresholdData.month) && (dataStartItem.day == lowerThresholdData.day))
+      || ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month == higherThresholdData.month) && (dataStartItem.day == higherThresholdData.day)))                  
+      {
+        listResult.add(listaNumarPacienti[index]);
+      }
+    }  
+
+    return listResult; 
+  }
+
+  bool isVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> mywidgets = [];
+    //List<NumarPacientiItem> listaFiltrata = filterListByLowerDurata(25);
+    //List<NumarPacientiItem> listaFiltrata = filterListByLowerData(DateTime.utc(2023, 2, 1));
+    //List<NumarPacientiItem> listaFiltrata = filterListByHigherData(DateTime.utc(2023, 1, 8));
+    //List<NumarPacientiItem> listaFiltrata = filterListByIntervalData(DateTime.utc(2021, 11, 9), DateTime.utc(2023, 10, 14));
+    //List<NumarPacientiItem> listaFiltrata = listaNumarPacienti;
+
+    for(int index = 0; index <listaFiltrata.length; index++){
+      if (index < listaFiltrata.length-1)
+      {
+        mywidgets.add(
+          IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(textNume: listaFiltrata[index].textNume, textOras: "București", iconPath:'./assets/images/pacient_cristina_mihalache.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+        );
+        mywidgets.add(
+          const SizedBox(height: 10),
+        );
+      }
+      else{
+        mywidgets.add(
+          FadingListViewWidget(textNume: listaFiltrata[index].textNume, textOras: "București", iconPath:'./assets/images/pacient_cristina_mihalache.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+        );
+        mywidgets.add(
+          const SizedBox(height: 10),
+        );
+      }
+    }
+    var length = listaFiltrata.length;
+    print('Size lista: $length');
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {},
+          icon: Image.asset('./assets/images/inapoi_icon.png'),
+        ),
+      ),
+      //resizeToAvoidBottomInset: false,
+      body: 
+
+      //SingleChildScrollView(
+      //  child: Column(
+      //    children: [
+      //      TopIconsTextWidget(topText: 'Selectează Perioada'),
+      //      SizedBox(height: 15),
+      Column(
+          children: [
+            //const TopIconsTextWidget(topText: 'Selectează Perioada'),
+            const SizedBox(height: 25),
+            Text('Alege perioada', style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 28, fontWeight: FontWeight.w400)),            
+            const SizedBox(width: 300, height: 400, child: RangePickerPage()),
+            SingleChildScrollView (
+              child: Column(
+                children: 
+                  mywidgets,
+              ),  
+            ),     
+          ],
+      )  
+                /* 
+                IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(textNume: "Cristina Mihalache", textOras: "București", iconPath:'./assets/images/pacient_cristina_mihalache.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+                SizedBox(height: 10),
+                IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(textNume: "Irina Brănescu", textOras: "București", iconPath:'./assets/images/pacient_irina_branescu.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+                SizedBox(height: 10),
+                IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(textNume: "Cristina Mihalache", textOras: "București", iconPath:'./assets/images/pacient_cristina_mihalache.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+                SizedBox(height: 10),
+                IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(textNume: "Irina Brănescu", textOras: "București", iconPath:'./assets/images/pacient_irina_branescu.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+                FadingListViewWidget(textNume: "Cristina Mihalache", textOras: "București", iconPath:'./assets/images/pacient_cristina_mihalache.png', textDurata: '10:00 AM - 10:30 AM (30 min)'),
+                */
+                //],
+              //),
+            //),
+          //],
+        //),
+      //),
+    );
+  }
+}
+
+class FadingListViewWidget extends StatelessWidget {
+  
+  final String textNume;
+  final String textOras;
+  final String iconPath;
+  final String textDurata;
+  
+  const FadingListViewWidget({super.key, required this.textNume, required this.textOras, required this.iconPath, required this.textDurata});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        height: 80,
+        child: ShaderMask(
+          shaderCallback: (Rect rect) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.white, Colors.transparent, Colors.transparent, Colors.white],
+              //stops: [0.0, 0.1, 0.9, 1.0], // 10% purple, 80% transparent, 10% purple
+            ).createShader(rect);
+          },
+          blendMode: BlendMode.dstOut,
+          child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(textNume: textNume, textOras: textOras, iconPath: iconPath, textDurata: textDurata); 
+            },
+          ),   
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class TopIconsTextWidget extends StatelessWidget {
+
+  final String topText;
+  
+  const TopIconsTextWidget({super.key, required this.topText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 15),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            const SizedBox(width: 5),
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset('./assets/images/left_top_icon.png'),
+            ),
+            const SizedBox(width: 160),
+
+            Text(topText, style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset('./assets/images/right_top_icon.png'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget extends StatelessWidget {
+
+  final String textNume;
+  final String textOras;
+  final String iconPath;
+  final String textDurata;
+
+  const IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget({super.key, required this.textNume, required this.textOras, required this.iconPath, required this.textDurata});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+    Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 5.0, horizontal: 30.0
+            ),
+            margin: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+            decoration: BoxDecoration(
+              color: const Color.fromRGBO(255, 255, 255, 1),
+              border: Border.all(
+                color: const Color.fromRGBO(255, 255, 255, 1),
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color.fromRGBO(220, 220, 220, 1),
+                  blurRadius: 15.0,
+                ),
+              ],
+            ),
+            child: Column(children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children:[
+                  //const SizedBox(width: 10), 
+                  CircleAvatar(foregroundImage: AssetImage(iconPath), radius: 25),  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
+                          width: 200,
+                          child: Text(textNume, style: GoogleFonts.rubik(color:const Color.fromRGBO(103, 114, 148, 1), fontSize: 15, fontWeight: FontWeight.w400)),
+                        ),
+                        SizedBox(
+                          width: 200,
+                          child: Text(textOras,
+                          style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 11, fontWeight: FontWeight.w400)),
+                        ),
+                      ],  
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      Image.asset(
+                        './assets/images/numar_pacienti_notification.png',
+                        width: 24,
+                        height: 24,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
+                  ),
+                ]
+              ),
+              const SizedBox(height: 10),
+              customDivider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: 200,
+                        child: Text(textDurata,
+                        style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 11, fontWeight: FontWeight.w400)),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ],  
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //GestureDetector(
+                  InkWell(
+                    child: Container(
+                      width: 71.0,
+                      height: 16.0,
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(14, 190, 127, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text("Apel video", style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 11, fontWeight: FontWeight.w400)),
+                    ),
+                    onTap: (){
+                    },
+                  ),  
+                  const SizedBox(width: 10),
+                  //GestureDetector(
+                   InkWell( 
+                    child: Container(
+                      width: 84.0,
+                      height: 16.0,
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(241, 201, 0, 1),
+                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text("Recomandare", style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 11, fontWeight: FontWeight.w400)),
+                    ),
+                    onTap: (){ //print("Click event on Recomandare"); 
+                    },
+                  ),  
+                ],
+              ),
+            ],
+          ),  
+        ),
+      ],  
+    );
+  }
+}
+
+  /// Mock events.
+/*
+final List<Event> events = [
+  Event(DateTime.now(), "Today event"),
+  Event(DateTime.now().subtract(const Duration(days: 3)), "Ev1"),
+  Event(DateTime.now().subtract(const Duration(days: 13)), "Ev2"),
+  Event(DateTime.now().subtract(const Duration(days: 30)), "Ev3"),
+  Event(DateTime.now().add(const Duration(days: 3)), "Ev4"),
+  Event(DateTime.now().add(const Duration(days: 13)), "Ev5"),
+  Event(DateTime.now().add(const Duration(days: 30)), "Ev6"),
+];
+*/

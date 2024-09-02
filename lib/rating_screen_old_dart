@@ -1,0 +1,451 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+//import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
+import 'package:sos_bebe_profil_bebe_doctor/initializare_rating_screen.dart';
+
+class RatingScreen extends StatefulWidget {
+  const RatingScreen({super.key});
+
+  @override
+  State<RatingScreen> createState() => _RatingScreenState();
+}
+
+class _RatingScreenState extends State<RatingScreen> {
+
+  List<RatingItem> listaRatings = [];
+  
+  @override
+  void initState() {
+    // Do some other stuff
+    super.initState();
+    listaRatings = InitializareRatingsWidget().initList();
+  }
+
+  List<RatingItem> filterListByIndex()
+  {
+    List<RatingItem> listResult = [];
+    for(int index = 0; index <listaRatings.length; index++){
+      if (index < 2)
+      {
+        listResult.add(listaRatings[index]);
+      }
+    }  
+    return listResult; 
+  }
+
+  List<RatingItem> filterListByLowerData(DateTime higherThresholdData)
+  {
+    List<RatingItem> listResult = [];
+    for(int index = 0; index < listaRatings.length; index++){
+      var dataStartItem = listaRatings[index].dataStart;
+      
+      if (dataStartItem.year < higherThresholdData.year)
+      {
+        listResult.add(listaRatings[index]);
+      }
+      else if ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month < higherThresholdData.month))
+      {
+        listResult.add(listaRatings[index]);
+      }
+      else if (((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month == higherThresholdData.month))
+             && (dataStartItem.day < higherThresholdData.day))
+      {
+        listResult.add(listaRatings[index]);
+      }
+      
+    } 
+    return listResult; 
+  }
+  
+  List<RatingItem> filterListByHigherData(DateTime lowerThresholdData)
+  {
+    List<RatingItem> listResult = [];
+    for(int index = 0; index <listaRatings.length; index++){
+      var dataStartItem = listaRatings[index].dataStart;
+      if (dataStartItem.year > lowerThresholdData.year)
+      {
+        listResult.add(listaRatings[index]);
+      }
+      else if (dataStartItem.year == lowerThresholdData.year && dataStartItem.month > lowerThresholdData.month)
+      {
+        listResult.add(listaRatings[index]);
+      }
+      else if (dataStartItem.year == lowerThresholdData.year && dataStartItem.month == lowerThresholdData.month
+             && dataStartItem.day > lowerThresholdData.day)
+      {
+        listResult.add(listaRatings[index]);
+      }
+    }  
+    return listResult; 
+  }
+  
+  List<RatingItem> filterListByIntervalData(DateTime lowerThresholdData, DateTime higherThresholdData)
+  {
+    List<RatingItem> listResult = [];
+    if (lowerThresholdData.isAfter(higherThresholdData))
+    {
+      return listResult;
+    }
+    
+    for(int index = 0; index <listaRatings.length; index++){
+      
+      var dataStartItem = listaRatings[index].dataStart;    
+
+      if ((dataStartItem.year > lowerThresholdData.year) && (dataStartItem.year < higherThresholdData.year))
+      {
+        listResult.add(listaRatings[index]);
+      }
+      else if (((dataStartItem.year == lowerThresholdData.year) && (dataStartItem.month > lowerThresholdData.month))
+                  || ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month < higherThresholdData.month)))
+      {
+        listResult.add(listaRatings[index]);
+      }  
+      else if (((dataStartItem.year == lowerThresholdData.year) && (dataStartItem.month == lowerThresholdData.month) && (dataStartItem.day > lowerThresholdData.day))
+      || ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month == higherThresholdData.month) && (dataStartItem.day < higherThresholdData.day)))                  
+      {
+        listResult.add(listaRatings[index]);
+      }
+      else if (((dataStartItem.year == lowerThresholdData.year) && (dataStartItem.month == lowerThresholdData.month) && (dataStartItem.day == lowerThresholdData.day))
+      || ((dataStartItem.year == higherThresholdData.year) && (dataStartItem.month == higherThresholdData.month) && (dataStartItem.day == higherThresholdData.day)))                  
+      {
+        listResult.add(listaRatings[index]);
+      }
+    }  
+
+    return listResult; 
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    List<Widget> mywidgets = [];
+    //List<NumarPacientiItem> listaFiltrata = filterListByLowerDurata(25);
+    //List<NumarPacientiItem> listaFiltrata = filterListByLowerData(DateTime.utc(2023, 2, 1));
+    //List<NumarPacientiItem> listaFiltrata = filterListByHigherData(DateTime.utc(2023, 1, 8));
+    //List<RatingItem> listaFiltrata = filterListByIntervalData(DateTime.utc(2021, 11, 9), DateTime.utc(2023, 3, 14));
+
+    List<RatingItem> listaFiltrata = listaRatings;
+
+    
+    for(int index = 0; index <listaFiltrata.length; index++){
+      var item = listaFiltrata[index];
+      if (index < listaFiltrata.length-2)
+      {
+        mywidgets.add(
+          IconNumeRatingTextDataRaspunde(textNume: item.textNume, textComentariu: item.textComentariu, 
+            iconPath:item.iconPath, textData: item.textData, textRating: ''),
+        );
+        mywidgets.add(
+          const SizedBox(height: 15),
+        );
+      }
+      else if (index == listaFiltrata.length-2)
+      {
+        mywidgets.add(
+          IconNumeRatingTextDataRaspunde(textNume: item.textNume, textComentariu: item.textComentariu, 
+            iconPath:item.iconPath, textData: item.textData, textRating: ''),
+        );
+      }
+      else if (index == listaFiltrata.length-1){
+        mywidgets.add(
+          FadingListViewWidget(textNume: item.textNume, textComentariu: item.textComentariu, 
+            iconPath:item.iconPath, 
+            textData: item.textData, textRating: ''),
+        );
+      }
+    }
+    //var length = listaRatings.length;
+    //print('Size lista: $length');
+
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: 
+      SingleChildScrollView(
+        child: Column(
+          children: [
+            const TopIconsTextWidget(topText: 'Alege perioada'),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:[
+                const SizedBox(width: 25),
+                Text('Rating-uri', style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 28, fontWeight: FontWeight.w400)),
+              ],
+            ),
+            const SizedBox(height: 20),    
+            Center(
+              child: Column(
+                children: 
+                  mywidgets,
+                /*[ 
+                  IconNumeRatingTextDataRaspunde(textNume: "Cristina Mihalache", 
+                    textComentariu: "Am discutat telefonic cu dna Dr. Pediatru și am avut o experiență foarte pozitivă. O consultație detaliată, mi s-a răspuns la toate întrebările.", 
+                    iconPath:'./assets/images/rating_cristina_mihalache.png', textData: '17 Februarie 2023', textRating: '',
+                  ),
+                  SizedBox(
+                    height:15
+                  ),
+                  IconNumeRatingTextDataRaspunde(textNume: "Irina Brănescu", 
+                    textComentariu: "Am discutat pentru o a 2-a părere medicală, legată de rinichi. Mi-a răspuns la toate întrebările cu multă empatie și răbdare, mi-a explicat pe înțelesul meu, s-a uitat la istoricul meu medical și a fost foarte implicată.", 
+                    iconPath:'./assets/images/rating_irina_branescu.png', textData: '21 Februarie 2023', textRating: '',
+                  ),
+                  SizedBox(
+                    height:15
+                  ),
+                  IconNumeRatingTextDataRaspunde(textNume: "Florentina Buzea", 
+                    textComentariu: "Un medic extraordinar, care se dedică micilor pacienți! Pentru copilul meu, născut la doar 29 săptămâni, a făcut minuni!", 
+                    iconPath:'./assets/images/rating_florentina_buzea.png', textData: '22 Februarie 2023', textRating: '',
+                  ),
+                  FadingListViewWidget(textNume: "Elena Tănase", 
+                    textComentariu: "O iubim pe doamna doctor! ❤️ Copilul meu nu putea avea un medic mai bun, un adevărat profesionist.", 
+                    iconPath:'./assets/images/rating_elena_tanase.png', textData: '22 Februarie 2023', textRating: '',
+                  ),
+                ],*/
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FadingListViewWidget extends StatelessWidget {
+  
+  final String iconPath;
+  final String textNume;
+  final String textComentariu;
+  final String textData;
+  final String textRating;
+  
+  const FadingListViewWidget({super.key, required this.textNume, required this.textComentariu, required this.iconPath, required this.textData, required this.textRating});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        height: 110,
+        child: ShaderMask(
+          shaderCallback: (Rect rect) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.white, Colors.transparent, Colors.transparent, Colors.white],
+              //stops: [0.0, 0.1, 0.9, 1.0], // 10% purple, 80% transparent, 10% purple
+            ).createShader(rect);
+          },
+          blendMode: BlendMode.dstOut,
+          child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return IconNumeRatingTextDataRaspunde(iconPath: iconPath, textNume: textNume, textComentariu: textComentariu, textData: textData, textRating: textRating); 
+            },
+          ),   
+        ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class TopIconsTextWidget extends StatelessWidget {
+
+  final String topText;
+  
+  const TopIconsTextWidget({super.key, required this.topText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 15),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(width: 5),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () => Navigator.pop(context), 
+                  icon: const Icon(Icons.arrow_back_outlined),
+                ),
+              ],
+            ),
+            const SizedBox(width: 150),
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset('./assets/images/alege_perioada.png'),
+            ),
+            const SizedBox(width: 5),
+            Text(topText, style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 14, fontWeight: FontWeight.w400)),
+            const SizedBox(width: 20),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class IconNumeRatingTextDataRaspunde extends StatefulWidget {
+  
+  final String iconPath;
+  final String textNume;
+  final String textRating;
+  final String textComentariu;
+  final String textData;
+
+  const IconNumeRatingTextDataRaspunde({super.key, required this.iconPath, required this.textNume, required this.textRating, required this.textComentariu, required this.textData});
+
+  @override
+  State<IconNumeRatingTextDataRaspunde> createState() => _IconNumeRatingTextDataRaspunde();
+}
+
+class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspunde> {
+  
+  double? _ratingValue = 4.9;
+
+  @override
+  Widget build(BuildContext context) {
+    return
+    Column(
+      children: [
+        Row(
+          children:[
+            const SizedBox(
+              width: 20,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromRGBO(211, 211, 211, 1),
+                    blurRadius: 5.0,
+                  ),
+                ],
+              ),
+              child: Card(
+                color: const Color.fromRGBO(255, 255, 255, 1),
+                child: ClipPath(
+                  clipper: ShapeBorderClipper(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)
+                      ),
+                    ),
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        left: BorderSide(color: Color.fromRGBO(14, 190, 127, 1), width: 7),
+                      ),
+                    ),
+                    child: Column(
+                      children:[
+                        Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:[
+                          const SizedBox(width: 20), 
+                          CircleAvatar(foregroundImage: AssetImage(widget.iconPath), radius: 25),  
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: Text(widget.textNume, style: GoogleFonts.rubik(color:const Color.fromRGBO(103, 114, 148, 1), fontSize: 15, fontWeight: FontWeight.w400)),
+                                ),
+                                Row(
+                                  children:[
+                                    RatingBar(
+                                      ignoreGestures: true,
+                                      initialRating: 4.9,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: 13,
+                                      itemPadding: const EdgeInsets.symmetric(horizontal: 0.5, vertical: 5.0),
+                                      ratingWidget: RatingWidget(
+                                        full: const Icon(Icons.star, color: Color.fromRGBO(252, 220, 85, 1)),
+                                        half: const Icon(
+                                          Icons.star_half,
+                                          color: Color.fromRGBO(252, 220, 85, 1),
+                                        ),
+                                        empty: const Icon(
+                                          Icons.star_outline,
+                                          color: Color.fromRGBO(252, 220, 85, 1),
+                                        )),
+                                        
+                                      onRatingUpdate: (value) {
+                                        setState(() {
+                                          _ratingValue = value;
+                                        });
+                                      }
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                      child: Text(_ratingValue.toString(), style: GoogleFonts.rubik(color:Colors.yellow, fontSize: 12, fontWeight: FontWeight.w500)),
+                                    ),
+                                  ],  
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 240,
+                                      child: Text( widget.textComentariu,
+                                        style: GoogleFonts.rubik(
+                                          color: const Color.fromRGBO(103, 114, 148, 1),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w300,
+                                        )
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                customPaddingRating(),
+            
+                                Row(children: [
+                                    SizedBox(
+                                      width: 110,
+                                      child: Text(widget.textData,
+                                      style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
+                                    ),
+                                    const SizedBox(
+                                      width: 26,
+                                    ),  
+                                    SizedBox(
+                                      width: 61,
+                                      child: Text('Răspunde',
+                                        style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 12, fontWeight: FontWeight.w400)
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {},
+                                      icon: Image.asset('./assets/images/raspunde_rating.png'),
+                                    ),
+                                  ]  
+                                )
+                              ],  
+                            ),
+                          ),
+                        ]
+                      ),
+                      ]
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],  
+        ),  
+      ],
+    );
+  }
+}

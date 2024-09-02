@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
+
+class ProfilulMeuScreen extends StatelessWidget {
+  const ProfilulMeuScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor:const Color.fromRGBO(30, 214, 158, 1),
+      appBar: AppBar( 
+        toolbarHeight: 90,
+        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+        foregroundColor: Colors.white,
+        leading:
+          const BackButton(
+            color: Colors.white,
+          ),
+        title:Row(
+          children: [
+            const SizedBox(width: 40),
+            Text('Setari - Profilul meu',
+              style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
+            ),  
+          ],
+        ),
+        centerTitle: false,
+      ),  
+      body: 
+      Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          color: Colors.white,
+        ),
+        child:Column(
+          children: [
+            const SizedBox(height: 43),
+            Row(
+              children:[
+                const SizedBox(width: 15),
+                Text('Profil',
+                  style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 14, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ),
+            const SizedBox(height: 50),
+            const IconLinie(iconPath:'./assets/images/editare_profil_icon.png',textLinie:'Editare Profil'),
+            customPaddingProfilulMeu(),
+            const IconLinie(iconPath:'./assets/images/resetare_parola_icon.png',textLinie:'Resetare Parola'),
+            customPaddingProfilulMeu(),
+            const IconLinieCV(iconPath:'./assets/images/editare_cv_icon.png',textLinie:'Editează CV', iconCV: './assets/images/profil_navigare_icon.png'),
+            const SizedBox(height: 320),
+            Row(
+              children:[
+                const SizedBox(width: 15),
+                IconButton(
+                onPressed: () {},
+                  icon: Image.asset('./assets/images/log_out_icon.png'),
+                ),
+                Text('Log Out',
+                  style: GoogleFonts.rubik(color: const Color.fromRGBO(30, 214, 158, 1), fontSize: 14, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ), 
+          ],
+        ),  
+      ),
+    );
+  }
+}
+
+class IconLinie extends StatelessWidget {
+  
+  final String iconPath;
+  final String textLinie;
+
+  const IconLinie({super.key, required this.iconPath, required this.textLinie});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+    Column(
+      children: [
+        Row(
+          children:[
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset(iconPath),
+            ),
+            Text( textLinie,
+              style: const TextStyle(color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
+            ),
+          ],  
+        ),
+      ],
+    );
+  }
+}
+
+class IconLinieCV extends StatelessWidget {
+  
+  final String iconPath;
+  final String textLinie;
+  final String iconCV;
+
+  const IconLinieCV({super.key, required this.iconPath, required this.textLinie, required this.iconCV});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+    Column(
+      children: [
+        Row(
+          children:[
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset(iconPath),
+            ),
+            Text( textLinie,
+              style: const TextStyle(color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
+            ),
+            const SizedBox(width: 210),
+            IconButton(
+              onPressed: () {},
+              icon: Image.asset(iconCV),
+            ),
+          ],  
+        ),
+      ],
+    );
+  }
+}
