@@ -1,10 +1,5 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import './shared_pref_keys.dart' as pref_keys;
 import 'api_call.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -20,8 +15,7 @@ class ApiCallFunctions {
     return md5.convert(utf8.encode(input)).toString();
   }
 
-  Future<http.Response?> getApelFunctie(
-      Map<String, String> parametriiApiCall, String numeMetoda) async {
+  Future<http.Response?> getApelFunctie(Map<String, String> parametriiApiCall, String numeMetoda) async {
     http.Response res;
 
     String url, key;
@@ -35,18 +29,12 @@ class ApiCallFunctions {
       url = '$url&$key=$value';
     });
 
-
-
     res = await http.get(Uri.parse(url));
 
-
     return res;
-
-    //res = await http.get(Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/GetContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'));
   }
 
-  Future<http.Response?> postApelFunctie(
-      Map<String, String> parametriiApiCall, String numeMetoda) async {
+  Future<http.Response?> postApelFunctie(Map<String, String> parametriiApiCall, String numeMetoda) async {
     http.Response res;
 
     String url, key;
@@ -64,14 +52,12 @@ class ApiCallFunctions {
 
     res = await http.post(
       Uri.parse(url),
-      //Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/AdaugaContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pNumeComplet=TestMobile&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'),
+
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       //body: jsonEncode(parametriiApiCall),
     );
-
-    //res = await http.get(Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/GetContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'));
 
     print('postApelFuncție rezultat: ${res.statusCode}');
     return res;
@@ -90,7 +76,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDeviceToken': pDeviceToken,
       'pTipDispozitiv': pTipDispozitiv,
@@ -107,8 +93,7 @@ class ApiCallFunctions {
     if (resGetContMedic.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      return ContMedicMobile.fromJson(
-          jsonDecode(resGetContMedic.body) as Map<String, dynamic>);
+      return ContMedicMobile.fromJson(jsonDecode(resGetContMedic.body) as Map<String, dynamic>);
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -128,24 +113,20 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
     };
 
     http.Response? resGetTotaluriDashboardMedic;
 
-    resGetTotaluriDashboardMedic =
-        await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedic');
+    resGetTotaluriDashboardMedic = await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedic');
 
-    print(
-        'getContClient rezultat: ${resGetTotaluriDashboardMedic!.statusCode}');
+    print('getContClient rezultat: ${resGetTotaluriDashboardMedic!.statusCode}');
 
     if (resGetTotaluriDashboardMedic.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      return TotaluriMedic.fromJson(
-          jsonDecode(resGetTotaluriDashboardMedic.body)
-              as Map<String, dynamic>);
+      return TotaluriMedic.fromJson(jsonDecode(resGetTotaluriDashboardMedic.body) as Map<String, dynamic>);
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -167,7 +148,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -175,24 +156,19 @@ class ApiCallFunctions {
 
     http.Response? resGetListaClientiPeMedicPePerioada;
 
-    resGetListaClientiPeMedicPePerioada = await getApelFunctie(
-        parametriiApiCall, 'GetListaClientiPeMedicPePerioada');
+    resGetListaClientiPeMedicPePerioada = await getApelFunctie(parametriiApiCall, 'GetListaClientiPeMedicPePerioada');
 
     if (resGetListaClientiPeMedicPePerioada!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
       List<ConsultatiiMobile> parseMediciMobile(String responseBody) {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-        return parsed
-            .map<ConsultatiiMobile>((json) => ConsultatiiMobile.fromJson(json))
-            .toList();
+        return parsed.map<ConsultatiiMobile>((json) => ConsultatiiMobile.fromJson(json)).toList();
       }
 
-      print(
-          'resGetListaMedici rezultat parsat: ${parseMediciMobile(resGetListaClientiPeMedicPePerioada.body)}');
+      print('resGetListaMedici rezultat parsat: ${parseMediciMobile(resGetListaClientiPeMedicPePerioada.body)}');
       return parseMediciMobile(resGetListaClientiPeMedicPePerioada.body);
 
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
@@ -215,7 +191,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -223,20 +199,16 @@ class ApiCallFunctions {
 
     http.Response? resGetListaRecenziiByMedicPePerioada;
 
-    resGetListaRecenziiByMedicPePerioada = await getApelFunctie(
-        parametriiApiCall, 'GetListaRecenziiByMedicPePerioada');
+    resGetListaRecenziiByMedicPePerioada = await getApelFunctie(parametriiApiCall, 'GetListaRecenziiByMedicPePerioada');
 
     if (resGetListaRecenziiByMedicPePerioada!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
       List<RecenzieMobile> parseRecenzieMobile(String responseBody) {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-        return parsed
-            .map<RecenzieMobile>((json) => RecenzieMobile.fromJson(json))
-            .toList();
+        return parsed.map<RecenzieMobile>((json) => RecenzieMobile.fromJson(json)).toList();
       }
 
       print(
@@ -263,7 +235,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -271,18 +243,15 @@ class ApiCallFunctions {
 
     http.Response? resGetTotaluriDashboardMedicPePerioada;
 
-    resGetTotaluriDashboardMedicPePerioada = await getApelFunctie(
-        parametriiApiCall, 'GetTotaluriDashboardMedicPePerioada');
+    resGetTotaluriDashboardMedicPePerioada =
+        await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedicPePerioada');
 
-    print(
-        'getTotaluriDashboardMedicPePerioada rezultat: ${resGetTotaluriDashboardMedicPePerioada!.statusCode}');
+    print('getTotaluriDashboardMedicPePerioada rezultat: ${resGetTotaluriDashboardMedicPePerioada!.statusCode}');
 
     if (resGetTotaluriDashboardMedicPePerioada.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      return TotaluriMedic.fromJson(
-          jsonDecode(resGetTotaluriDashboardMedicPePerioada.body)
-              as Map<String, dynamic>);
+      return TotaluriMedic.fromJson(jsonDecode(resGetTotaluriDashboardMedicPePerioada.body) as Map<String, dynamic>);
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -302,7 +271,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -310,20 +279,16 @@ class ApiCallFunctions {
 
     http.Response? resGetListaTranzactiiMedicPePerioada;
 
-    resGetListaTranzactiiMedicPePerioada = await getApelFunctie(
-        parametriiApiCall, 'GetListaTranzactiiMedicPePerioada');
+    resGetListaTranzactiiMedicPePerioada = await getApelFunctie(parametriiApiCall, 'GetListaTranzactiiMedicPePerioada');
 
     if (resGetListaTranzactiiMedicPePerioada!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
       List<IncasareMedic> parseIncasareMedic(String responseBody) {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-        return parsed
-            .map<IncasareMedic>((json) => IncasareMedic.fromJson(json))
-            .toList();
+        return parsed.map<IncasareMedic>((json) => IncasareMedic.fromJson(json)).toList();
       }
 
       print(
@@ -349,22 +314,21 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdClient': pIdClient,
     };
 
     http.Response? resGetUltimulChestionarCompletatByContMedic;
 
-    resGetUltimulChestionarCompletatByContMedic = await getApelFunctie(
-        parametriiApiCall, 'GetUltimulChestionarCompletatByContMedic');
+    resGetUltimulChestionarCompletatByContMedic =
+        await getApelFunctie(parametriiApiCall, 'GetUltimulChestionarCompletatByContMedic');
 
     if (resGetUltimulChestionarCompletatByContMedic!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       return ChestionarClientMobile.fromJson(
-          jsonDecode(resGetUltimulChestionarCompletatByContMedic.body)
-              as Map<String, dynamic>);
+          jsonDecode(resGetUltimulChestionarCompletatByContMedic.body) as Map<String, dynamic>);
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -390,8 +354,8 @@ class ApiCallFunctions {
 
     http.Response? resGetUltimulChestionarCompletatByContMedic;
 
-    resGetUltimulChestionarCompletatByContMedic = await postApelFunctie(
-        parametriiApiCall, 'SchimbaPozaProfilDinContMedic');
+    resGetUltimulChestionarCompletatByContMedic =
+        await postApelFunctie(parametriiApiCall, 'SchimbaPozaProfilDinContMedic');
 
     print(resGetUltimulChestionarCompletatByContMedic!.statusCode);
     if (resGetUltimulChestionarCompletatByContMedic!.statusCode == 200) {
@@ -414,8 +378,8 @@ class ApiCallFunctions {
 
     http.Response? resGetUltimulChestionarCompletatByContMedic;
 
-    resGetUltimulChestionarCompletatByContMedic = await postApelFunctie(
-        parametriiApiCall, 'StergePozaProfilDinContMedic');
+    resGetUltimulChestionarCompletatByContMedic =
+        await postApelFunctie(parametriiApiCall, 'StergePozaProfilDinContMedic');
 
     if (resGetUltimulChestionarCompletatByContMedic!.statusCode == 200) {
       print('poza stearsa cu succes');
@@ -425,12 +389,9 @@ class ApiCallFunctions {
   }
 
   List<TotaluriMedic> parseTotaluriMedic(String responseBody) {
-    final parsed =
-        (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+    final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-    return parsed
-        .map<TotaluriMedic>((json) => TotaluriMedic.fromJson(json))
-        .toList();
+    return parsed.map<TotaluriMedic>((json) => TotaluriMedic.fromJson(json)).toList();
   }
 
   Future<List<TotaluriMedic>?> getTotaluriDashboardMedicPeZi({
@@ -443,15 +404,14 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
     };
 
     http.Response? resGetTotaluriDashboardMedicPeZi;
 
-    resGetTotaluriDashboardMedicPeZi = await getApelFunctie(
-        parametriiApiCall, 'GetTotaluriDashboardMedicPeZi');
+    resGetTotaluriDashboardMedicPeZi = await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedicPeZi');
 
     if (resGetTotaluriDashboardMedicPeZi!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
@@ -481,7 +441,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -489,8 +449,8 @@ class ApiCallFunctions {
 
     http.Response? resGetTotaluriDashboardMedicPeSaptamana;
 
-    resGetTotaluriDashboardMedicPeSaptamana = await getApelFunctie(
-        parametriiApiCall, 'GetTotaluriDashboardMedicPeSaptamana');
+    resGetTotaluriDashboardMedicPeSaptamana =
+        await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedicPeSaptamana');
 
     if (resGetTotaluriDashboardMedicPeSaptamana!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
@@ -520,7 +480,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -528,8 +488,7 @@ class ApiCallFunctions {
 
     http.Response? resGetTotaluriDashboardMedicPeLuna;
 
-    resGetTotaluriDashboardMedicPeLuna = await getApelFunctie(
-        parametriiApiCall, 'GetTotaluriDashboardMedicPeLuna');
+    resGetTotaluriDashboardMedicPeLuna = await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedicPeLuna');
 
     if (resGetTotaluriDashboardMedicPeLuna!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
@@ -559,7 +518,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -567,8 +526,8 @@ class ApiCallFunctions {
 
     http.Response? resGetTotaluriDashboardMedicPePerioadaCustom;
 
-    resGetTotaluriDashboardMedicPePerioadaCustom = await getApelFunctie(
-        parametriiApiCall, 'GetTotaluriDashboardMedicPePerioadaCustom');
+    resGetTotaluriDashboardMedicPePerioadaCustom =
+        await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedicPePerioadaCustom');
 
     if (resGetTotaluriDashboardMedicPePerioadaCustom!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
@@ -576,8 +535,7 @@ class ApiCallFunctions {
 
       print(
           'resGetTotaluriDashboardMedicPePerioadaCustom rezultat parsat: ${parseTotaluriMedic(resGetTotaluriDashboardMedicPePerioadaCustom.body)}');
-      return parseTotaluriMedic(
-          resGetTotaluriDashboardMedicPePerioadaCustom.body);
+      return parseTotaluriMedic(resGetTotaluriDashboardMedicPePerioadaCustom.body);
 
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
     } else {
@@ -599,7 +557,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pDataInceputDDMMYYYY': pDataInceputDDMMYYYY,
       'pDataSfarsitDDMMYYYY': pDataSfarsitDDMMYYYY,
@@ -607,8 +565,7 @@ class ApiCallFunctions {
 
     http.Response? resGetTotaluriDashboardMedicPeAn;
 
-    resGetTotaluriDashboardMedicPeAn = await getApelFunctie(
-        parametriiApiCall, 'GetTotaluriDashboardMedicPeAn');
+    resGetTotaluriDashboardMedicPeAn = await getApelFunctie(parametriiApiCall, 'GetTotaluriDashboardMedicPeAn');
 
     if (resGetTotaluriDashboardMedicPeAn!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
@@ -633,14 +590,12 @@ class ApiCallFunctions {
 
     http.Response? resGetCredentialeAgora;
 
-    resGetCredentialeAgora =
-        await getApelFunctie(parametriiApiCall, 'GetCredentialeAgora');
+    resGetCredentialeAgora = await getApelFunctie(parametriiApiCall, 'GetCredentialeAgora');
 
     if (resGetCredentialeAgora!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
-      return ChestionarClientMobile.fromJson(
-          jsonDecode(resGetCredentialeAgora.body) as Map<String, dynamic>);
+      return ChestionarClientMobile.fromJson(jsonDecode(resGetCredentialeAgora.body) as Map<String, dynamic>);
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -661,7 +616,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
     };
 
@@ -669,13 +624,13 @@ class ApiCallFunctions {
 
     resGetListaMedici = await getApelFunctie(parametriiApiCall, 'GetListaMedici');
 
-    if (resGetListaMedici!.statusCode == 200) 
+    if (resGetListaMedici!.statusCode == 200)
     {
 
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
-      List<MedicMobile> parseMediciMobile(String responseBody) 
+      List<MedicMobile> parseMediciMobile(String responseBody)
       {
         final parsed =
             (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
@@ -689,7 +644,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -711,7 +666,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdMedic': pIdMedic,
     };
@@ -720,18 +675,18 @@ class ApiCallFunctions {
 
     resGetDetaliiMedic = await getApelFunctie(parametriiApiCall, 'GetDetaliiMedic');
 
-    
+
     if (resGetDetaliiMedic!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       return MedicMobile.fromJson(jsonDecode(resGetDetaliiMedic.body) as Map<String, dynamic>);
-    } 
+    }
     else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       //throw Exception('Nu s-a putut crea corect contul de client mobile din Json-ul rezultat.'); //old IGV
-      return const MedicMobile(id: -1, linkPozaProfil: '', titulatura: '', numeleComplet: '', locDeMunca: '', functia: '', 
-        specializarea: '', medieReviewuri: -1.0, nrLikeuri: -1, status: -1, primesteIntrebari: false, interpreteazaAnalize: false, consultatieVideo: false, monedaPreturi: -1, pretIntrebare: -1.0, pretConsultatieVideo: -1.0, 
+      return const MedicMobile(id: -1, linkPozaProfil: '', titulatura: '', numeleComplet: '', locDeMunca: '', functia: '',
+        specializarea: '', medieReviewuri: -1.0, nrLikeuri: -1, status: -1, primesteIntrebari: false, interpreteazaAnalize: false, consultatieVideo: false, monedaPreturi: -1, pretIntrebare: -1.0, pretConsultatieVideo: -1.0,
         pretInterpretareAnalize: -1.0, experienta: '', adresaLocDeMunca: '', totalClienti: 0, totalTestimoniale: 0, procentRating: 0.0, esteFavorit: false);
     }
 
@@ -752,7 +707,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdMedic': pIdMedic,
       'pNrMaxim': pNrMaxim,
@@ -762,13 +717,13 @@ class ApiCallFunctions {
 
     resGetListaRecenziiByIdMedic = await getApelFunctie(parametriiApiCall, 'GetListaRecenziiByIdMedic');
 
-    if (resGetListaRecenziiByIdMedic!.statusCode == 200) 
+    if (resGetListaRecenziiByIdMedic!.statusCode == 200)
     {
 
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
-      List<RecenzieMobile> parseRecenzii(String responseBody) 
+      List<RecenzieMobile> parseRecenzii(String responseBody)
       {
         final parsed =
             (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
@@ -782,7 +737,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -794,7 +749,7 @@ class ApiCallFunctions {
 
   }
 
-  
+
 
   Future<List<FacturaClientMobile>?> getListaFacturi({
     //required String pNumeComplet,
@@ -807,7 +762,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
     };
 
@@ -815,13 +770,13 @@ class ApiCallFunctions {
 
     resGetListaFacturi = await getApelFunctie(parametriiApiCall, 'GetListaFacturi');
 
-    if (resGetListaFacturi!.statusCode == 200) 
+    if (resGetListaFacturi!.statusCode == 200)
     {
 
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
-      List<FacturaClientMobile> parseFacturiMobile(String responseBody) 
+      List<FacturaClientMobile> parseFacturiMobile(String responseBody)
       {
         final parsed =
             (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
@@ -835,7 +790,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -847,7 +802,7 @@ class ApiCallFunctions {
 
   }
 
-  
+
 
   Future<FacturaClientMobile>? getDetaliiFactura({
     //required String pNumeComplet,
@@ -861,7 +816,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdFactura': pIdFactura,
     };
@@ -870,16 +825,16 @@ class ApiCallFunctions {
 
     resGetDetaliiFactura = await getApelFunctie(parametriiApiCall, 'GetDetaliiFactura');
 
-    
+
     if (resGetDetaliiFactura!.statusCode == 200) {
-      
+
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       return FacturaClientMobile.fromJson(jsonDecode(resGetDetaliiFactura.body) as Map<String, dynamic>);
 
     }
     else {
-      
+
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       //throw Exception('Nu s-a putut crea corect contul de client mobile din Json-ul rezultat.'); //old IGV
@@ -906,7 +861,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       //'pIdMedic': pIdMedic,
     };
@@ -915,13 +870,13 @@ class ApiCallFunctions {
 
     resGetListaConversatii = await getApelFunctie(parametriiApiCall, 'GetListaConversatii');
 
-    if (resGetListaConversatii!.statusCode == 200) 
+    if (resGetListaConversatii!.statusCode == 200)
     {
 
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
-      List<ConversatieMobile> parseConversatii(String responseBody) 
+      List<ConversatieMobile> parseConversatii(String responseBody)
       {
         final parsed =
             (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
@@ -935,7 +890,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -960,7 +915,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdConversatie': pIdConversatie,
       //'pIdMedic': pIdMedic,
@@ -970,13 +925,13 @@ class ApiCallFunctions {
 
     resGetListaMesajePeConversatie = await getApelFunctie(parametriiApiCall, 'GetListaMesajePeConversatie');
 
-    if (resGetListaMesajePeConversatie!.statusCode == 200) 
+    if (resGetListaMesajePeConversatie!.statusCode == 200)
     {
 
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
-      List<MesajConversatieMobile> parseListaMesajePeConversatie(String responseBody) 
+      List<MesajConversatieMobile> parseListaMesajePeConversatie(String responseBody)
       {
         final parsed =
             (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
@@ -990,7 +945,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -1016,7 +971,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       //'pIdMedic': pIdMedic,
     };
@@ -1025,7 +980,7 @@ class ApiCallFunctions {
 
     resGetUltimulChestionarCompletatByContClient = await getApelFunctie(parametriiApiCall, 'GetUltimulChestionarCompletatByContClient');
 
-    if (resGetUltimulChestionarCompletatByContClient!.statusCode == 200) 
+    if (resGetUltimulChestionarCompletatByContClient!.statusCode == 200)
     {
 
       // If the server did return a 200 response,
@@ -1038,7 +993,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -1062,7 +1017,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdFactura': pIdFactura,
     };
@@ -1071,7 +1026,7 @@ class ApiCallFunctions {
 
     resGetUltimulChestionarCompletatByContClient = await getApelFunctie(parametriiApiCall, 'GetSirBitiFacturaContClient');
 
-    if (resGetUltimulChestionarCompletatByContClient!.statusCode == 200) 
+    if (resGetUltimulChestionarCompletatByContClient!.statusCode == 200)
     {
 
       // If the server did return a 200 response,
@@ -1084,7 +1039,7 @@ class ApiCallFunctions {
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
 
     }
-    else 
+    else
     {
       return null;
       // If the server did not return a 201 CREATED response,
@@ -1112,7 +1067,7 @@ class ApiCallFunctions {
       'pEmail': pEmail, //IGV
       'pTelefon': pTelefon,
       'pCNP': pCNP,
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParolaMD5,
       'pDeviceToken': pDeviceToken,
       'pTipDispozitiv': pTipDispozitiv,
@@ -1120,8 +1075,7 @@ class ApiCallFunctions {
 
     http.Response? resAdaugaContMedic;
 
-    resAdaugaContMedic =
-        await postApelFunctie(parametriiApiCall, 'AdaugaContMedic');
+    resAdaugaContMedic = await postApelFunctie(parametriiApiCall, 'AdaugaContMedic');
 
     print(
         'adaugaContMedic status rezultat: ${resAdaugaContMedic!.statusCode} body rezultat: ${resAdaugaContMedic!.body}');
@@ -1139,8 +1093,8 @@ class ApiCallFunctions {
 
     http.Response? resTrimitePinPentruResetareParolaMedic;
 
-    resTrimitePinPentruResetareParolaMedic = await postApelFunctie(
-        parametriiApiCall, 'TrimitePinPentruResetareParolaMedic');
+    resTrimitePinPentruResetareParolaMedic =
+        await postApelFunctie(parametriiApiCall, 'TrimitePinPentruResetareParolaMedic');
 
     print(
         'trimitePinPentruResetareParolaMedic rezultat: ${resTrimitePinPentruResetareParolaMedic!.statusCode} body rezultat: ${resTrimitePinPentruResetareParolaMedic.body}');
@@ -1160,8 +1114,7 @@ class ApiCallFunctions {
 
     http.Response? resVerificaCodPinMedic;
 
-    resVerificaCodPinMedic =
-        await postApelFunctie(parametriiApiCall, 'VerificaCodPinMedic');
+    resVerificaCodPinMedic = await postApelFunctie(parametriiApiCall, 'VerificaCodPinMedic');
 
     print(
         'verificaCodPinClient rezultat: ${resVerificaCodPinMedic!.statusCode} body rezultat: ${resVerificaCodPinMedic.body}');
@@ -1181,8 +1134,7 @@ class ApiCallFunctions {
 
     http.Response? resReseteazaParolaMedic;
 
-    resReseteazaParolaMedic =
-        await postApelFunctie(parametriiApiCall, 'ReseteazaParolaMedic');
+    resReseteazaParolaMedic = await postApelFunctie(parametriiApiCall, 'ReseteazaParolaMedic');
 
     print(
         'reseteazaParolaClient rezultat: ${resReseteazaParolaMedic!.statusCode} body rezultat: ${resReseteazaParolaMedic.body}');
@@ -1210,11 +1162,9 @@ class ApiCallFunctions {
 
     http.Response? resUpdateDateMedic;
 
-    resUpdateDateMedic =
-        await postApelFunctie(parametriiApiCall, 'UpdateDateMedic');
+    resUpdateDateMedic = await postApelFunctie(parametriiApiCall, 'UpdateDateMedic');
 
-    print(
-        'updateDateClient rezultat: ${resUpdateDateMedic!.statusCode} body rezultat: ${resUpdateDateMedic.body}');
+    print('updateDateClient rezultat: ${resUpdateDateMedic!.statusCode} body rezultat: ${resUpdateDateMedic.body}');
 
     return resUpdateDateMedic;
   }
@@ -1239,8 +1189,7 @@ class ApiCallFunctions {
 
     http.Response? resSeteazaStatusuriMedic;
 
-    resSeteazaStatusuriMedic =
-        await postApelFunctie(parametriiApiCall, 'SeteazaStatusuriMedic');
+    resSeteazaStatusuriMedic = await postApelFunctie(parametriiApiCall, 'SeteazaStatusuriMedic');
 
     print(
         'seteazaStatusuriMedic status rezultat: ${resSeteazaStatusuriMedic!.statusCode} body rezultat: ${resSeteazaStatusuriMedic!.body}');
@@ -1270,8 +1219,7 @@ class ApiCallFunctions {
 
     http.Response? resActualizeazaCVContMedic;
 
-    resActualizeazaCVContMedic =
-        await postApelFunctie(parametriiApiCall, 'ActualizeazaCVContMedic');
+    resActualizeazaCVContMedic = await postApelFunctie(parametriiApiCall, 'ActualizeazaCVContMedic');
 
     print('actualizeazaCVContMedic parametriiApiCall: $parametriiApiCall');
 
@@ -1297,8 +1245,7 @@ class ApiCallFunctions {
 
     http.Response? resAdaugaEducatieMedic;
 
-    resAdaugaEducatieMedic =
-        await postApelFunctie(parametriiApiCall, 'AdaugaEducatieMedic');
+    resAdaugaEducatieMedic = await postApelFunctie(parametriiApiCall, 'AdaugaEducatieMedic');
 
     print(
         'adaugaEducatieMedic status rezultat: ${resAdaugaEducatieMedic!.statusCode} body rezultat: ${resAdaugaEducatieMedic.body}');
@@ -1324,8 +1271,7 @@ class ApiCallFunctions {
 
     http.Response? resActualizeazaEducatieMedic;
 
-    resActualizeazaEducatieMedic =
-        await postApelFunctie(parametriiApiCall, 'ActualizeazaEducatieMedic');
+    resActualizeazaEducatieMedic = await postApelFunctie(parametriiApiCall, 'ActualizeazaEducatieMedic');
 
     print(
         'actualizeazaEducatieMedic status rezultat: ${resActualizeazaEducatieMedic!.statusCode} body rezultat: ${resActualizeazaEducatieMedic.body}');
@@ -1347,8 +1293,7 @@ class ApiCallFunctions {
 
     http.Response? resStergeEducatieMedic;
 
-    resStergeEducatieMedic =
-        await postApelFunctie(parametriiApiCall, 'StergeEducatieMedic');
+    resStergeEducatieMedic = await postApelFunctie(parametriiApiCall, 'StergeEducatieMedic');
 
     print(
         'stergeEducatieMedic status rezultat: ${resStergeEducatieMedic!.statusCode} body rezultat: ${resStergeEducatieMedic.body}');
@@ -1372,8 +1317,7 @@ class ApiCallFunctions {
 
     http.Response? resRaspundeLaFeedbackDinContMedic;
 
-    resRaspundeLaFeedbackDinContMedic = await postApelFunctie(
-        parametriiApiCall, 'RaspundeLaFeedbackDinContMedic');
+    resRaspundeLaFeedbackDinContMedic = await postApelFunctie(parametriiApiCall, 'RaspundeLaFeedbackDinContMedic');
 
     print(
         'raspundeLaFeedbackDinContMedic status rezultat: ${resRaspundeLaFeedbackDinContMedic!.statusCode} body rezultat: ${resRaspundeLaFeedbackDinContMedic.body}');
@@ -1397,8 +1341,8 @@ class ApiCallFunctions {
 
     http.Response? resModificaRaspunsDeLaFeedbackDinContMedic;
 
-    resModificaRaspunsDeLaFeedbackDinContMedic = await postApelFunctie(
-        parametriiApiCall, 'ModificaRaspunsDeLaFeedbackDinContMedic');
+    resModificaRaspunsDeLaFeedbackDinContMedic =
+        await postApelFunctie(parametriiApiCall, 'ModificaRaspunsDeLaFeedbackDinContMedic');
 
     print(
         'modificaRaspunsDeLaFeedbackDinContMedic status rezultat: ${resModificaRaspunsDeLaFeedbackDinContMedic!.statusCode} body rezultat: ${resModificaRaspunsDeLaFeedbackDinContMedic.body}');
@@ -1420,8 +1364,8 @@ class ApiCallFunctions {
 
     http.Response? resStergeRaspunsDeLaFeedbackDinContMedic;
 
-    resStergeRaspunsDeLaFeedbackDinContMedic = await postApelFunctie(
-        parametriiApiCall, 'StergeRaspunsDeLaFeedbackDinContMedic');
+    resStergeRaspunsDeLaFeedbackDinContMedic =
+        await postApelFunctie(parametriiApiCall, 'StergeRaspunsDeLaFeedbackDinContMedic');
 
     print(
         'stergeRaspunsDeLaFeedbackDinContMedic status rezultat: ${resStergeRaspunsDeLaFeedbackDinContMedic!.statusCode} body rezultat: ${resStergeRaspunsDeLaFeedbackDinContMedic.body}');
@@ -1443,8 +1387,7 @@ class ApiCallFunctions {
 
     http.Response? resTrimitePushPrinOneSignal;
 
-    resTrimitePushPrinOneSignal =
-        await postApelFunctie(parametriiApiCall, 'TrimitePushPrinOneSignal');
+    resTrimitePushPrinOneSignal = await postApelFunctie(parametriiApiCall, 'TrimitePushPrinOneSignal');
 
     print(
         'trimitePushPrinOneSignal status rezultat: ${resTrimitePushPrinOneSignal!.statusCode} body rezultat: ${resTrimitePushPrinOneSignal.body}');
@@ -1468,8 +1411,7 @@ class ApiCallFunctions {
 
     http.Response? resAdaugaMesajDinContMedic;
 
-    resAdaugaMesajDinContMedic =
-        await postApelFunctie(parametriiApiCall, 'AdaugaMesajDinContMedic');
+    resAdaugaMesajDinContMedic = await postApelFunctie(parametriiApiCall, 'AdaugaMesajDinContMedic');
 
     print(
         'adaugaMesajDinContMedic status rezultat: ${resAdaugaMesajDinContMedic!.statusCode} body rezultat: ${resAdaugaMesajDinContMedic!.body}');
@@ -1492,9 +1434,7 @@ class ApiCallFunctions {
   }
 
   Future<List<ConsultatiiMobile>?> getListaIstoricConsultatiiPerPacient(
-      {required String pUser,
-      required String pParola,
-      required String idPacient}) async {
+      {required String pUser, required String pParola, required String idPacient}) async {
     final Map<String, String> parametriiApiCall = {
       'pUser': pUser, //IGV
       'pParolaMD5': pParola,
@@ -1503,19 +1443,15 @@ class ApiCallFunctions {
 
     http.Response? resGetListaConversatii;
 
-    resGetListaConversatii = await getApelFunctie(
-        parametriiApiCall, 'GetListaIstoricConsultatiiPerPacient');
+    resGetListaConversatii = await getApelFunctie(parametriiApiCall, 'GetListaIstoricConsultatiiPerPacient');
 
     if (resGetListaConversatii!.statusCode == 200) {
       print("work");
 
       List<ConsultatiiMobile> parseMediciMobile(String responseBody) {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-        return parsed
-            .map<ConsultatiiMobile>((json) => ConsultatiiMobile.fromJson(json))
-            .toList();
+        return parsed.map<ConsultatiiMobile>((json) => ConsultatiiMobile.fromJson(json)).toList();
       }
 
       return parseMediciMobile(resGetListaConversatii.body);
@@ -1540,31 +1476,26 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       //'pIdMedic': pIdMedic,
     };
 
     http.Response? resGetListaConversatii;
 
-    resGetListaConversatii =
-        await getApelFunctie(parametriiApiCall, 'GetListaConversatii');
+    resGetListaConversatii = await getApelFunctie(parametriiApiCall, 'GetListaConversatii');
 
     if (resGetListaConversatii!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
       List<ConversatieMobile> parseConversatii(String responseBody) {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-        return parsed
-            .map<ConversatieMobile>((json) => ConversatieMobile.fromJson(json))
-            .toList();
+        return parsed.map<ConversatieMobile>((json) => ConversatieMobile.fromJson(json)).toList();
       }
 
-      print(
-          'resGetListaConversatii rezultat parsat: ${parseConversatii(resGetListaConversatii.body)}');
+      print('resGetListaConversatii rezultat parsat: ${parseConversatii(resGetListaConversatii.body)}');
       return parseConversatii(resGetListaConversatii.body);
 
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
@@ -1589,7 +1520,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParola,
       'pIdMedic': pIdConversatie,
       //'pIdMedic': pIdMedic,
@@ -1597,26 +1528,19 @@ class ApiCallFunctions {
 
     http.Response? resGetListaMesajePeConversatie;
 
-    resGetListaMesajePeConversatie =
-        await getApelFunctie(parametriiApiCall, 'GetListaMesajePeConversatie');
+    resGetListaMesajePeConversatie = await getApelFunctie(parametriiApiCall, 'GetListaMesajePeConversatie');
 
     if (resGetListaMesajePeConversatie!.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
 
-      List<MesajConversatieMobile> parseListaMesajePeConversatie(
-          String responseBody) {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+      List<MesajConversatieMobile> parseListaMesajePeConversatie(String responseBody) {
+        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
 
-        return parsed
-            .map<MesajConversatieMobile>(
-                (json) => MesajConversatieMobile.fromJson(json))
-            .toList();
+        return parsed.map<MesajConversatieMobile>((json) => MesajConversatieMobile.fromJson(json)).toList();
       }
 
-      print(
-          'resGetListaMedici rezultat parsat: ${parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body)}');
+      print('resGetListaMedici rezultat parsat: ${parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body)}');
       return parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body);
 
       //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
@@ -1885,7 +1809,6 @@ class ApiCallFunctions {
   */
 }
 
-
 //////////////////////////////////////old
 /*
   Future<http.Response?> getContClient({
@@ -1897,7 +1820,7 @@ class ApiCallFunctions {
     final Map<String, String> parametriiApiCall = {
       //'pNumeComplet': pNumeComplet,
       'pUser': pUser, //IGV
-      //'pUser': '0737862090',
+
       'pParolaMD5': pParolaMD5,
     };
 
@@ -1913,20 +1836,20 @@ class ApiCallFunctions {
     });
 
     print('getContClient url: $url');
-    
+
     http.Response res;
 
     res = await http.get(Uri.parse(url));
 
-    //res = await http.get(Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/GetContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'));
+
 
 
     print('getContClient rezultat: ${res.statusCode}');
     return res;
   }
   */
-  
-  /*
+
+/*
   Future<http.Response?> adaugaContClient({
     required String pNumeComplet,
     required String pUser,
@@ -1953,14 +1876,14 @@ class ApiCallFunctions {
 
     res = await http.post(
       //Uri.parse(url),
-      Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/AdaugaContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pNumeComplet=TestMobile&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'),
+
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       //body: jsonEncode(parametriiApiCall),
     );
 
-    //res = await http.get(Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/GetContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'));
+
 
 
     print('adaugaContClient rezultat: ${res.statusCode}');
@@ -1994,7 +1917,7 @@ class ApiCallFunctions {
       body: jsonEncode(parametriiApiCall),
     );
 
-    //res = await http.get(Uri.parse('https://sosbebe.crmonline.ro/api/OnlineShopAPI/GetContClient?pCheie=6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa&pUser=0737862090&pParolaMD5=e10adc3949ba59abbe56e057f20f883e'));
+
 
 
     print('trimitePinPentruResetareParolaClient rezultat: ${res.statusCode}');

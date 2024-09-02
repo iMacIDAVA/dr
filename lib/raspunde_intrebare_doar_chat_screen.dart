@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -14,7 +13,6 @@ import 'package:uuid/uuid.dart';
 //import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import './utils/chat.dart' as chat;
 import './utils/chat_l10n.dart' as chat_l10n;
 import './utils/chat_theme.dart' as chat_theme;
@@ -22,18 +20,14 @@ import './utils/typing_indicator.dart' as typing_indicator;
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
-import 'package:sos_bebe_profil_bebe_doctor/utils_api/functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
-
-import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
 
 ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
 List<ConversatieMobile> listaConversatii = [];
 
 class RaspundeIntrebareDoarChatScreen extends StatefulWidget {
-
   final String textNume;
   final String textIntrebare;
   final String textRaspuns;
@@ -44,21 +38,23 @@ class RaspundeIntrebareDoarChatScreen extends StatefulWidget {
   final String numePacient;
   final bool onlineStatus;
 
-
-  RaspundeIntrebareDoarChatScreen({
-
-    super.key, required this.textNume, required this.textIntrebare, required this.textRaspuns, required this.idClient, required this.idMedic, required this.iconPathPacient,
-    required this.numePacient, required this.onlineStatus,
-
+  const RaspundeIntrebareDoarChatScreen({
+    super.key,
+    required this.textNume,
+    required this.textIntrebare,
+    required this.textRaspuns,
+    required this.idClient,
+    required this.idMedic,
+    required this.iconPathPacient,
+    required this.numePacient,
+    required this.onlineStatus,
   });
 
   @override
   State<RaspundeIntrebareDoarChatScreen> createState() => _RaspundeIntrebareDoarChatScreenState();
-
 }
 
 class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarChatScreen> {
-
   String textNume = '';
   String textIntrebare = '';
   String textRaspuns = '';
@@ -67,10 +63,9 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
 
   List<types.TextMessage> newMessages = [];
 
-  types.User _user = const types.User(
+  final types.User _user = const types.User(
     id: '-1',
   );
-
 
 /*
   List<types.Message> _messages = [];
@@ -83,8 +78,7 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
   //final _user = const types.User(id: '12345', imageUrl: 'https://i.pravatar.cc/300', firstName: 'Test', lastName: 'Test');
 
   @override
-  initState(){
-
+  initState() {
     super.initState();
 
     /* //de completat IGV
@@ -97,98 +91,80 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     //textNume = '';
     //textIntrebare = '';
     //textRaspuns = '';
-    
-    
+
     getListaConversatii();
 
-    Timer.periodic(new Duration(seconds: 5), (timer) {
-
+    Timer.periodic(const Duration(seconds: 5), (timer) {
       _loadMessagesFromList();
-      if (_messages.length != newMessages.length)
-      {
+      if (_messages.length != newMessages.length) {
         setState(() {
           _messages = newMessages;
         });
       }
-
     });
 
     //_loadMessages();
-
   }
 
-  
-
-  void getListaConversatii() async
-  {
-
+  void getListaConversatii() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     //prefs.setString(pref_keys.userPassMD5, controllerEmail.text);
 
-    String user = prefs.getString('user')??'';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
     //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5('123456')); //old IGV
 
     //String? userPassMD5 = prefs.getString(pref_keys.userPassMD5);
 
     /*
-    String? user = 'george.iordache@gmail.com';
+
 
     String? userPassMD5 = apiCallFunctions.generateMd5('123456');
     */
-    
-    //SharedPreferences prefs = await SharedPreferences.getInstance(); 
-    
+
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
+
     //String user = prefs.getString('user')??'';
     //String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
 
     listaConversatii = await apiCallFunctions.getListaConversatii(
-      pUser: user,
-      pParola: userPassMD5,
-    )?? [];
+          pUser: user,
+          pParola: userPassMD5,
+        ) ??
+        [];
 
-    print('listaConversatii length: ${listaConversatii.length} ${listaConversatii[0].idDestinatar} ${listaConversatii[0].idExpeditor} ${listaConversatii[0].id.toString()}');
+    print(
+        'listaConversatii length: ${listaConversatii.length} ${listaConversatii[0].idDestinatar} ${listaConversatii[0].idExpeditor} ${listaConversatii[0].id.toString()}');
     //print('listaConversatii  id medic: ${widget.medic.id} id client: ${widget.contClientMobile.id}');
-
   }
 
-  
-
   void _loadMessagesFromList() async {
-
-    print('_loadMessagesFromList Aici');
-    
     List<MesajConversatieMobile> listaMesaje = [];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     //prefs.setString(pref_keys.userPassMD5, controllerEmail.text);
 
-    String user = prefs.getString('user')??'';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
-
-    //String? user = 'george.iordache@gmail.com';
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
     //String? userPassMD5 = apiCallFunctions.generateMd5('123456');
 
     listaConversatii.retainWhere((element) {
-     //do something when textType == "birth"
-        return ((element.idExpeditor == widget.idMedic) && (element.idExpeditor == widget.idClient));
-      }
-    );
+      //do something when textType == "birth"
+      return ((element.idExpeditor == widget.idMedic) && (element.idExpeditor == widget.idClient));
+    });
 
-    if (listaConversatii.isNotEmpty)
-    {
-
+    if (listaConversatii.isNotEmpty) {
       listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
-        pUser: user,
-        pParola: userPassMD5,
-        pIdConversatie: listaConversatii[0].id.toString(),
-      )?? [];
+            pUser: user,
+            pParola: userPassMD5,
+            pIdConversatie: listaConversatii[0].id.toString(),
+          ) ??
+          [];
 
-    
       //final response = await rootBundle.loadString('./assets/messages.json');
 
       //print('test');
@@ -199,24 +175,27 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
           .toList();
       */
       newMessages = listaMesaje
-          .map((e) => types.TextMessage(id:e.id.toString(), author:types.User(id:e.idExpeditor.toString() == widget.idMedic.toString() ? widget.idMedic.toString() : e.idExpeditor.toString()), text:e.comentariu, createdAt:e.dataMesaj.millisecondsSinceEpoch))
+          .map((e) => types.TextMessage(
+              id: e.id.toString(),
+              author: types.User(
+                  id: e.idExpeditor.toString() == widget.idMedic.toString()
+                      ? widget.idMedic.toString()
+                      : e.idExpeditor.toString()),
+              text: e.comentariu,
+              createdAt: e.dataMesaj.millisecondsSinceEpoch))
           .toList();
     }
-
   }
 
-
   void _addMessage(types.Message message) {
-
     setState(() {
       _messages.insert(0, message);
     });
-
   }
 
-  /* 
+  /*
   void _handleAttachmentPressed() {
-    
+
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) => SafeArea(
@@ -257,7 +236,7 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
         ),
       ),
     );
-  } 
+  }
   */
 
   /*
@@ -317,10 +296,8 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
 
       if (message.uri.startsWith('http')) {
         try {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
+          final index = _messages.indexWhere((element) => element.id == message.id);
+          final updatedMessage = (_messages[index] as types.FileMessage).copyWith(
             isLoading: true,
           );
 
@@ -339,11 +316,8 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
             await file.writeAsBytes(bytes);
           }
         } finally {
-
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
+          final index = _messages.indexWhere((element) => element.id == message.id);
+          final updatedMessage = (_messages[index] as types.FileMessage).copyWith(
             isLoading: null,
           );
 
@@ -360,9 +334,7 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
   void _handlePreviewDataFetched(
     types.TextMessage message,
     types.PreviewData previewData,
-  )
-  {
-
+  ) {
     final index = _messages.indexWhere((element) => element.id == message.id);
     final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
       previewData: previewData,
@@ -371,11 +343,9 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     setState(() {
       _messages[index] = updatedMessage;
     });
-
   }
 
   void _handleSendPressed(types.PartialText message) {
-    
     final textMessage = types.TextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -384,79 +354,56 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     );
 
     _addMessage(textMessage);
-
-  }
-
-  void _loadMessages() async {
-
-    final response = await rootBundle.loadString('./assets/messages.json');
-
-    print('test');
-
-    final messages = (jsonDecode(response) as List)
-        .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
-        .toList();
-
-    setState(() {
-      _messages = messages;
-    });
   }
 
   void callbackTextIntrebare(String newTextIntrebare) {
     setState(() {
-
       textIntrebare = newTextIntrebare;
 
       // ignore: avoid_print
       //print('is checked alergic: ' + isAlergic.toString());
-
     });
   }
-  
+
   void callbackTextRaspuns(String newTextRaspuns) {
     setState(() {
       textRaspuns = newTextRaspuns;
 
       // ignore: avoid_print
       //print('is checked alergic: ' + isAlergic.toString());
-
     });
   }
 
-Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-        
+  Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
     /*
     String user = prefs.getString('user')??'';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
     */
 
-    
-    String? user = 'george.iordache@gmail.com';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userEmail = prefs.getString('userEmail');
+    String? userPassMD5 = prefs.getString('userPassMD5');
 
-    String? userPassMD5 = apiCallFunctions.generateMd5('123456');
+    if (userEmail == null || userPassMD5 == null) {
+      return null;
+    }
 
     /*
     String textMessage = '';
     Color backgroundColor = Colors.red;
     Color textColor = Colors.black;
     */
-    
+
     http.Response? resAdaugaMesaj = await apiCallFunctions.adaugaMesajDinContMedic(
-      pUser: user,
+      pUser: userEmail,
       pParola: userPassMD5,
       pIdClient: widget.idClient.toString(),
       pMesaj: mesaj,
     );
 
-
     print('adaugaMesajDinContMedic resAdaugaMesaj.body ${resAdaugaMesaj!.body}');
 
-
-    if (int.parse(resAdaugaMesaj!.body) == 200)
-    {
-
+    if (int.parse(resAdaugaMesaj.body) == 200) {
 /*
       setState(() {
 
@@ -465,13 +412,7 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
 
       });
 */
-
-      print('Mesaj adăugat cu succes!');
-
-    }
-    else if (int.parse(resAdaugaMesaj.body) == 400)
-    {
-
+    } else if (int.parse(resAdaugaMesaj.body) == 400) {
       /*
       setState(() {
 
@@ -480,20 +421,13 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
 
       });
       */
-
-      print('Apel invalid');
 
       /*
       textMessage = 'Apel invalid!';
       backgroundColor = Colors.red;
       textColor = Colors.black;
       */
-
-    }
-    else if (int.parse(resAdaugaMesaj!.body) == 401)
-    {
-      
-      print('Eroare la adăugare mesaj!');
+    } else if (int.parse(resAdaugaMesaj.body) == 401) {
       /*
       setState(() {
 
@@ -501,18 +435,12 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
         showButonTrimiteTestimonial = true;
 
       });
-      
+
       textMessage = 'Feedback-ul nu a fost trimis!';
       backgroundColor = Colors.red;
       textColor = Colors.black;
       */
-
-    }
-    else if (int.parse(resAdaugaMesaj!.body) == 405)
-    {
-
-      print('Informatii insuficiente');
-
+    } else if (int.parse(resAdaugaMesaj.body) == 405) {
       /*
       setState(() {
 
@@ -522,20 +450,13 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
       });
 
       print('Informații insuficiente');
-    
-      
+
+
       textMessage = 'Informații insuficiente!';
       backgroundColor = Colors.red;
       textColor = Colors.black;
       */
-
-    }
-    else if (int.parse(resAdaugaMesaj!.body) == 500)
-    {
-
-
-      print('A apărut o eroare la execuția metodei');
-
+    } else if (int.parse(resAdaugaMesaj.body) == 500) {
       /*
         setState(() {
 
@@ -545,12 +466,11 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
         });
 
         print('A apărut o eroare la execuția metodei');
-        
+
         textMessage = 'A apărut o eroare la execuția metodei!';
         backgroundColor = Colors.red;
         textColor = Colors.black;
       */
-
     }
 
     /*
@@ -563,25 +483,25 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
 
     }
     */
-    
+
     return null;
-
   }
-
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 75,
-        title: const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
+        title: const RaspundeIntrebareTopIconsTextWidget(
+          iconPath: './assets/images/raspunde_intrebare_pacienta.png',
+          textNume: 'Nume pacienta',
+        ),
       ),
       body:
-      //const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
-      chat.Chat(
+          //const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
+          chat.Chat(
         messages: _messages,
         onSendPressed: _handleSendPressed,
         user: _user,
@@ -590,24 +510,23 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
         onPreviewDataFetched: _handlePreviewDataFetched,
         showUserAvatars: true,
         showUserNames: true,
-        typingIndicatorOptions : const typing_indicator.TypingIndicatorOptions(),
+        typingIndicatorOptions: const typing_indicator.TypingIndicatorOptions(),
         //l10n: const ChatL10nRo().toChatL10n,
         l10n: const chat_l10n.ChatL10nRo(),
         theme: const chat_theme.DefaultChatTheme(
           inputBackgroundColor: Color.fromRGBO(255, 255, 255, 1), // Color.fromRGBO(30, 214, 158, 1),
           inputTextColor: Color.fromRGBO(103, 114, 148, 1), // Color.fromRGBO(30, 214, 158, 1),
-          //backgroundColor: Color.fromRGBO(14, 190, 127, 1), 
+          //backgroundColor: Color.fromRGBO(14, 190, 127, 1),
           primaryColor: Color.fromRGBO(14, 190, 127, 1),
-                     
         ),
       ),
-      //Column( 
+      //Column(
       //  children: [
-          //const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
+      //const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
       //    const InkWell(
       //      child: ChatWidget(),
-      //      ),  
-      //    ),  
+      //      ),
+      //    ),
       //  ],
       //),
     );
@@ -616,10 +535,9 @@ Future<http.Response?> adaugaMesajDinContMedic(String mesaj) async {
 
 // ignore: must_be_immutable
 class RaspundeIntrebareTopIconsTextWidget extends StatelessWidget {
-  
   final String iconPath;
   final String textNume;
-    
+
   const RaspundeIntrebareTopIconsTextWidget({super.key, required this.iconPath, required this.textNume});
 
   @override
@@ -632,14 +550,16 @@ class RaspundeIntrebareTopIconsTextWidget extends StatelessWidget {
           children: [
             const SizedBox(width: 20),
             IconButton(
-              onPressed: () => Navigator.pop(context), 
+              onPressed: () => Navigator.pop(context),
               icon: Image.asset('./assets/images/inapoi_chat_icon.png'),
               color: const Color.fromRGBO(103, 114, 148, 1),
             ),
             const SizedBox(width: 5),
             CircleAvatar(foregroundImage: AssetImage(iconPath), radius: 25),
             const SizedBox(width: 15),
-            Text(textNume, style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 12, fontWeight: FontWeight.w500)),
+            Text(textNume,
+                style: GoogleFonts.rubik(
+                    color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 12, fontWeight: FontWeight.w500)),
             //const SizedBox(width: 160),
           ],
         ),

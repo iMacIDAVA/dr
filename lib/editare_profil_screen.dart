@@ -132,7 +132,7 @@ class _EditareProfilScreenState extends State<EditareProfilScreen> {
                   textStanga: l.editareProfilUser,
                   textDreapta: widget.contMedicMobile.numeComplet),
               customPaddingProfilulMeu(),
-              //const TexteLinie(textStanga:'Email',textDreapta:'drdanielaperoteasa@gmail.com'), //old IGV
+
               TexteLinie(
                   //textStanga:'Email', //old IGV
                   textStanga: l.editareProfilEmail,

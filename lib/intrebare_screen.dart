@@ -3,31 +3,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:sos_bebe_profil_bebe_doctor/chestionar_screen.dart';
 
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
-import 'package:sos_bebe_profil_bebe_doctor/utils_api/functions.dart';
-
-import 'package:http/http.dart' as http;
-import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
 
 ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
 class IntrebareScreen extends StatelessWidget {
-
   const IntrebareScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar( 
+      appBar: AppBar(
         toolbarHeight: 790,
         backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
         foregroundColor: Colors.white,
@@ -37,10 +30,10 @@ class IntrebareScreen extends StatelessWidget {
         title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:[ 
+          children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center, 
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(
                   height: 140,
@@ -61,53 +54,55 @@ class IntrebareScreen extends StatelessWidget {
                       ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start, 
+                      textAlign: TextAlign.start,
                     ),
                   ),
                 ),
                 const SizedBox(height: 35),
                 Center(
-                  child:IconButton(
+                  child: IconButton(
                     onPressed: () {},
                     icon: Image.asset('./assets/images/chat_icon.png'),
                   ),
                 ),
                 const SizedBox(height: 165),
-                SizedBox( 
+                SizedBox(
                   width: 320,
                   height: 55,
-                  child: ElevatedButton (
+                  child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-                      side: const BorderSide(width : 1, color:Colors.white),
-                      shape: RoundedRectangleBorder( //to set border radius to button
+                      side: const BorderSide(width: 1, color: Colors.white),
+                      shape: RoundedRectangleBorder(
+                        //to set border radius to button
                         borderRadius: BorderRadius.circular(10),
                       ),
                       //padding: const EdgeInsets.all(10),
                     ),
                     onPressed: () async {
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      String? userEmail = prefs.getString('userEmail');
+                      String? userPassMD5 = prefs.getString('userPassMD5');
 
-                          
-                      String? user = 'george.iordache@gmail.com';
+                      if (userEmail == null || userPassMD5 == null) {
+                        return;
+                      }
 
-                      String? userPassMD5 = apiCallFunctions.generateMd5('123456');
-
-                      ChestionarClientMobile? resGetUltimulChestionarCompletatByContMedic = await apiCallFunctions.getUltimulChestionarCompletatByContMedic(
-                        pUser: user,
+                      ChestionarClientMobile? resGetUltimulChestionarCompletatByContMedic =
+                          await apiCallFunctions.getUltimulChestionarCompletatByContMedic(
+                        pUser: userEmail,
                         pParola: userPassMD5,
                         pIdClient: '13',
                       );
 
-                      if (context.mounted)
-                      {  
+                      if (context.mounted) {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
+                            context,
+                            MaterialPageRoute(
                               //builder: (context) => const ServiceSelectScreen(),
-                              builder: (context) => ChestionarScreen( chestionar: resGetUltimulChestionarCompletatByContMedic!
-                            ),
-                          ) 
-                        );
+                              builder: (context) =>
+                                  ChestionarScreen(chestionar: resGetUltimulChestionarCompletatByContMedic!),
+                            ));
                       }
                     },
                     child: Row(
@@ -126,7 +121,7 @@ class IntrebareScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),  
+                ),
               ],
             ),
           ],

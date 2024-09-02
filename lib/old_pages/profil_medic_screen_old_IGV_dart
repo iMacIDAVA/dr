@@ -8,7 +8,7 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:sos_bebe_profil_bebe_doctor/reset_password_screen.dart';
 
 class ProfilMedicScreen extends StatefulWidget {
-  
+
   final bool isDisponibleForNotifications;
 
   const ProfilMedicScreen({super.key, required this.isDisponibleForNotifications});
@@ -49,7 +49,7 @@ class _ProfilMedicScreenState extends State<ProfilMedicScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor:const Color.fromRGBO(30, 214, 158, 1),
-      appBar: AppBar( 
+      appBar: AppBar(
         toolbarHeight: 90,
         backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
         foregroundColor: Colors.white,
@@ -61,9 +61,9 @@ class _ProfilMedicScreenState extends State<ProfilMedicScreen> {
           style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
         ),
         centerTitle: true,
-      ),  
+      ),
       body:
-      SingleChildScrollView( 
+      SingleChildScrollView(
         child: Container(
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
@@ -107,7 +107,7 @@ class _ProfilMedicScreenState extends State<ProfilMedicScreen> {
                   children:[
                     const Icon(Icons.email_outlined, color: Colors.blue),
                     const SizedBox(width: 30),
-                    Text( 'dr.daniela@gmail.com',
+                    Text( 'Doctor',
                       style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w500),
                     ),
                   ],
@@ -139,7 +139,7 @@ class _ProfilMedicScreenState extends State<ProfilMedicScreen> {
                       }
                     ),
                   );
-                },  
+                },
                 child: Padding(
                   padding: const EdgeInsets.only(left:25.0, right: 40),
                   child:Row(
@@ -192,7 +192,7 @@ class _ProfilMedicScreenState extends State<ProfilMedicScreen> {
               /*
               const TexteLinie(textStanga:'User',textDreapta:'@Dr Daniela Preoteasa'),
               customPaddingProfilulMeu(),
-              const TexteLinie(textStanga:'Email',textDreapta:'drdanielaperoteasa@gmail.com'),
+              const TexteLinie(textStanga:'Email',textDreapta:'Doctor'),
               customPaddingProfilulMeu(),
               const IconTextCV(textLinie:'cv', iconCV: './assets/images/profil_navigare_icon.png'),
               customPaddingProfilulMeu(),
@@ -232,20 +232,20 @@ class _ProfilMedicScreenState extends State<ProfilMedicScreen> {
                         )
                       ),
                     ),
-                  ),    
+                  ),
                 ],
               ),
-              */ 
+              */
             ],
-          ),  
+          ),
         ),
-      ),  
+      ),
     );
   }
 }
 
 class TextNavigareLinie extends StatelessWidget {
-  
+
   final String textStanga;
   final int navigare;
 
@@ -317,7 +317,7 @@ class _TextAndSwitchWidgetState extends State<TextAndSwitchWidget> {
 
               //added by George Valentin Iordache
               activeColor: const Color.fromRGBO(30, 214, 158, 1),
-              
+
               inactiveColor: Colors.grey[200]!,
               onToggle: (value) {
                 if (widget.callback != null) {
@@ -341,7 +341,7 @@ class _TextAndSwitchWidgetState extends State<TextAndSwitchWidget> {
 
 /*
 class IconTextCV extends StatelessWidget {
-  
+
   final String textLinie;
   final String iconCV;
 
@@ -372,9 +372,9 @@ class IconTextCV extends StatelessWidget {
                     onPressed: () {},
                     icon: Image.asset(iconCV),
                   ),
-                ],  
+                ],
               ),
-            ),  
+            ),
           ],
         ),
         const SizedBox(
