@@ -45,8 +45,7 @@ class _IncasariPageState extends State<IncasariPage> {
   //date time variables
   DatePeriod _selectedPeriod = DatePeriod(DateTime.now(), DateTime.now());
   DateTime dateNow = DateTime.now();
-  final DateTime _firstDate =
-      DateTime.now().subtract(const Duration(days: 4050));
+  final DateTime _firstDate = DateTime.now().subtract(const Duration(days: 4050));
   final DateTime _lastDate = DateTime.now().add(const Duration(days: 365));
   //function to get data for every case
   void getData() async {
@@ -101,9 +100,7 @@ class _IncasariPageState extends State<IncasariPage> {
             //'Încasări', //old IGV
             l.incasariFiltratIncasari,
             style: GoogleFonts.rubik(
-                color: const Color.fromRGBO(255, 255, 255, 1),
-                fontSize: 24,
-                fontWeight: FontWeight.w400),
+                color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 24, fontWeight: FontWeight.w400),
           ),
           centerTitle: true,
         ),
@@ -115,9 +112,7 @@ class _IncasariPageState extends State<IncasariPage> {
                 margin: const EdgeInsets.only(top: 29),
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -135,8 +130,7 @@ class _IncasariPageState extends State<IncasariPage> {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 1,
                               blurRadius: 7,
-                              offset: const Offset(
-                                  2, 3), // changes position of shadow
+                              offset: const Offset(2, 3), // changes position of shadow
                             ),
                           ],
                         ),
@@ -158,8 +152,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                 Text(
                                   l.sumeIncasariFiltratSoldCurent,
                                   style: GoogleFonts.rubik(
-                                      color: const Color.fromRGBO(
-                                          255, 255, 255, 1),
+                                      color: const Color.fromRGBO(255, 255, 255, 1),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -167,11 +160,9 @@ class _IncasariPageState extends State<IncasariPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      widget.totaluriMedic[0].totalIncasari
-                                          .toStringAsFixed(2),
+                                      widget.totaluriMedic[0].totalIncasari.toStringAsFixed(2),
                                       style: GoogleFonts.rubik(
-                                          color: const Color.fromRGBO(
-                                              255, 255, 255, 1),
+                                          color: const Color.fromRGBO(255, 255, 255, 1),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -182,8 +173,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                               ? l.sumeIncasariFiltratEuro
                                               : l.sumeIncasariFiltratLei,
                                       style: GoogleFonts.rubik(
-                                          color: const Color.fromRGBO(
-                                              255, 255, 255, 1),
+                                          color: const Color.fromRGBO(255, 255, 255, 1),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -211,8 +201,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                 Text(
                                   l.sumeIncasariFiltratDeIncasat,
                                   style: GoogleFonts.rubik(
-                                      color:
-                                          const Color.fromRGBO(30, 214, 158, 1),
+                                      color: const Color.fromRGBO(30, 214, 158, 1),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -220,11 +209,9 @@ class _IncasariPageState extends State<IncasariPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      widget.totaluriMedic[0].totalDeIncasat
-                                          .toStringAsFixed(2),
+                                      widget.totaluriMedic[0].totalDeIncasat.toStringAsFixed(2),
                                       style: GoogleFonts.rubik(
-                                          color: const Color.fromRGBO(
-                                              103, 114, 148, 1),
+                                          color: const Color.fromRGBO(103, 114, 148, 1),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -235,8 +222,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                               ? l.sumeIncasariFiltratEuro
                                               : l.sumeIncasariFiltratLei,
                                       style: GoogleFonts.rubik(
-                                          color: const Color.fromRGBO(
-                                              103, 114, 148, 1),
+                                          color: const Color.fromRGBO(103, 114, 148, 1),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -266,7 +252,9 @@ class _IncasariPageState extends State<IncasariPage> {
                               showLuna = false;
                               showAn = false;
                               showCustomPicker = false;
-                              showCustomCalendar = false;
+                              showCustomCalendar = true;
+
+                              _selectedPeriod = DatePeriod(DateTime.now(), DateTime.now());
 
                               setState(() {});
                             },
@@ -276,8 +264,7 @@ class _IncasariPageState extends State<IncasariPage> {
                               style: GoogleFonts.rubik(
                                   color: showZi
                                       ? const Color.fromRGBO(103, 114, 148, 1)
-                                      : const Color.fromRGBO(103, 114, 148, 1)
-                                          .withOpacity(0.6),
+                                      : const Color.fromRGBO(103, 114, 148, 1).withOpacity(0.6),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400),
                             ),
@@ -289,7 +276,12 @@ class _IncasariPageState extends State<IncasariPage> {
                               showLuna = false;
                               showAn = false;
                               showCustomPicker = false;
-                              showCustomCalendar = false;
+                              showCustomCalendar = true;
+
+                              DateTime startOfWeek =
+                                  DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+                              DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+                              _selectedPeriod = DatePeriod(startOfWeek, endOfWeek);
 
                               setState(() {});
                             },
@@ -299,8 +291,7 @@ class _IncasariPageState extends State<IncasariPage> {
                               style: GoogleFonts.rubik(
                                   color: showSaptamana
                                       ? const Color.fromRGBO(103, 114, 148, 1)
-                                      : const Color.fromRGBO(103, 114, 148, 1)
-                                          .withOpacity(0.6),
+                                      : const Color.fromRGBO(103, 114, 148, 1).withOpacity(0.6),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400),
                             ),
@@ -312,7 +303,12 @@ class _IncasariPageState extends State<IncasariPage> {
                               showLuna = true;
                               showAn = false;
                               showCustomPicker = false;
-                              showCustomCalendar = false;
+                              showCustomCalendar = true;
+
+                              DateTime firstDayOfMonth = DateTime(DateTime.now().year, DateTime.now().month, 1);
+                              DateTime lastDayOfMonth = DateTime(DateTime.now().year, DateTime.now().month + 1, 0);
+                              _selectedPeriod = DatePeriod(firstDayOfMonth, lastDayOfMonth);
+
                               setState(() {});
                             },
                             child: Text(
@@ -321,8 +317,7 @@ class _IncasariPageState extends State<IncasariPage> {
                               style: GoogleFonts.rubik(
                                   color: showLuna
                                       ? const Color.fromRGBO(103, 114, 148, 1)
-                                      : const Color.fromRGBO(103, 114, 148, 1)
-                                          .withOpacity(0.6),
+                                      : const Color.fromRGBO(103, 114, 148, 1).withOpacity(0.6),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400),
                             ),
@@ -333,7 +328,11 @@ class _IncasariPageState extends State<IncasariPage> {
                               showSaptamana = false;
                               showLuna = false;
                               showAn = true;
-                              showCustomPicker = false;
+                              showCustomPicker = true;
+
+                              DateTime firstDayOfYear = DateTime(DateTime.now().year, 1, 1);
+                              DateTime lastDayOfYear = DateTime(DateTime.now().year, 12, 31);
+                              _selectedPeriod = DatePeriod(firstDayOfYear, lastDayOfYear);
 
                               setState(() {});
                             },
@@ -343,8 +342,7 @@ class _IncasariPageState extends State<IncasariPage> {
                               style: GoogleFonts.rubik(
                                   color: showAn
                                       ? const Color.fromRGBO(103, 114, 148, 1)
-                                      : const Color.fromRGBO(103, 114, 148, 1)
-                                          .withOpacity(0.6),
+                                      : const Color.fromRGBO(103, 114, 148, 1).withOpacity(0.6),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400),
                             ),
@@ -360,8 +358,7 @@ class _IncasariPageState extends State<IncasariPage> {
 
                               setState(() {});
                             },
-                            icon: Image.asset(
-                                './assets/images/calendar_incasari_icon.png'),
+                            icon: Image.asset('./assets/images/calendar_incasari_icon.png'),
                           ),
                         ],
                       ),
@@ -387,16 +384,14 @@ class _IncasariPageState extends State<IncasariPage> {
                                       getDrawingHorizontalLine: (value) {
                                         return const FlLine(
                                           //color: AppColors.mainGridLineColor,
-                                          color: Color.fromRGBO(
-                                              255, 255, 255, 0.0),
+                                          color: Color.fromRGBO(255, 255, 255, 0.0),
                                           strokeWidth: 1,
                                         );
                                       },
                                       getDrawingVerticalLine: (value) {
                                         return const FlLine(
                                           //color: AppColors.mainGridLineColor,
-                                          color: Color.fromRGBO(
-                                              255, 255, 255, 0.0),
+                                          color: Color.fromRGBO(255, 255, 255, 0.0),
                                           strokeWidth: 1,
                                         );
                                       },
@@ -404,12 +399,10 @@ class _IncasariPageState extends State<IncasariPage> {
                                     titlesData: const FlTitlesData(
                                       show: false,
                                       rightTitles: AxisTitles(
-                                        sideTitles:
-                                            SideTitles(showTitles: false),
+                                        sideTitles: SideTitles(showTitles: false),
                                       ),
                                       topTitles: AxisTitles(
-                                        sideTitles:
-                                            SideTitles(showTitles: false),
+                                        sideTitles: SideTitles(showTitles: false),
                                       ),
                                       bottomTitles: AxisTitles(
                                         sideTitles: SideTitles(
@@ -433,13 +426,9 @@ class _IncasariPageState extends State<IncasariPage> {
                                         : showSaptamana
                                             ? weekListSpot.length.toDouble() - 1
                                             : showLuna
-                                                ? monthListSpot.length
-                                                        .toDouble() -
-                                                    1
+                                                ? monthListSpot.length.toDouble() - 1
                                                 : showAn
-                                                    ? yearListSpot.length
-                                                            .toDouble() -
-                                                        1
+                                                    ? yearListSpot.length.toDouble() - 1
                                                     : 0,
                                     minY: 0,
                                     maxY: (showZi
@@ -469,8 +458,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                         dotData: const FlDotData(
                                           show: false,
                                         ),
-                                        color: const Color.fromRGBO(
-                                            30, 214, 158, 1),
+                                        color: const Color.fromRGBO(30, 214, 158, 1),
                                         belowBarData: BarAreaData(
                                           show: true,
                                           gradient: const LinearGradient(
@@ -494,8 +482,7 @@ class _IncasariPageState extends State<IncasariPage> {
                         if (customListSpot.isEmpty)
                           const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text(
-                                "Nu există încasări în perioada selectată."),
+                            child: Text("Nu există încasări în perioada selectată."),
                           ),
                       if (showCustomPicker && customListSpot.length == 1)
                         // if (customListSpot.isEmpty && selectedCustomOnce)
@@ -506,17 +493,13 @@ class _IncasariPageState extends State<IncasariPage> {
                               Text(
                                 customListSpot[0].y.toString(),
                                 style: const TextStyle(
-                                    color: Color.fromRGBO(30, 214, 158, 1),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600),
+                                    color: Color.fromRGBO(30, 214, 158, 1), fontSize: 18, fontWeight: FontWeight.w600),
                               ),
                               Container(
                                 height: 15,
                                 width: 15,
-                                decoration: BoxDecoration(
-                                    color:
-                                        const Color.fromRGBO(30, 214, 158, 1),
-                                    shape: BoxShape.circle),
+                                decoration:
+                                    const BoxDecoration(color: Color.fromRGBO(30, 214, 158, 1), shape: BoxShape.circle),
                               )
                             ],
                           ),
@@ -544,16 +527,14 @@ class _IncasariPageState extends State<IncasariPage> {
                                         getDrawingHorizontalLine: (value) {
                                           return const FlLine(
                                             //color: AppColors.mainGridLineColor,
-                                            color: Color.fromRGBO(
-                                                255, 255, 255, 0.0),
+                                            color: Color.fromRGBO(255, 255, 255, 0.0),
                                             strokeWidth: 1,
                                           );
                                         },
                                         getDrawingVerticalLine: (value) {
                                           return const FlLine(
                                             //color: AppColors.mainGridLineColor,
-                                            color: Color.fromRGBO(
-                                                255, 255, 255, 0.0),
+                                            color: Color.fromRGBO(255, 255, 255, 0.0),
                                             strokeWidth: 1,
                                           );
                                         },
@@ -561,12 +542,10 @@ class _IncasariPageState extends State<IncasariPage> {
                                       titlesData: const FlTitlesData(
                                         show: false,
                                         rightTitles: AxisTitles(
-                                          sideTitles:
-                                              SideTitles(showTitles: false),
+                                          sideTitles: SideTitles(showTitles: false),
                                         ),
                                         topTitles: AxisTitles(
-                                          sideTitles:
-                                              SideTitles(showTitles: false),
+                                          sideTitles: SideTitles(showTitles: false),
                                         ),
                                         bottomTitles: AxisTitles(
                                           sideTitles: SideTitles(
@@ -585,8 +564,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                         border: Border.all(color: Colors.white),
                                       ),
                                       minX: 0,
-                                      maxX:
-                                          customListSpot.length.toDouble() - 1,
+                                      maxX: customListSpot.length.toDouble() - 1,
                                       minY: 0,
                                       maxY: (maxListCustom) * 1.1,
                                       lineBarsData: [
@@ -598,8 +576,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                           dotData: const FlDotData(
                                             show: false,
                                           ),
-                                          color: const Color.fromRGBO(
-                                              30, 214, 158, 1),
+                                          color: const Color.fromRGBO(30, 214, 158, 1),
                                           belowBarData: BarAreaData(
                                             show: true,
                                             gradient: const LinearGradient(
@@ -607,8 +584,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                               end: Alignment.bottomCenter,
                                               colors: [
                                                 Color.fromRGBO(30, 214, 158, 1),
-                                                Color.fromRGBO(
-                                                    255, 255, 255, 1),
+                                                Color.fromRGBO(255, 255, 255, 1),
                                               ],
                                             ),
                                           ),
@@ -629,33 +605,25 @@ class _IncasariPageState extends State<IncasariPage> {
                             firstDate: _firstDate,
                             lastDate: _lastDate,
                             datePickerStyles: DatePickerRangeStyles(
-                                selectedPeriodStartTextStyle: const TextStyle(
-                                    color: Color.fromRGBO(255, 255, 255, 1)),
-                                selectedPeriodMiddleTextStyle: const TextStyle(
-                                    color: Color.fromRGBO(78, 87, 133, 1)),
-                                selectedPeriodEndTextStyle: const TextStyle(
-                                    color: Color.fromRGBO(255, 255, 255, 1)),
-                                selectedPeriodLastDecoration:
-                                    const BoxDecoration(
+                                selectedPeriodStartTextStyle: const TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                                selectedPeriodMiddleTextStyle: const TextStyle(color: Color.fromRGBO(78, 87, 133, 1)),
+                                selectedPeriodEndTextStyle: const TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                                selectedPeriodLastDecoration: const BoxDecoration(
                                   color: Color.fromRGBO(14, 190, 127, 1),
                                   shape: BoxShape.rectangle,
 
                                   //color: selectedPeriodLastColor,
                                   borderRadius: BorderRadiusDirectional.only(
-                                      topEnd: Radius.circular(24.0),
-                                      bottomEnd: Radius.circular(24.0)),
+                                      topEnd: Radius.circular(24.0), bottomEnd: Radius.circular(24.0)),
                                 ),
-                                selectedPeriodStartDecoration:
-                                    const BoxDecoration(
+                                selectedPeriodStartDecoration: const BoxDecoration(
                                   color: Color.fromRGBO(14, 190, 127, 1),
 
                                   //color: selectedPeriodStartColor,
                                   borderRadius: BorderRadiusDirectional.only(
-                                      topStart: Radius.circular(24.0),
-                                      bottomStart: Radius.circular(24.0)),
+                                      topStart: Radius.circular(24.0), bottomStart: Radius.circular(24.0)),
                                 ),
-                                selectedPeriodMiddleDecoration:
-                                    const BoxDecoration(
+                                selectedPeriodMiddleDecoration: const BoxDecoration(
                                   color: Color.fromRGBO(50, 250, 190, 0.6),
                                   //color: selectedPeriodMiddleColor,
                                   shape: BoxShape.rectangle,
@@ -683,8 +651,7 @@ class _IncasariPageState extends State<IncasariPage> {
         _selectedPeriod.start.year == _selectedPeriod.end.year) {
     } else {
       selectedCustomOnce = true;
-      List<dynamic> customList = await incasariService.getIncasariCustom(
-          newPeriod.start, newPeriod.end);
+      List<dynamic> customList = await incasariService.getIncasariCustom(newPeriod.start, newPeriod.end);
       customListSpot = customList[0];
       maxListCustom = customList[1];
     }
@@ -708,7 +675,6 @@ class _IncasariPageState extends State<IncasariPage> {
   }
 
   DayHeaderStyle _dayHeaderStyleBuilder(int weekday) {
-    return const DayHeaderStyle(
-        textStyle: TextStyle(color: Color.fromRGBO(103, 114, 148, 1)));
+    return const DayHeaderStyle(textStyle: TextStyle(color: Color.fromRGBO(103, 114, 148, 1)));
   }
 }

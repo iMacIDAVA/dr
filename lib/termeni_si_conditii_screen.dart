@@ -10,40 +10,40 @@ class TermeniSiConditiiScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor:const Color.fromRGBO(30, 214, 158, 1),
-      appBar: AppBar( 
+      backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+      appBar: AppBar(
         toolbarHeight: 90,
         backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
         foregroundColor: Colors.white,
         //leading:
-        
-        title:Row(
+
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {}, 
-              icon: Image.asset('./assets/images/menu_icon_top_leading.png'),
-            ),
-            SizedBox(width: MediaQuery.of(context).size.width* 0.04),
+            // IconButton(
+            //   onPressed: () {},
+            //   icon: Image.asset('./assets/images/menu_icon_top_leading.png'),
+            // ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.04),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.04),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.04),
             //Text('Termeni și condiții', //old IGV
-            Text(l.termeniSiConditiiTitlu,
-                style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            SizedBox(width: MediaQuery.of(context).size.width* 0.28),
+            Text(
+              l.termeniSiConditiiTitlu,
+              style: GoogleFonts.rubik(
+                  color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.28),
           ],
         ),
         centerTitle: false,
-      ),  
-      body: 
-      SingleChildScrollView(
-        child:
-        Container(
+      ),
+      body: SingleChildScrollView(
+        child: Container(
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30),
@@ -51,24 +51,24 @@ class TermeniSiConditiiScreen extends StatelessWidget {
             ),
             color: Colors.white,
           ),
-          child:Column(
+          child: Column(
             children: [
               const SizedBox(height: 30),
               Row(
                 children: [
                   const SizedBox(width: 55),
                   Row(
-                    children:[
+                    children: [
                       SizedBox(
                         width: 280,
                         child: ElevatedButton(
                           onPressed: () {
                             //Navigator.push(
-                                //context,
-                                //MaterialPageRoute(
-                                  //builder: (context) => const ServiceSelectScreen(),
-                                  //builder: (context) => const TestimonialScreen(),
-                                //));
+                            //context,
+                            //MaterialPageRoute(
+                            //builder: (context) => const ServiceSelectScreen(),
+                            //builder: (context) => const TestimonialScreen(),
+                            //));
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
@@ -78,13 +78,12 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                               )),
                           //child: const Text('Ultima actualizare : 27 / 03 / 2023', //old IGV
                           child: Text(l.termeniSiConditiiUltimaActualizare,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'SF Pro Text',
-                              fontWeight: FontWeight.w400,
-                              color:Color.fromRGBO(255, 255, 255, 1),
-                            )
-                          ),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'SF Pro Text',
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(255, 255, 255, 1),
+                              )),
                         ),
                       ),
                     ],
@@ -94,8 +93,9 @@ class TermeniSiConditiiScreen extends StatelessWidget {
               const SizedBox(height: 55),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                width:355,
-                child:AutoSizeText.rich(// old value RichText(
+                width: 355,
+                child: AutoSizeText.rich(
+                  // old value RichText(
                   TextSpan(
                     style: GoogleFonts.rubik(
                       color: const Color.fromRGBO(111, 139, 164, 1),
@@ -115,20 +115,20 @@ class TermeniSiConditiiScreen extends StatelessWidget {
               const SizedBox(height: 25),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                width:355,
+                width: 355,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("• ", 
-                      style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(30, 214, 158, 1),
-                        fontSize: 40,
-                        fontWeight: FontWeight.w300,
-                      )
-                    ),
+                    Text("• ",
+                        style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(30, 214, 158, 1),
+                          fontSize: 40,
+                          fontWeight: FontWeight.w300,
+                        )),
                     SizedBox(
                       width: 280,
-                      child:AutoSizeText.rich(// old value RichText(
+                      child: AutoSizeText.rich(
+                        // old value RichText(
                         TextSpan(
                           style: GoogleFonts.rubik(
                             color: const Color.fromRGBO(111, 139, 164, 1),
@@ -145,27 +145,27 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                         textAlign: TextAlign.left,
                       ),
                     ),
-                    const SizedBox(width:25),
+                    const SizedBox(width: 25),
                   ],
                 ),
               ),
               const SizedBox(height: 25),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                width:355,
+                width: 355,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("• ", 
-                      style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(30, 214, 158, 1),
-                        fontSize: 40,
-                        fontWeight: FontWeight.w300,
-                      )
-                    ),
+                    Text("• ",
+                        style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(30, 214, 158, 1),
+                          fontSize: 40,
+                          fontWeight: FontWeight.w300,
+                        )),
                     SizedBox(
-                      width:280,
-                      child:AutoSizeText.rich(// old value RichText(
+                      width: 280,
+                      child: AutoSizeText.rich(
+                        // old value RichText(
                         TextSpan(
                           style: GoogleFonts.rubik(
                             color: const Color.fromRGBO(111, 139, 164, 1),
@@ -182,27 +182,27 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                         textAlign: TextAlign.left,
                       ),
                     ),
-                    const SizedBox(width:25),
+                    const SizedBox(width: 25),
                   ],
                 ),
               ),
               const SizedBox(height: 25),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                width:355,
+                width: 355,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("• ", 
-                      style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(30, 214, 158, 1),
-                        fontSize: 40,
-                        fontWeight: FontWeight.w300,
-                      )
-                    ),
+                    Text("• ",
+                        style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(30, 214, 158, 1),
+                          fontSize: 40,
+                          fontWeight: FontWeight.w300,
+                        )),
                     SizedBox(
-                      width:280,
-                      child:AutoSizeText.rich(// old value RichText(
+                      width: 280,
+                      child: AutoSizeText.rich(
+                        // old value RichText(
                         TextSpan(
                           style: GoogleFonts.rubik(
                             color: const Color.fromRGBO(111, 139, 164, 1),
@@ -219,15 +219,16 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                         textAlign: TextAlign.left,
                       ),
                     ),
-                    const SizedBox(width:25),
+                    const SizedBox(width: 25),
                   ],
                 ),
               ),
               const SizedBox(height: 25),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                width:355,
-                child:AutoSizeText.rich(// old value RichText(
+                width: 355,
+                child: AutoSizeText.rich(
+                  // old value RichText(
                   TextSpan(
                     style: GoogleFonts.rubik(
                       color: const Color.fromRGBO(111, 139, 164, 1),
@@ -245,24 +246,24 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 25),
-                  //FadingListViewWidget(text:'Vivamus ex felis, ullamcorper ac metus ac, finibus egestas nibh. Donec at mattis lacus. Duis cursus orci a convallis condimentum. Phasellus gravida felis leo. Fusce mollis auctor tincidunt. Vestibulun consequat massa aliquet, porttitor sapien ut, gravida tortor.'),
+              //FadingListViewWidget(text:'Vivamus ex felis, ullamcorper ac metus ac, finibus egestas nibh. Donec at mattis lacus. Duis cursus orci a convallis condimentum. Phasellus gravida felis leo. Fusce mollis auctor tincidunt. Vestibulun consequat massa aliquet, porttitor sapien ut, gravida tortor.'),
               //const FadingContainerWidget(text:'Vivamus ex felis, ullamcorper ac metus ac, finibus egestas nibh. Donec at mattis lacus. Duis cursus orci a convallis condimentum. Phasellus gravida felis leo. Fusce mollis auctor tincidunt. Vestibulun consequat massa aliquet, porttitor sapien ut, gravida tortor.'), //old IGV
-              FadingContainerWidget(text:l.termeniSiConditiiTextCentral6),
+              FadingContainerWidget(text: l.termeniSiConditiiTextCentral6),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.06,
               ),
             ],
           ),
         ),
-      ),  
+      ),
     );
   }
 }
 
 /*class FadingListViewWidget extends StatelessWidget {
-  
+
   final String text;
-  
+
   const FadingListViewWidget({super.key, required this.text});
 
   @override
@@ -310,41 +311,39 @@ class TermeniSiConditiiScreen extends StatelessWidget {
               );
             },
           ),
-          */   
+          */
         ),
       ),
     );
   }
   */
-  class FadingContainerWidget extends StatelessWidget {
-  
+class FadingContainerWidget extends StatelessWidget {
   final String text;
-  
+
   const FadingContainerWidget({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Container(
+    return Container(
       width: 355,
       padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-      child: 
-      AutoSizeText.rich(// old value RichText(
+      child: AutoSizeText.rich(
+        // old value RichText(
         TextSpan(
-          text: text,
-          style: GoogleFonts.rubik(
-            //color: const Color.fromRGBO(14, 210, 62, 1), old
-            color: const Color.fromRGBO(111, 139, 164, 1),
-            // fontSize: 32, old
-            fontSize: 14,
-            fontWeight: FontWeight.w300,
-          )),
+            text: text,
+            style: GoogleFonts.rubik(
+              //color: const Color.fromRGBO(14, 210, 62, 1), old
+              color: const Color.fromRGBO(111, 139, 164, 1),
+              // fontSize: 32, old
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+            )),
         maxLines: 6,
         softWrap: true,
         overflow: TextOverflow.fade,
         textAlign: TextAlign.start,
       ),
-        /*
+      /*
         Text(
           text,
           style: GoogleFonts.rubik(
@@ -361,4 +360,3 @@ class TermeniSiConditiiScreen extends StatelessWidget {
     );
   }
 }
-

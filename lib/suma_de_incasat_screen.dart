@@ -132,16 +132,16 @@ class _SumaIncasatScreenState extends State<SumaIncasatScreen> {
                   ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Image.asset('./assets/images/incasari_appbar_transparent.png'),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     IconButton(
+              //       onPressed: () {},
+              //       icon: Image.asset('./assets/images/incasari_appbar_transparent.png'),
+              //     ),
+              //   ],
+              // ),
               // Row(
               //   mainAxisAlignment: MainAxisAlignment.start,
               //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,21 +266,22 @@ class TopTextIconWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(topText,
               style: GoogleFonts.rubik(
                   color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 16, fontWeight: FontWeight.w500)),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Image.asset('./assets/images/top_icon_suma_de_incasat.png'),
-              ),
-            ],
-          ),
+
+          // Row(
+          //   children: [
+          //     IconButton(
+          //       onPressed: () {},
+          //       icon: Image.asset('./assets/images/top_icon_suma_de_incasat.png'),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
@@ -313,7 +314,7 @@ class _IconNumeDataSuma extends State<IconNumeDataSuma> {
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
             color: const Color(0xff0EBE7F), // Uniform color for all sides
-            width: 7,
+            width: 0,
           ),
           color: Colors.white,
           boxShadow: [

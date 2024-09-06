@@ -742,7 +742,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
             color: const Color(0xff0EBE7F),
-            width: 7,
+            width: 0,
           ),
           color: Colors.white,
           boxShadow: [
@@ -750,7 +750,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -816,16 +816,16 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                       )
                     ],
                   ),
-                  Text(
-                    widget.textComentariu,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff677294),
-                    ),
-                  ),
+                  // Text(
+                  //   widget.textComentariu,
+                  //   style: const TextStyle(
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: Color(0xff677294),
+                  //   ),
+                  // ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Divider(
                     height: 1,

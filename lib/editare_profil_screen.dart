@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sos_bebe_profil_bebe_doctor/termeni_si_conditii_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
 
 import 'package:flutter_switch/flutter_switch.dart';
@@ -546,38 +547,55 @@ class IconTextTermeniConditii extends StatelessWidget {
   const IconTextTermeniConditii({super.key, required this.text, required this.icon});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          //const SizedBox(width:15)
-          margin: EdgeInsets.only(
-              left: MediaQuery.of(context).size.height * 0.015,
-              right: MediaQuery.of(context).size.height * 0.035,
-              top: MediaQuery.of(context).size.height * 0.12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Image.asset(icon),
-                      ),
-                      Text(text,
-                          style: GoogleFonts.rubik(
-                              color: const Color.fromRGBO(112, 112, 112, 1),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400)),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return const TermeniSiConditiiScreen();
+          }),
+        );
+      },
+      child: Column(
+        children: [
+          Container(
+            //const SizedBox(width:15)
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.height * 0.015,
+                right: MediaQuery.of(context).size.height * 0.035,
+                top: MediaQuery.of(context).size.height * 0.12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return const TermeniSiConditiiScreen();
+                              }),
+                            );
+                          },
+                          icon: Image.asset(icon),
+                        ),
+                        Text(text,
+                            style: GoogleFonts.rubik(
+                                color: const Color.fromRGBO(112, 112, 112, 1),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400)),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

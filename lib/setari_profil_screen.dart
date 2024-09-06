@@ -1238,10 +1238,18 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                 GestureDetector(
                   onTap: () async {
                     final isValidMainForm = setariProfilKey.currentState!.validate();
-                    //if ((isValidMainForm) && (!showCV || (showCV && isValidCvForm))) {
 
-                    if (isValidMainForm && (!showCV)) {
-                    } else if (isValidMainForm && showCV) {}
+                    if (isValidMainForm) {
+                      await updateDateMedic();
+
+                      if (editareContCorecta) {
+                        showSnackbar(context, "Profile updated successfully", Colors.green, Colors.white);
+                      } else {
+                        showSnackbar(context, "Failed to update profile", Colors.red, Colors.white);
+                      }
+                    } else {
+                      showSnackbar(context, "Please fill all required fields", Colors.red, Colors.white);
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),

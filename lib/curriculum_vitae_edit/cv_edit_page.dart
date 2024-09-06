@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sos_bebe_profil_bebe_doctor/curriculum_vitae_edit/cv_services.dart';
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
@@ -75,16 +73,14 @@ class _CVEditPageState extends State<CVEditPage> {
                 Navigator.pop(context, true);
                 // });
               },
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back,
                 color: Colors.white,
               )),
           title: Text(
             l.setariProfilEditeazaCV,
             style: GoogleFonts.rubik(
-                color: const Color.fromRGBO(255, 255, 255, 1),
-                fontSize: 16,
-                fontWeight: FontWeight.w500),
+                color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
           ),
           centerTitle: true,
         ),
@@ -121,9 +117,7 @@ class _CVEditPageState extends State<CVEditPage> {
                       fillColor: Colors.white,
                       labelText: l.setariProfilTitluProfestionalHint,
                       labelStyle: const TextStyle(
-                          color: Color.fromRGBO(111, 139, 164, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                          color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                     textCapitalization: TextCapitalization.sentences,
                   ),
@@ -143,9 +137,7 @@ class _CVEditPageState extends State<CVEditPage> {
                       fillColor: Colors.white,
                       labelText: l.setariProfilSpecializareHint,
                       labelStyle: const TextStyle(
-                          color: Color.fromRGBO(111, 139, 164, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                          color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                   ),
                   customDivider(),
@@ -164,9 +156,7 @@ class _CVEditPageState extends State<CVEditPage> {
                       fillColor: Colors.white,
                       labelText: l.setariProfilExperientaHint,
                       labelStyle: const TextStyle(
-                          color: Color.fromRGBO(111, 139, 164, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                          color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                   ),
                   customDivider(),
@@ -186,9 +176,7 @@ class _CVEditPageState extends State<CVEditPage> {
                       fillColor: Colors.white,
                       labelText: l.setariProfilDenumireLocDeMuncaHint,
                       labelStyle: const TextStyle(
-                          color: Color.fromRGBO(111, 139, 164, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                          color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                   ),
                   customDivider(),
@@ -208,9 +196,7 @@ class _CVEditPageState extends State<CVEditPage> {
                       fillColor: Colors.white,
                       labelText: l.setariProfilAdresaLocDeMuncaHint,
                       labelStyle: const TextStyle(
-                          color: Color.fromRGBO(111, 139, 164, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400),
+                          color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                     ),
                   ),
                   customDivider(),
@@ -268,9 +254,7 @@ class _CVEditPageState extends State<CVEditPage> {
                             fillColor: Colors.white,
                             labelText: l.setariProfilTipEducatieHint,
                             labelStyle: const TextStyle(
-                                color: Color.fromRGBO(111, 139, 164, 1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
+                                color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                         ),
                         customDivider(),
@@ -289,9 +273,7 @@ class _CVEditPageState extends State<CVEditPage> {
                             fillColor: Colors.white,
                             labelText: l.setariProfilInformatiiEducatieHint,
                             labelStyle: const TextStyle(
-                                color: Color.fromRGBO(111, 139, 164, 1),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400),
+                                color: Color.fromRGBO(111, 139, 164, 1), fontSize: 14, fontWeight: FontWeight.w400),
                           ),
                           textCapitalization: TextCapitalization.sentences,
                         ),
@@ -300,13 +282,9 @@ class _CVEditPageState extends State<CVEditPage> {
                             onTap: () async {
                               if (tipEducatieController.text.isNotEmpty) {
                                 var resp = await cvServices.adaugaEducatieMedic(
-                                    context,
-                                    tipEducatieController.text,
-                                    descriereEducatieController.text,
-                                    1);
+                                    context, tipEducatieController.text, descriereEducatieController.text, 1);
                                 if (int.parse(resp!.body) == 200) {
-                                  ContMedicMobile cont =
-                                      await cvServices.getContMedicUpdate();
+                                  ContMedicMobile cont = await cvServices.getContMedicUpdate();
                                   listaEducatie = cont.listaEducatie;
                                 }
 
@@ -323,10 +301,7 @@ class _CVEditPageState extends State<CVEditPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: const Text(
                                 "Adaugă Educație",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400),
+                                style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w400),
                               ),
                             ))
                       ],
@@ -343,43 +318,36 @@ class _CVEditPageState extends State<CVEditPage> {
                             children: [
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         l.setariProfilTipEducatieHint,
                                         style: const TextStyle(
-                                            color: Color.fromRGBO(
-                                                111, 139, 164, 1),
+                                            color: Color.fromRGBO(111, 139, 164, 1),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400),
                                       ),
                                       Text(
                                         listaEducatie[index].tipEducatie!,
                                         style: const TextStyle(
-                                            color: Color.fromRGBO(
-                                                111, 139, 164, 1),
+                                            color: Color.fromRGBO(111, 139, 164, 1),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w700),
                                       ),
                                       Text(
                                         l.setariProfilInformatiiEducatieHint,
                                         style: const TextStyle(
-                                            color: Color.fromRGBO(
-                                                111, 139, 164, 1),
+                                            color: Color.fromRGBO(111, 139, 164, 1),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400),
                                       ),
                                       Text(
-                                        listaEducatie[index]
-                                            .informatiiSuplimentare!,
+                                        listaEducatie[index].informatiiSuplimentare!,
                                         style: const TextStyle(
-                                            color: Color.fromRGBO(
-                                                111, 139, 164, 1),
+                                            color: Color.fromRGBO(111, 139, 164, 1),
                                             fontSize: 16,
                                             fontWeight: FontWeight.w700),
                                       ),
@@ -390,16 +358,10 @@ class _CVEditPageState extends State<CVEditPage> {
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
-                                          var resp = await cvServices
-                                              .stergeEducatieMedic(
-                                                  context,
-                                                  listaEducatie[index]
-                                                      .id
-                                                      .toString());
+                                          var resp = await cvServices.stergeEducatieMedic(
+                                              context, listaEducatie[index].id.toString());
                                           if (int.parse(resp!.body) == 200) {
-                                            ContMedicMobile cont =
-                                                await cvServices
-                                                    .getContMedicUpdate();
+                                            ContMedicMobile cont = await cvServices.getContMedicUpdate();
                                             listaEducatie = cont.listaEducatie;
                                           }
                                           setState(() {});
@@ -416,8 +378,7 @@ class _CVEditPageState extends State<CVEditPage> {
                                         onTap: () {
                                           showEditDialog(
                                             listaEducatie[index].tipEducatie!,
-                                            listaEducatie[index]
-                                                .informatiiSuplimentare!,
+                                            listaEducatie[index].informatiiSuplimentare!,
                                             listaEducatie[index].id.toString(),
                                           );
                                         },
@@ -443,15 +404,26 @@ class _CVEditPageState extends State<CVEditPage> {
                       onTap: () async {
                         isUpdatingCV = true;
                         setState(() {});
-                        // if (int.parse(resp!.body) == 200) {
-                        //   // await cvServices.getContMedicUpdate();
-                        //   setState(() {
-                        //     Navigator.pop(context);
-                        //   });
-                        // }
-                        setState(() {
-                          Navigator.pop(context, true);
-                        });
+
+                        var resp = await cvServices.actualizeazaCVContMedic(
+                          context,
+                          locDeMuncaController.text,
+                          adresaLocDeMuncaController.text,
+                          specializareController.text,
+                          titluProfesionalController.text,
+                          experientaController.text,
+                        );
+
+                        if (int.parse(resp!.body) == 200) {
+                          setState(() {
+                            isUpdatingCV = false;
+                            Navigator.pop(context, true);
+                          });
+                        } else {
+                          setState(() {
+                            isUpdatingCV = false;
+                          });
+                        }
                       },
                       child: isUpdatingCV
                           ? const CircularProgressIndicator(
@@ -466,10 +438,7 @@ class _CVEditPageState extends State<CVEditPage> {
                               child: const Center(
                                 child: Text(
                                   "Salveaza CV",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
                                 ),
                               ),
                             ),
@@ -485,16 +454,14 @@ class _CVEditPageState extends State<CVEditPage> {
 
   showEditDialog(String tipEducatie, String informatiiEducatie, String id) {
     LocalizationsApp l = LocalizationsApp.of(context)!;
-    TextEditingController tipEducatieController =
-        TextEditingController(text: tipEducatie);
-    TextEditingController informatiiEducatieController =
-        TextEditingController(text: informatiiEducatie);
+    TextEditingController tipEducatieController = TextEditingController(text: tipEducatie);
+    TextEditingController informatiiEducatieController = TextEditingController(text: informatiiEducatie);
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Modifică educație"),
+            title: const Text("Modifică educație"),
             content: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
@@ -506,8 +473,7 @@ class _CVEditPageState extends State<CVEditPage> {
                   ),
                   TextFormField(
                     controller: informatiiEducatieController,
-                    decoration: InputDecoration(
-                        labelText: l.setariProfilInformatiiEducatieHint),
+                    decoration: InputDecoration(labelText: l.setariProfilInformatiiEducatieHint),
                   ),
                 ],
               ),
@@ -517,18 +483,14 @@ class _CVEditPageState extends State<CVEditPage> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Text("Anulează"),
+                child: const Text("Anulează"),
               ),
               GestureDetector(
                 onTap: () async {
                   var resp = await cvServices.actualizeazaEducatieMedic(
-                      context,
-                      id,
-                      tipEducatieController.text,
-                      informatiiEducatieController.text);
+                      context, id, tipEducatieController.text, informatiiEducatieController.text);
                   if (int.parse(resp!.body) == 200) {
-                    ContMedicMobile cont =
-                        await cvServices.getContMedicUpdate();
+                    ContMedicMobile cont = await cvServices.getContMedicUpdate();
                     listaEducatie = cont.listaEducatie;
                   }
                   ContMedicMobile cont = await cvServices.getContMedicUpdate();
@@ -537,7 +499,7 @@ class _CVEditPageState extends State<CVEditPage> {
 
                   setState(() {});
                 },
-                child: Text("Salvează"),
+                child: const Text("Salvează"),
               ),
             ],
           );
