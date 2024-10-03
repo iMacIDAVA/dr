@@ -76,7 +76,7 @@ class _IntroScreenState extends State<IntroScreen> {
         ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
           pUser: user,
           pParola: userPassMD5,
-          pDeviceToken: oneSignal.toString(),
+          pDeviceToken: oneSignal,
           pTipDispozitiv: Platform.isAndroid ? '1' : '2',
           pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
           pTokenVoip: '',

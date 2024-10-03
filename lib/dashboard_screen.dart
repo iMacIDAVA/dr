@@ -79,6 +79,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
       isVisibleEstiOnline = isToggledEstiOnline;
+
+      isToggledPrimesteIntrebari = prefs.getBool(pref_keys.primesteIntrebari) ?? false;
+      isVisiblePrimesteIntrebari = isToggledPrimesteIntrebari;
+
+      isToggledInterpretareAnalize = prefs.getBool(pref_keys.interpreteazaAnalize) ?? false;
+      isVisibleInterpretareAnalize = isToggledInterpretareAnalize;
+
+      isToggledConsultatieVideo = prefs.getBool(pref_keys.permiteConsultVideo) ?? false;
+      isVisibleConsultatieVideo = isToggledConsultatieVideo;
     });
   }
 
@@ -88,9 +97,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       isToggledEstiOnline = newIsVisibleEstiOnline;
     });
 
-    await seteazaStatusuriMedic();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isOnline', isToggledEstiOnline);
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    final response = await apiCallFunctions.seteazaStatusuriMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pEsteActiv: isToggledEstiOnline.toString(),
+      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
+      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
+      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
+    );
+
+    if (response?.statusCode == 200) {
+      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
+      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
+      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
+      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    }
   }
 
   void callbackPrimesteIntrebari(bool newIsVisiblePrimesteIntrebari) async {
@@ -99,7 +124,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       isToggledPrimesteIntrebari = newIsVisiblePrimesteIntrebari;
     });
 
-    await seteazaStatusuriMedic();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    final response = await apiCallFunctions.seteazaStatusuriMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pEsteActiv: isToggledEstiOnline.toString(),
+      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
+      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
+      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
+    );
+
+    if (response?.statusCode == 200) {
+      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
+      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
+      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
+      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    }
   }
 
   void callbackInterpretareAnalize(bool newIsVisibleInterpretareAnalize) async {
@@ -108,7 +151,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       isToggledInterpretareAnalize = newIsVisibleInterpretareAnalize;
     });
 
-    await seteazaStatusuriMedic();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    final response = await apiCallFunctions.seteazaStatusuriMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pEsteActiv: isToggledEstiOnline.toString(),
+      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
+      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
+      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
+    );
+
+    if (response?.statusCode == 200) {
+      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
+      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
+      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
+      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    }
   }
 
   void callbackConsultatieVideo(bool newIsVisibleConsultatieVideo) async {
@@ -117,7 +178,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
       isToggledConsultatieVideo = newIsVisibleConsultatieVideo;
     });
 
-    await seteazaStatusuriMedic();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    final response = await apiCallFunctions.seteazaStatusuriMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pEsteActiv: isToggledEstiOnline.toString(),
+      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
+      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
+      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
+    );
+
+    if (response?.statusCode == 200) {
+      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
+      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
+      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
+      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    }
   }
 
   Future<http.Response?> seteazaStatusuriMedic() async {
@@ -219,208 +298,219 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: IconButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MeniuScreen(
-                    contMedicMobile: widget.contMedicMobile,
-                    totaluriMedic: widget.totaluriMedic,
-                    onToggleStatusChanged: () async {
-                      await seteazaStatusuriMedic(); // This will call the method when toggling the switch in the menu.
-                      // You might want to reload the data or update the UI here if needed.
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MeniuScreen(
+                      contMedicMobile: widget.contMedicMobile,
+                      totaluriMedic: widget.totaluriMedic,
+                      onToggleStatusChanged: () async {
+                        await seteazaStatusuriMedic();
+                      },
+                    ),
+                  ));
+            },
+            icon: Image.asset('./assets/images/left_top_icon.png'),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Text(l.dashboardEstiON,
+                      style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  const SizedBox(width: 5),
+                  FlutterSwitch(
+                    value: isToggledEstiOnline,
+                    height: 25,
+                    width: 60,
+                    //added by George Valentin Iordache
+                    activeColor: const Color.fromRGBO(14, 190, 127, 1),
+
+                    inactiveColor: Colors.grey[200]!,
+                    onToggle: (value) async {
+                      callbackEstiOnline(value);
+                      setState(() {});
                     },
                   ),
-                ));
-          },
-          icon: Image.asset('./assets/images/left_top_icon.png'),
+                ],
+              ),
+            )
+          ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Text(l.dashboardEstiON,
-                    style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                const SizedBox(width: 5),
-                FlutterSwitch(
-                  value: isToggledEstiOnline,
-                  height: 25,
-                  width: 60,
-                  //added by George Valentin Iordache
-                  activeColor: const Color.fromRGBO(14, 190, 127, 1),
-
-                  inactiveColor: Colors.grey[200]!,
-                  onToggle: (value) async {
-                    callbackEstiOnline(value);
-                    setState(() {});
-                  },
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(28, 10, 17, 38),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(oneSignal),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 74,
-                    ),
-                    Text(
-                      //"Bun venit,", //old IGV
-                      l.dashboardBunVenit,
-                      style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(103, 114, 148, 1),
-                        fontWeight: FontWeight.w300,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Container(
-                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                      child: widget.contMedicMobile.linkPozaProfil.isEmpty
-                          ? Image.asset(
-                              './assets/images/user_fara_poza.png',
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.network(
-                              widget.contMedicMobile.linkPozaProfil,
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    const SizedBox(
-                      width: 14,
-                    ),
-                    Flexible(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          //'Dr. Daniela Pretoeasa', //old IGV
-                          '${widget.contMedicMobile.titulatura}. ${widget.contMedicMobile.numeComplet}',
-                          style: GoogleFonts.rubik(
-                              color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 16, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          widget.contMedicMobile.locDeMunca,
-                          style: GoogleFonts.rubik(
-                              color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300),
-                        ),
-                        Text(
-                          //'AIS Clinic & Hospital Bucharest', //old IGV
-                          widget.contMedicMobile.adresaLocDeMunca,
-                          style: GoogleFonts.rubik(
-                              color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300),
-                        ),
-                        Text(
-                          //'Pediatrie, doctor primar', //old IGV
-                          '${widget.contMedicMobile.specializarea}, ${widget.contMedicMobile.functia}',
-                          style: GoogleFonts.rubik(
-                              color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 9, fontWeight: FontWeight.w300),
-                        ),
-                      ],
-                    ))
-                  ],
-                ),
-                customDivider(),
-                const SizedBox(height: 5),
-                TextAndSwitchWidget(
-                  isToggled: isToggledPrimesteIntrebari,
-                  optiuniText: l.dashboardPrimesteIntrebari,
-                  callback: callbackPrimesteIntrebari,
-                ),
-                TextAndSwitchWidget(
-                  isToggled: isToggledInterpretareAnalize,
-                  optiuniText: l.dashboardInterpretareAnalize,
-                  callback: callbackInterpretareAnalize,
-                ),
-                TextAndSwitchWidget(
-                  isToggled: isToggledConsultatieVideo,
-                  optiuniText: l.dashboardConsultatieVideo,
-                  callback: callbackConsultatieVideo,
-                ),
-                Container(
-                  // width: 360,
-                  // height: 420,
-                  margin: const EdgeInsets.fromLTRB(0, 0, 11, 0),
-                  padding: const EdgeInsets.all(30),
-                  decoration: ShapeDecoration(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.0),
-                          side: const BorderSide(width: 1, color: Color.fromRGBO(14, 190, 127, 1)))),
-                  child: Column(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(28, 10, 17, 38),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            //"Raport", //old IGV
-                            l.dashboardRaportTitlu,
-                            style: const TextStyle(
-                                color: Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400),
-                          ),
-                        ],
+                      const SizedBox(
+                        width: 74,
                       ),
-                      //const RaportIconTextNumarDetaliiWidget(defText: 'Număr pacienți', numarText: "38", iconPath: "./assets/images/numar_pacienti.png",
-                      //  tipSectiune: 1,), //old IGV
-                      RaportIconTextNumarDetaliiWidget(
-                        defText: l.dashboardNumarPacienti,
-                        numarText: widget.totaluriMedic.totalNrPacienti.toString(),
-                        iconPath: "./assets/images/numar_pacienti.png",
-                        tipSectiune: 1,
-                        contMedicMobile: widget.contMedicMobile,
-                        totaluriMedic: widget.totaluriMedic,
-                      ),
-                      customDivider(),
-
-                      RaportIconTextNumarDetaliiWidget(
-                        defText: l.dashboardRating,
-                        numarText: widget.totaluriMedic.totalNrRatinguri.toString(),
-                        iconPath: "./assets/images/rating_dashboard.png",
-                        tipSectiune: 2,
-                        totaluriMedic: widget.totaluriMedic,
-                      ),
-                      customDivider(),
-
-                      RaportIconTextNumarLeiDetaliiWidget(
-                        defSuma: l.dashboardSumaDeIncasat,
-                        numarText: widget.totaluriMedic.totalDeIncasat.toString(),
-                        iconPath: "./assets/images/suma_de_incasat.png",
-                        moneda: widget.totaluriMedic.moneda,
-                        tipSectiune: 3,
-                      ),
-                      customDivider(),
-
-                      RaportIconTextNumarLeiDetaliiWidget(
-                        defSuma: l.dashboardTotalIncasari,
-                        numarText: widget.totaluriMedic.totalDeIncasat.toString(),
-                        iconPath: "./assets/images/total_incasari.png",
-                        moneda: widget.totaluriMedic.moneda,
-                        tipSectiune: 4,
+                      Text(
+                        //"Bun venit,", //old IGV
+                        l.dashboardBunVenit,
+                        style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(103, 114, 148, 1),
+                          fontWeight: FontWeight.w300,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  Row(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                        child: widget.contMedicMobile.linkPozaProfil.isEmpty
+                            ? Image.asset(
+                                './assets/images/user_fara_poza.png',
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                widget.contMedicMobile.linkPozaProfil,
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                      const SizedBox(
+                        width: 14,
+                      ),
+                      Flexible(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            //'Dr. Daniela Pretoeasa', //old IGV
+                            '${widget.contMedicMobile.titulatura}. ${widget.contMedicMobile.numeComplet}',
+                            style: GoogleFonts.rubik(
+                                color: const Color.fromRGBO(14, 190, 127, 1),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            widget.contMedicMobile.locDeMunca,
+                            style: GoogleFonts.rubik(
+                                color: const Color.fromRGBO(103, 114, 148, 1),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300),
+                          ),
+                          Text(
+                            //'AIS Clinic & Hospital Bucharest', //old IGV
+                            widget.contMedicMobile.adresaLocDeMunca,
+                            style: GoogleFonts.rubik(
+                                color: const Color.fromRGBO(103, 114, 148, 1),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300),
+                          ),
+                          Text(
+                            //'Pediatrie, doctor primar', //old IGV
+                            '${widget.contMedicMobile.specializarea}, ${widget.contMedicMobile.functia}',
+                            style: GoogleFonts.rubik(
+                                color: const Color.fromRGBO(103, 114, 148, 1),
+                                fontSize: 9,
+                                fontWeight: FontWeight.w300),
+                          ),
+                        ],
+                      ))
+                    ],
+                  ),
+                  customDivider(),
+                  const SizedBox(height: 5),
+                  TextAndSwitchWidget(
+                    isToggled: isToggledPrimesteIntrebari,
+                    optiuniText: l.dashboardPrimesteIntrebari,
+                    callback: callbackPrimesteIntrebari,
+                  ),
+                  TextAndSwitchWidget(
+                    isToggled: isToggledInterpretareAnalize,
+                    optiuniText: l.dashboardInterpretareAnalize,
+                    callback: callbackInterpretareAnalize,
+                  ),
+                  TextAndSwitchWidget(
+                    isToggled: isToggledConsultatieVideo,
+                    optiuniText: l.dashboardConsultatieVideo,
+                    callback: callbackConsultatieVideo,
+                  ),
+                  Container(
+                    // width: 360,
+                    // height: 420,
+                    margin: const EdgeInsets.fromLTRB(0, 0, 11, 0),
+                    padding: const EdgeInsets.all(30),
+                    decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6.0),
+                            side: const BorderSide(width: 1, color: Color.fromRGBO(14, 190, 127, 1)))),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              //"Raport", //old IGV
+                              l.dashboardRaportTitlu,
+                              style: const TextStyle(
+                                  color: Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                        //const RaportIconTextNumarDetaliiWidget(defText: 'Număr pacienți', numarText: "38", iconPath: "./assets/images/numar_pacienti.png",
+                        //  tipSectiune: 1,), //old IGV
+                        RaportIconTextNumarDetaliiWidget(
+                          defText: l.dashboardNumarPacienti,
+                          numarText: widget.totaluriMedic.totalNrPacienti.toString(),
+                          iconPath: "./assets/images/numar_pacienti.png",
+                          tipSectiune: 1,
+                          contMedicMobile: widget.contMedicMobile,
+                          totaluriMedic: widget.totaluriMedic,
+                        ),
+                        customDivider(),
+
+                        RaportIconTextNumarDetaliiWidget(
+                          defText: l.dashboardRating,
+                          numarText: widget.totaluriMedic.totalNrRatinguri.toString(),
+                          iconPath: "./assets/images/rating_dashboard.png",
+                          tipSectiune: 2,
+                          totaluriMedic: widget.totaluriMedic,
+                        ),
+                        customDivider(),
+
+                        RaportIconTextNumarLeiDetaliiWidget(
+                          defSuma: l.dashboardSumaDeIncasat,
+                          numarText: widget.totaluriMedic.totalDeIncasat.toString(),
+                          iconPath: "./assets/images/suma_de_incasat.png",
+                          moneda: widget.totaluriMedic.moneda,
+                          tipSectiune: 3,
+                        ),
+                        customDivider(),
+
+                        RaportIconTextNumarLeiDetaliiWidget(
+                          defSuma: l.dashboardTotalIncasari,
+                          numarText: widget.totaluriMedic.totalDeIncasat.toString(),
+                          iconPath: "./assets/images/total_incasari.png",
+                          moneda: widget.totaluriMedic.moneda,
+                          tipSectiune: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -62,6 +62,8 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
   @override
   void initState() {
     super.initState();
+
+    getKey();
     contMedicMobile = widget.contMedicMobile;
 
     listaEducatieMedic.addAll(contMedicMobile!.listaEducatie);
@@ -790,6 +792,14 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
     return null;
   }
 
+  String oneSignal = '';
+  void getKey() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    oneSignal = prefs.getString("oneSignalId")!;
+
+    setState(() {});
+  }
+
   bool isReturningFromCV = false;
   @override
   Widget build(BuildContext context) {
@@ -804,7 +814,7 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
         contMedicMobile = await apiCallFunctions.getContMedic(
           pUser: user,
           pParola: userPassMD5,
-          pDeviceToken: prefs.getString("oneSignalId") ?? "",
+          pDeviceToken: oneSignal,
           pTipDispozitiv: Platform.isAndroid ? '1' : '2',
           pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
           pTokenVoip: '',
@@ -839,7 +849,7 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
               contMedicMobile = await apiCallFunctions.getContMedic(
                 pUser: user,
                 pParola: userPassMD5,
-                pDeviceToken: prefs.getString("oneSignalId") ?? "",
+                pDeviceToken: oneSignal,
                 pTipDispozitiv: Platform.isAndroid ? '1' : '2',
                 pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
                 pTokenVoip: '',
@@ -1201,7 +1211,7 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                                 contMedicMobile = await apiCallFunctions.getContMedic(
                                   pUser: user,
                                   pParola: userPassMD5,
-                                  pDeviceToken: prefs.getString("oneSignalId") ?? "",
+                                  pDeviceToken: oneSignal,
                                   pTipDispozitiv: Platform.isAndroid ? '1' : '2',
                                   pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
                                   pTokenVoip: '',

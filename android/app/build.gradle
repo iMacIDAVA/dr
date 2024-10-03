@@ -26,7 +26,8 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 34  // This can stay the latest for future-proofing
+
     namespace "com.example.sos_bebe_profil_bebe_doctor"
 
     sourceSets {
@@ -35,10 +36,12 @@ android {
 
     defaultConfig {
         applicationId "com.example.sos_bebe_profil_bebe_doctor"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdkVersion 21  // Minimum SDK level, keep it to support more devices
+        targetSdkVersion 30  // Set target to Android 11 API level (30) to match Android 11 compatibility
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        multiDexEnabled true  // Enable MultiDex for method limit
 
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_17
@@ -61,6 +64,12 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
 }
 
 flutter {
@@ -68,6 +77,7 @@ flutter {
 }
 
 dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'  // Ensure MultiDex is enabled
     implementation 'com.stripe:stripe-android:20.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

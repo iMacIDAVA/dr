@@ -198,7 +198,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
                           pUser: controllerPhone.text,
                           pParola: userPassMD5,
-                          pDeviceToken: oneSignal.toString(),
+                          pDeviceToken: oneSignal,
                           pTipDispozitiv: Platform.isAndroid ? '1' : '2',
                           pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
                           pTokenVoip: '',

@@ -4,12 +4,20 @@ import 'package:sos_bebe_profil_bebe_doctor/reset_password_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart'
-    as pref_keys;
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 import 'package:http/http.dart' as http;
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
 
 class CVServices {
+  String oneSignal = '';
+
+  void getKey(Function(String) callback) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    oneSignal = prefs.getString("oneSignalId") ?? '';
+
+    callback(oneSignal);
+  }
+
   Future<ContMedicMobile> getContMedicUpdate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -20,7 +28,7 @@ class CVServices {
     ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
       pUser: user,
       pParola: userPassMD5,
-      pDeviceToken: oneSingleToken,
+      pDeviceToken: oneSignal,
       pTipDispozitiv: Platform.isAndroid ? '1' : '2',
       pModelDispozitiv: deviceType,
       pTokenVoip: '',
@@ -29,13 +37,8 @@ class CVServices {
     return resGetCont!;
   }
 
-  Future<http.Response?> actualizeazaCVContMedic(
-      BuildContext context,
-      String locDeMunca,
-      String adresaLocDeMunca,
-      String specializare,
-      String titluProfesional,
-      String experienta) async {
+  Future<http.Response?> actualizeazaCVContMedic(BuildContext context, String locDeMunca, String adresaLocDeMunca,
+      String specializare, String titluProfesional, String experienta) async {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -47,8 +50,7 @@ class CVServices {
     Color backgroundColor = Colors.red;
     Color textColor = Colors.black;
 
-    http.Response? resActualizeazaCVContMedic =
-        await apiCallFunctions.actualizeazaCVContMedic(
+    http.Response? resActualizeazaCVContMedic = await apiCallFunctions.actualizeazaCVContMedic(
       pUser: userLogin,
       pParola: userPassMD5,
       pLocDeMunca: locDeMunca,
@@ -58,8 +60,7 @@ class CVServices {
       pExperienta: experienta, //de modificat IGV
     );
 
-    print(
-        'actualizeazaCVContMedic resActualizeazaCVContMedic.body ${resActualizeazaCVContMedic!.body}');
+    print('actualizeazaCVContMedic resActualizeazaCVContMedic.body ${resActualizeazaCVContMedic!.body}');
 
     if (int.parse(resActualizeazaCVContMedic.body) == 200) {
       //SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -120,10 +121,7 @@ class CVServices {
   }
 
   Future<http.Response?> adaugaEducatieMedic(
-      BuildContext context,
-      String pTipEducatie,
-      String pInformatiiSuplimentare,
-      int numarCamp) async {
+      BuildContext context, String pTipEducatie, String pInformatiiSuplimentare, int numarCamp) async {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -134,42 +132,35 @@ class CVServices {
     String textMessage = '';
     Color backgroundColor = Colors.red;
     Color textColor = Colors.black;
-    http.Response? resAdaugaEducatieMedic =
-        await apiCallFunctions.adaugaEducatieMedic(
+    http.Response? resAdaugaEducatieMedic = await apiCallFunctions.adaugaEducatieMedic(
       pUser: user,
       pParola: userPassMD5,
       pTipEducatie: pTipEducatie,
       pInformatiiSuplimentare: pInformatiiSuplimentare,
     );
 
-    print(
-        'adaugaEducatieMedic resAdaugaEducatieMedic.body ${resAdaugaEducatieMedic!.body}');
+    print('adaugaEducatieMedic resAdaugaEducatieMedic.body ${resAdaugaEducatieMedic!.body}');
 
     if (int.parse(resAdaugaEducatieMedic.body) == 200) {
       if (numarCamp == 1) {
         //SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString(pref_keys.tipEducatie1, pTipEducatie);
-        prefs.setString(
-            pref_keys.informatiiSuplimentare1, pInformatiiSuplimentare);
+        prefs.setString(pref_keys.informatiiSuplimentare1, pInformatiiSuplimentare);
         //prefs.setString(pref_keys.userPassMD5, controllerEmail.text);
 
         //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerResetareParola.text));
       } else if (numarCamp == 2) {
         prefs.setString(pref_keys.tipEducatie2, pTipEducatie);
-        prefs.setString(
-            pref_keys.informatiiSuplimentare2, pInformatiiSuplimentare);
+        prefs.setString(pref_keys.informatiiSuplimentare2, pInformatiiSuplimentare);
       } else if (numarCamp == 3) {
         prefs.setString(pref_keys.tipEducatie3, pTipEducatie);
-        prefs.setString(
-            pref_keys.informatiiSuplimentare3, pInformatiiSuplimentare);
+        prefs.setString(pref_keys.informatiiSuplimentare3, pInformatiiSuplimentare);
       } else if (numarCamp == 4) {
         prefs.setString(pref_keys.tipEducatie4, pTipEducatie);
-        prefs.setString(
-            pref_keys.informatiiSuplimentare4, pInformatiiSuplimentare);
+        prefs.setString(pref_keys.informatiiSuplimentare4, pInformatiiSuplimentare);
       } else if (numarCamp == 5) {
         prefs.setString(pref_keys.tipEducatie5, pTipEducatie);
-        prefs.setString(
-            pref_keys.informatiiSuplimentare5, pInformatiiSuplimentare);
+        prefs.setString(pref_keys.informatiiSuplimentare5, pInformatiiSuplimentare);
       }
 
       print('Adăugare educație finalizată cu succes!');
@@ -246,8 +237,7 @@ class CVServices {
     );
     */
 
-    http.Response? resActualizeazaEducatieMedic =
-        await apiCallFunctions.actualizeazaEducatieMedic(
+    http.Response? resActualizeazaEducatieMedic = await apiCallFunctions.actualizeazaEducatieMedic(
       pUser: user,
       pParola: userPassMD5,
       pIdEducatie: pIdEducatie,
@@ -255,8 +245,7 @@ class CVServices {
       pInformatiiSuplimentare: pInformatiiSuplimentare,
     );
 
-    print(
-        'actualizeazaEducatieMedic resActualizeazaEducatieMedic.body ${resActualizeazaEducatieMedic!.body}');
+    print('actualizeazaEducatieMedic resActualizeazaEducatieMedic.body ${resActualizeazaEducatieMedic!.body}');
 
     if (int.parse(resActualizeazaEducatieMedic!.body) == 200) {
       print('Actualizare educație finalizată cu succes!');
@@ -309,8 +298,7 @@ class CVServices {
     return null;
   }
 
-  Future<http.Response?> stergeEducatieMedic(
-      BuildContext context, String idEducatie) async {
+  Future<http.Response?> stergeEducatieMedic(BuildContext context, String idEducatie) async {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -322,8 +310,7 @@ class CVServices {
     Color backgroundColor = Colors.red;
     Color textColor = Colors.black;
 
-    http.Response? resStergeEducatieMedic =
-        await apiCallFunctions.stergeEducatieMedic(
+    http.Response? resStergeEducatieMedic = await apiCallFunctions.stergeEducatieMedic(
       pUser: user,
       pParola: userPassMD5,
       pIdEducatie: idEducatie,
