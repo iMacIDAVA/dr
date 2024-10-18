@@ -1,10 +1,11 @@
 import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/dashboard_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/login_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/agora_call_service.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
@@ -20,6 +21,7 @@ class _IntroScreenState extends State<IntroScreen> {
   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
   String oneSignalId = '';
   TotaluriMedic? totaluriMedic;
+  CallService callService = CallService();
 
   Future<void> initOneSignal() async {
     await getPlayerId();
@@ -83,13 +85,18 @@ class _IntroScreenState extends State<IntroScreen> {
         );
         if (resGetTotaluriDashboardMedic != null) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DashboardScreen(
-                  contMedicMobile: resGetCont!,
-                  totaluriMedic: resGetTotaluriDashboardMedic,
-                ),
-              ));
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardScreen(
+                contMedicMobile: resGetCont!,
+                totaluriMedic: resGetTotaluriDashboardMedic,
+              ),
+            ),
+          );
+
+          Future.delayed(const Duration(seconds: 3), () {
+            callService.startPolling();
+          });
         }
       } else {
         Navigator.push(
@@ -98,7 +105,9 @@ class _IntroScreenState extends State<IntroScreen> {
               builder: (context) => const LoginMedicScreen(),
             ));
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -106,6 +115,12 @@ class _IntroScreenState extends State<IntroScreen> {
     super.initState();
     initOneSignal();
     getKey();
+  }
+
+  @override
+  void dispose() {
+    callService.dispose();
+    super.dispose();
   }
 
   @override

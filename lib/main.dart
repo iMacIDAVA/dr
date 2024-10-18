@@ -1,19 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:sos_bebe_profil_bebe_doctor/firebase_options.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
-
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
 
-import 'package:sos_bebe_profil_bebe_doctor/login_screen.dart';
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey =
-  //     'pk_test_51NiZpwCOKR6JfYKlesMUOOQJyJLVZPUPgsjQIBbTHDGXFD0ocGELdZ3uVPrJn4knnhsdhTkRVm9h1Ij3WUU8EEdg00MhGEEoPS';
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -29,19 +24,16 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    //InitializareNumarPacientiWidget widget = InitializareNumarPacientiWidget();
-
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-        highlightColor: Colors.white, //added by Iordache George Valentin
-        primarySwatch: Colors.green, //added by Iordache George Valentin
+        highlightColor: Colors.white,
+        primarySwatch: Colors.green,
       ),
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         LocalizationsApp.delegate,
@@ -50,16 +42,12 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('en', 'US'), // American English
-        //Locale('ro', 'RO'),
+        Locale('en', 'US'),
         Locale.fromSubtags(languageCode: 'ro'),
-
-        Locale('ro', 'RO'), // Romanian
+        Locale('ro', 'RO'),
       ],
-
       locale: const Locale('ro'),
-
-      home: const IntroScreen(), // ecranul principal
+      home: const IntroScreen(),
     );
   }
 }
