@@ -51,7 +51,7 @@ class _LoginMedicScreenState extends State<LoginMedicScreen> {
   String oneSignal = '';
   void getKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    oneSignal = prefs.getString("oneSignalId")!;
+    oneSignal = prefs.getString("deviceToken")!;
 
     setState(() {});
   }

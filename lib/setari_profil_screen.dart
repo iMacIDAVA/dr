@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sos_bebe_profil_bebe_doctor/consult_set_price_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/curriculum_vitae_edit/cv_edit_page.dart';
 import 'package:sos_bebe_profil_bebe_doctor/dashboard_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
@@ -795,7 +796,7 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
   String oneSignal = '';
   void getKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    oneSignal = prefs.getString("oneSignalId")!;
+    oneSignal = prefs.getString("deviceToken")!;
 
     setState(() {});
   }
@@ -1241,6 +1242,50 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                             ),
                           ),
                         ),
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+
+
+
+
+
+
+
+
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 40, 10),
+                          child: GestureDetector(
+                            onTap: () async {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                                return const ConsultSetPriceScreen();
+                              }));
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    left: MediaQuery.of(context).size.width * 0.030,
+                                    top: MediaQuery.of(context).size.height * 0.001,
+                                  ),
+                                  child: Text('Setează preturi consultatie',
+                                      style: GoogleFonts.rubik(
+                                        color: const Color.fromRGBO(111, 139, 164, 1),
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 14,
+                                      )),
+                                ),
+                                Image.asset('./assets/images/reseteaza_parola_editeaza_cv_icon.png'),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+
+
+
+
+
                       ],
                     ),
                   ),

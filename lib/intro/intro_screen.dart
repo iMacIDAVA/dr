@@ -10,6 +10,8 @@ import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
+import '../notification_confirm_screen.dart';
+
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
 
@@ -24,33 +26,84 @@ class _IntroScreenState extends State<IntroScreen> {
   CallService callService = CallService();
 
   Future<void> initOneSignal() async {
-    await getPlayerId();
+    await ensureDeviceToken();
     await getUserData();
+
+    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+      saveNotificationData(event.notification);
+    });
+    OneSignal.Notifications.addClickListener((event) {
+      saveNotificationData(event.notification);
+    });
   }
 
-  String oneSignal = '';
-  void getKey() async {
+  Future<void> navigateToNotificationScreen(BuildContext context) async {
+    ApiCallFunctions apiCallFunctions = ApiCallFunctions();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    oneSignal = prefs.getString("oneSignalId")!;
 
-    setState(() {});
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    String deviceToken = prefs.getString('deviceToken') ?? '';
+
+    TotaluriMedic? resGetTotaluriDashboardMedic = await apiCallFunctions.getTotaluriDashboardMedic(
+      pUser: user,
+      pParola: userPassMD5,
+    );
+
+    ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pDeviceToken: deviceToken,
+      pTipDispozitiv: Platform.isAndroid ? '1' : '2',
+      pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
+      pTokenVoip: '',
+    );
+
+    if (resGetCont != null && resGetTotaluriDashboardMedic != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NotificationDetailsScreen(
+            totaluriMedic: resGetTotaluriDashboardMedic,
+            contMedicMobile: resGetCont,
+          ),
+        ),
+        (route) => false,
+      );
+    }
   }
 
-  Future<void> getPlayerId() async {
-    final String? id = OneSignal.User.pushSubscription.id;
+  Future<void> saveNotificationData(OSNotification notification) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (id != null) {
-      oneSignalId = id;
-    } else {
-      oneSignalId = '';
-      await getPlayerId();
-    }
-    if (id != null) {
-      await SharedPreferences.getInstance().then((value) {
-        value.setString('oneSignalId', id);
-      });
-    }
-    setState(() {});
+    await prefs.setString(pref_keys.notificationTitle, notification.title ?? 'Fără Titlu');
+    await prefs.setString(pref_keys.notificationBody, notification.body ?? 'Fără corp');
+    await prefs.setString(pref_keys.notificationData, notification.additionalData?.toString() ?? 'Fără date');
+
+    String? alertMessage = notification.body;
+    if (alertMessage != null) {
+      if (alertMessage.toLowerCase().contains('apel')) {
+        navigateToNotificationScreen(context);
+      } else if (alertMessage.toLowerCase().contains('recomandare')) {
+        navigateToNotificationScreen(context);
+      } else if (alertMessage.toLowerCase().contains('întrebare')) {
+        navigateToNotificationScreen(context);
+      } else {}
+    } else {}
+  }
+
+  Future<void> ensureDeviceToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? deviceToken = prefs.getString('deviceToken');
+
+    if (deviceToken == null || deviceToken.isEmpty) {
+      final String? newToken = OneSignal.User.pushSubscription.id;
+
+      if (newToken != null) {
+        await prefs.setString('deviceToken', newToken);
+      } else {}
+    } else {}
   }
 
   Future<TotaluriMedic?> getTotaluriDashboardMedic() async {
@@ -69,20 +122,26 @@ class _IntroScreenState extends State<IntroScreen> {
 
   Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? "";
+
+    String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    String deviceToken = prefs.getString('deviceToken') ?? '';
 
     try {
-      if (user != '') {
+      if (user.isNotEmpty) {
         TotaluriMedic? resGetTotaluriDashboardMedic = await getTotaluriDashboardMedic();
+
         ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
           pUser: user,
           pParola: userPassMD5,
-          pDeviceToken: oneSignal,
+          pDeviceToken: deviceToken,
           pTipDispozitiv: Platform.isAndroid ? '1' : '2',
           pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
           pTokenVoip: '',
         );
+
+        if (resGetCont == null) {}
+
         if (resGetTotaluriDashboardMedic != null) {
           Navigator.push(
             context,
@@ -93,17 +152,14 @@ class _IntroScreenState extends State<IntroScreen> {
               ),
             ),
           );
-
-          Future.delayed(const Duration(seconds: 3), () {
-            callService.startPolling();
-          });
         }
       } else {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginMedicScreen(),
-            ));
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginMedicScreen(),
+          ),
+        );
       }
     } catch (e) {
       print(e);
@@ -114,7 +170,6 @@ class _IntroScreenState extends State<IntroScreen> {
   void initState() {
     super.initState();
     initOneSignal();
-    getKey();
   }
 
   @override

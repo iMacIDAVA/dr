@@ -24,6 +24,13 @@ const String primesteIntrebari = 'primesteIntrebari';
 const String interpreteazaAnalize = 'interpreteazaAnalize';
 const String permiteConsultVideo = 'permiteConsultVideo';
 
+const String deviceToken = 'deviceToken';
+
+const String notificationTitle = 'notificationTitle';
+const String notificationBody = 'notificationBody';
+const String notificationData = 'notificationData';
+
+
 
 const String userIdPacientAsociat = 'userIdPacientAsociat';
 const String userVip = 'userVip';

@@ -82,10 +82,12 @@ dependencies:
   firebase_messaging: ^14.7.8
   shared_preferences: ^2.2.2
   camera: ^0.10.5+9
+  agora_rtm: ^1.5.9
   onesignal_flutter: ^5.2.4
   firebase_core: ^2.24.2
   firebase_auth: ^4.7.3
   fluttertoast: ^8.2.5
+  flutter_isolate : ^2.0.4
   flutter_local_notifications: ^14.0.0
 dev_dependencies:
   flutter_test:

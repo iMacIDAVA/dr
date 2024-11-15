@@ -24,11 +24,11 @@ class CVServices {
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
     String deviceType = await apiCallFunctions.getDeviceInfo();
-    String oneSingleToken = prefs.getString("oneSignalId") ?? "";
+    String deviceToken = prefs.getString("deviceToken") ?? "";
     ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
       pUser: user,
       pParola: userPassMD5,
-      pDeviceToken: oneSignal,
+      pDeviceToken: deviceToken,
       pTipDispozitiv: Platform.isAndroid ? '1' : '2',
       pModelDispozitiv: deviceType,
       pTokenVoip: '',

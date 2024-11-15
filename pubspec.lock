@@ -18,7 +18,7 @@ packages:
     source: hosted
     version: "6.3.2"
   agora_rtm:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: agora_rtm
       sha256: "6c65cf6c9658acc9024322798c546e9dc61c39605b67d0af069793d4ee81d199"
@@ -454,6 +454,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.3"
+  flutter_isolate:
+    dependency: "direct main"
+    description:
+      name: flutter_isolate
+      sha256: "36a84e1a22371d8092ea2121145b330c24fb272acb951fb30c60ba44926b8fb3"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.1.0"
   flutter_launcher_icons:
     dependency: "direct main"
     description:

@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
+
 import 'api_call.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -63,8 +66,66 @@ class ApiCallFunctions {
     return res;
   }
 
+  Future<void> TrimitePushPrinOneSignalCatrePacient({
+    required String pCheie, // API key
+    required int pIdPacient, // Doctor's ID
+    required String pTip, // Type of service
+    required String pMesaj, // Notification message
+    required String pObservatii, // Additional data
+  }) async {
+    // Prepare parameters
+    final Map<String, String> parametriiApiCall = {
+      'pCheie': pCheie,
+      'pIdPacient': pIdPacient.toString(),
+      'pTip': pTip,
+      'pMesaj': pMesaj,
+      'pObservatii': pObservatii,
+    };
+
+    // Log the request payload
+    print('Sending Notification with the following parameters:');
+    parametriiApiCall.forEach((key, value) {
+      print('$key: $value');
+    });
+
+    // Call the API
+    http.Response? response = await postApelFunctie(
+      parametriiApiCall,
+      'TrimitePushPrinOneSignalCatrePacient',
+    );
+
+    // Log the response
+    if (response != null) {
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+    } else {
+      print('API call failed: No response received.');
+    }
+  }
+
+  Future<http.Response?> updateMedicPrices({
+    required String pCheie,
+    required String pUser,
+    required String pParolaMD5,
+    required String pPretServiciuPrimesteIntrebari,
+    required String pPretServiciuInterpreteazaAnalize,
+    required String pPretServiciuConsultVideo,
+  }) async {
+    // Define parameters to pass to the `postApelFunctie`.
+    final Map<String, String> parameters = {
+      'pCheie': pCheie,
+      'pUser': pUser,
+      'pParolaMD5': pParolaMD5,
+      'pPretServiciuPrimesteIntrebari': pPretServiciuPrimesteIntrebari,
+      'pPretServiciuInterpreteazaAnalize': pPretServiciuInterpreteazaAnalize,
+      'pPretServiciuConsultVideo': pPretServiciuConsultVideo,
+    };
+
+    // Call `postApelFunctie` with the specified parameters and method name.
+    return await postApelFunctie(parameters, 'ActualizeazaPreturiMedic');
+  }
+
   Future<ContMedicMobile?> getContMedic({
-    //required String pNumeComplet,
     required String pUser,
     required String pParola,
     required String pDeviceToken,
@@ -72,11 +133,13 @@ class ApiCallFunctions {
     required String pModelDispozitiv,
     required String pTokenVoip,
   }) async {
-    //final String pParolaMD5 = generateMd5(pParola);
-    final Map<String, String> parametriiApiCall = {
-      //'pNumeComplet': pNumeComplet,
-      'pUser': pUser, //IGV
+    // Save pDeviceToken to SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(pref_keys.deviceToken, pDeviceToken); // Save token
 
+
+    final Map<String, String> parametriiApiCall = {
+      'pUser': pUser,
       'pParolaMD5': pParola,
       'pDeviceToken': pDeviceToken,
       'pTipDispozitiv': pTipDispozitiv,
@@ -84,25 +147,27 @@ class ApiCallFunctions {
       'pTokenVoip': pTokenVoip,
     };
 
+    print('Parameter map for API call: $parametriiApiCall');
+
     http.Response? resGetContMedic;
+
 
     resGetContMedic = await getApelFunctie(parametriiApiCall, 'GetContMedic');
 
-    print('getContClient rezultat: ${resGetContMedic!.statusCode}');
+
+    print('getContClient result status code: ${resGetContMedic!.statusCode}');
 
     if (resGetContMedic.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
+
       return ContMedicMobile.fromJson(jsonDecode(resGetContMedic.body) as Map<String, dynamic>);
     } else {
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      //throw Exception('Nu s-a putut crea corect contul de client mobile din Json-ul rezultat.'); //old IGV
+      // Handle non-200 responses
+      print('Error: Non-200 status code returned: ${resGetContMedic.statusCode}');
       return null;
     }
-
-    //return resGetContClient;
   }
+
+
 
   Future<TotaluriMedic?> getTotaluriDashboardMedic({
     //required String pNumeComplet,

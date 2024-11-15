@@ -42,7 +42,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   String oneSignal = '';
   void getKey() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    oneSignal = prefs.getString("oneSignalId")!;
+    oneSignal = prefs.getString("deviceToken")!;
 
     setState(() {});
   }
