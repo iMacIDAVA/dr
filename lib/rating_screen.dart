@@ -994,7 +994,6 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
           content: TextFormField(
             controller: _textFieldRaspund,
             onChanged: (value) {
-              _textFieldRaspund.text = value;
               fieldRaspunsDat = value;
             },
             decoration: const InputDecoration(
@@ -1011,10 +1010,12 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
             GestureDetector(
               onTap: () async {
                 Navigator.of(context).pop();
-                _textFieldRaspund.text.isNotEmpty
-                    ? await raspundeLaFeedbackDinContMedic(widget.id, _textFieldRaspund.text)
-                    : Fluttertoast.showToast(msg: "Introduceți un răspuns");
-
+                if (_textFieldRaspund.text.isNotEmpty) {
+                  await raspundeLaFeedbackDinContMedic(widget.id, _textFieldRaspund.text);
+                  Fluttertoast.showToast(msg: "Răspuns trimis");
+                } else {
+                  Fluttertoast.showToast(msg: "Introduceți un răspuns");
+                }
                 _textFieldRaspund.clear();
                 setState(() {});
               },
