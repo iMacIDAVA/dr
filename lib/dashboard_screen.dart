@@ -1,5 +1,3 @@
-//import 'package:auto_size_text/auto_size_text.dart';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
@@ -8,13 +6,13 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:sos_bebe_profil_bebe_doctor/incasari/incasari_page.dart';
-//import 'package:sos_bebe_profil_bebe_doctor/meniu_profil_screen_old_IGV_dart';
+
 import 'package:sos_bebe_profil_bebe_doctor/numar_pacienti_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/rating_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/suma_de_incasat_screen.dart';
 
 import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
-//import 'package:sos_bebe_profil_bebe_doctor/profil_medic_screen_old_dart';
+
 import 'package:sos_bebe_profil_bebe_doctor/meniu_screen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,8 +37,6 @@ const ron = EnumTipMoneda.lei;
 TotaluriMedic? totaluriDashboardMedic;
 
 List<TotaluriMedic>? listaInitialaTotaluriMedicZi = [];
-
-//import 'package:sos_bebe_app/login_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final ContMedicMobile contMedicMobile;
@@ -76,121 +72,121 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void loadToggleState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
-      isVisibleEstiOnline = isToggledEstiOnline;
-
       isToggledPrimesteIntrebari = prefs.getBool(pref_keys.primesteIntrebari) ?? false;
-      isVisiblePrimesteIntrebari = isToggledPrimesteIntrebari;
-
       isToggledInterpretareAnalize = prefs.getBool(pref_keys.interpreteazaAnalize) ?? false;
-      isVisibleInterpretareAnalize = isToggledInterpretareAnalize;
-
       isToggledConsultatieVideo = prefs.getBool(pref_keys.permiteConsultVideo) ?? false;
-      isVisibleConsultatieVideo = isToggledConsultatieVideo;
+
+      if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
+        isToggledEstiOnline = false;
+        prefs.setBool('isOnline', false);
+      }
     });
   }
 
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isVisibleEstiOnline = newIsVisibleEstiOnline;
-      isToggledEstiOnline = newIsVisibleEstiOnline;
-    });
 
-    await prefs.setBool('isOnline', newIsVisibleEstiOnline);
+    if (!newIsVisibleEstiOnline) {
+      setState(() {
+        isToggledEstiOnline = false;
+        isToggledPrimesteIntrebari = false;
+        isToggledInterpretareAnalize = false;
+        isToggledConsultatieVideo = false;
+      });
 
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
-    await apiCallFunctions.seteazaStatusuriMedic(
-      pUser: user,
-      pParola: userPassMD5,
-      pEsteActiv: isToggledEstiOnline.toString(),
-      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
-      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
-      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
-    );
+      prefs.setBool('isOnline', false);
+      prefs.setBool(pref_keys.primesteIntrebari, false);
+      prefs.setBool(pref_keys.interpreteazaAnalize, false);
+      prefs.setBool(pref_keys.permiteConsultVideo, false);
+    } else if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
+      setState(() {
+        isToggledEstiOnline = false;
+      });
+      prefs.setBool('isOnline', false);
+      return;
+    } else {
+      setState(() {
+        isToggledEstiOnline = newIsVisibleEstiOnline;
+      });
+      prefs.setBool('isOnline', newIsVisibleEstiOnline);
+    }
+
+    await seteazaStatusuriMedic();
   }
 
   void callbackPrimesteIntrebari(bool newIsVisiblePrimesteIntrebari) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
-      isVisiblePrimesteIntrebari = newIsVisiblePrimesteIntrebari;
       isToggledPrimesteIntrebari = newIsVisiblePrimesteIntrebari;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    prefs.setBool(pref_keys.primesteIntrebari, newIsVisiblePrimesteIntrebari);
 
-    final response = await apiCallFunctions.seteazaStatusuriMedic(
-      pUser: user,
-      pParola: userPassMD5,
-      pEsteActiv: isToggledEstiOnline.toString(),
-      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
-      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
-      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
-    );
-
-    if (response?.statusCode == 200) {
-      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
-      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
-      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
-      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
+      setState(() {
+        isToggledEstiOnline = false;
+      });
+      prefs.setBool('isOnline', false);
+    } else if (!isToggledEstiOnline) {
+      setState(() {
+        isToggledEstiOnline = true;
+      });
+      prefs.setBool('isOnline', true);
     }
+
+    await seteazaStatusuriMedic();
   }
 
   void callbackInterpretareAnalize(bool newIsVisibleInterpretareAnalize) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
-      isVisibleInterpretareAnalize = newIsVisibleInterpretareAnalize;
       isToggledInterpretareAnalize = newIsVisibleInterpretareAnalize;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    prefs.setBool(pref_keys.interpreteazaAnalize, newIsVisibleInterpretareAnalize);
 
-    final response = await apiCallFunctions.seteazaStatusuriMedic(
-      pUser: user,
-      pParola: userPassMD5,
-      pEsteActiv: isToggledEstiOnline.toString(),
-      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
-      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
-      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
-    );
-
-    if (response?.statusCode == 200) {
-      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
-      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
-      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
-      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
+      setState(() {
+        isToggledEstiOnline = false;
+      });
+      prefs.setBool('isOnline', false);
+    } else if (!isToggledEstiOnline) {
+      setState(() {
+        isToggledEstiOnline = true;
+      });
+      prefs.setBool('isOnline', true);
     }
+
+    await seteazaStatusuriMedic();
   }
 
   void callbackConsultatieVideo(bool newIsVisibleConsultatieVideo) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
-      isVisibleConsultatieVideo = newIsVisibleConsultatieVideo;
       isToggledConsultatieVideo = newIsVisibleConsultatieVideo;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    prefs.setBool(pref_keys.permiteConsultVideo, newIsVisibleConsultatieVideo);
 
-    final response = await apiCallFunctions.seteazaStatusuriMedic(
-      pUser: user,
-      pParola: userPassMD5,
-      pEsteActiv: isToggledEstiOnline.toString(),
-      pPrimesteIntrebari: isToggledPrimesteIntrebari.toString(),
-      pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
-      pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
-    );
-
-    if (response?.statusCode == 200) {
-      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
-      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
-      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
-      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
+    if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
+      setState(() {
+        isToggledEstiOnline = false;
+      });
+      prefs.setBool('isOnline', false);
+    } else if (!isToggledEstiOnline) {
+      setState(() {
+        isToggledEstiOnline = true;
+      });
+      prefs.setBool('isOnline', true);
     }
+
+    await seteazaStatusuriMedic();
   }
 
   Future<http.Response?> seteazaStatusuriMedic() async {
@@ -218,7 +214,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       setState(() {});
       prefs.setString("isActive", isToggledEstiOnline.toString());
 
-      //textMessage = 'Statusuri setate cu succes!'; //old IGV
       textMessage = l.dashboardStatusuriSetateCuSucces;
 
       backgroundColor = const Color.fromARGB(255, 14, 190, 127);
@@ -226,44 +221,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } else if (int.parse(resSeteazaStatusuriMedic.body) == 400) {
       setState(() {});
 
-      //textMessage = 'Apel invalid!'; //old IGV
-
       textMessage = l.dashboardApelInvalid;
       backgroundColor = Colors.red;
       textColor = Colors.black;
     } else if (int.parse(resSeteazaStatusuriMedic.body) == 401) {
-      setState(() {
-        //medicAdaugatCuSucces = false;
-        //medicScosCuSucces = false;
-        //showButonTrimiteTestimonial = false;
-      });
+      setState(() {});
 
-      //textMessage = 'Statusurile nu au fost setate!'; //old IGV
       textMessage = l.dashboardStatusurileNuAuFostSetate;
 
       backgroundColor = Colors.red;
       textColor = Colors.black;
     } else if (int.parse(resSeteazaStatusuriMedic.body) == 405) {
-      setState(() {
-        //medicAdaugatCuSucces = false;
-        //medicScosCuSucces = false;
-        //showButonTrimiteTestimonial = false;
-      });
-
-      //textMessage = 'Informații insuficiente!'; //old IGV
+      setState(() {});
 
       textMessage = l.dashboardInformatiiInsuficiente;
 
       backgroundColor = Colors.red;
       textColor = Colors.black;
     } else if (int.parse(resSeteazaStatusuriMedic.body) == 500) {
-      setState(() {
-        //medicAdaugatCuSucces = false;
-        //medicScosCuSucces = false;
-        //showButonTrimiteTestimonial = false;
-      });
-
-      //textMessage = 'A apărut o eroare la execuția metodei!'; //old IGV
+      setState(() {});
 
       textMessage = l.dashboardAAparutOEroareLaExecutiaMetodei;
 
@@ -328,9 +304,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     value: isToggledEstiOnline,
                     height: 25,
                     width: 60,
-                    //added by George Valentin Iordache
                     activeColor: const Color.fromRGBO(14, 190, 127, 1),
-
                     inactiveColor: Colors.grey[200]!,
                     onToggle: (value) async {
                       callbackEstiOnline(value);
@@ -354,7 +328,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         width: 74,
                       ),
                       Text(
-                        //"Bun venit,", //old IGV
                         l.dashboardBunVenit,
                         style: GoogleFonts.rubik(
                           color: const Color.fromRGBO(103, 114, 148, 1),
@@ -390,7 +363,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            //'Dr. Daniela Pretoeasa', //old IGV
                             '${widget.contMedicMobile.titulatura}. ${widget.contMedicMobile.numeComplet}',
                             style: GoogleFonts.rubik(
                                 color: const Color.fromRGBO(14, 190, 127, 1),
@@ -405,7 +377,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            //'AIS Clinic & Hospital Bucharest', //old IGV
                             widget.contMedicMobile.adresaLocDeMunca,
                             style: GoogleFonts.rubik(
                                 color: const Color.fromRGBO(103, 114, 148, 1),
@@ -413,7 +384,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 fontWeight: FontWeight.w300),
                           ),
                           Text(
-                            //'Pediatrie, doctor primar', //old IGV
                             '${widget.contMedicMobile.specializarea}, ${widget.contMedicMobile.functia}',
                             style: GoogleFonts.rubik(
                                 color: const Color.fromRGBO(103, 114, 148, 1),
@@ -442,8 +412,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     callback: callbackConsultatieVideo,
                   ),
                   Container(
-                    // width: 360,
-                    // height: 420,
                     margin: const EdgeInsets.fromLTRB(0, 0, 11, 0),
                     padding: const EdgeInsets.all(30),
                     decoration: ShapeDecoration(
@@ -456,15 +424,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Row(
                           children: [
                             Text(
-                              //"Raport", //old IGV
                               l.dashboardRaportTitlu,
                               style: const TextStyle(
                                   color: Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
-                        //const RaportIconTextNumarDetaliiWidget(defText: 'Număr pacienți', numarText: "38", iconPath: "./assets/images/numar_pacienti.png",
-                        //  tipSectiune: 1,), //old IGV
                         RaportIconTextNumarDetaliiWidget(
                           defText: l.dashboardNumarPacienti,
                           numarText: widget.totaluriMedic.totalNrPacienti.toString(),
@@ -474,7 +439,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           totaluriMedic: widget.totaluriMedic,
                         ),
                         customDivider(),
-
                         RaportIconTextNumarDetaliiWidget(
                           defText: l.dashboardRating,
                           numarText: widget.totaluriMedic.totalNrRatinguri.toString(),
@@ -483,7 +447,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           totaluriMedic: widget.totaluriMedic,
                         ),
                         customDivider(),
-
                         RaportIconTextNumarLeiDetaliiWidget(
                           defSuma: l.dashboardSumaDeIncasat,
                           numarText: widget.totaluriMedic.totalDeIncasat.toString(),
@@ -492,7 +455,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           tipSectiune: 3,
                         ),
                         customDivider(),
-
                         RaportIconTextNumarLeiDetaliiWidget(
                           defSuma: l.dashboardTotalIncasari,
                           numarText: widget.totaluriMedic.totalDeIncasat.toString(),
@@ -544,14 +506,6 @@ class _TopIconTextAndSwitchWidgetState extends State<TopIconTextAndSwitchWidget>
             const SizedBox(width: 5),
             IconButton(
               onPressed: () {
-                /*
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProfilMedicScreen(isDisponibleForNotifications: true,),
-                  )
-                );
-                */
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -560,15 +514,6 @@ class _TopIconTextAndSwitchWidgetState extends State<TopIconTextAndSwitchWidget>
                         totaluriMedic: widget.totaluriMedic,
                       ),
                     ));
-
-                /*
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditareProfilScreen(contMedicMobile: widget.contMedicMobile),
-                  )
-                );
-                */
               },
               icon: Image.asset('./assets/images/left_top_icon.png'),
             ),
@@ -581,9 +526,7 @@ class _TopIconTextAndSwitchWidgetState extends State<TopIconTextAndSwitchWidget>
               value: widget.isToggled,
               height: 25,
               width: 60,
-              //added by George Valentin Iordache
               activeColor: const Color.fromRGBO(14, 190, 127, 1),
-
               inactiveColor: Colors.grey[200]!,
               onToggle: (value) {
                 if (widget.callback != null) {
@@ -593,8 +536,6 @@ class _TopIconTextAndSwitchWidgetState extends State<TopIconTextAndSwitchWidget>
                 } else {
                   setState(() {
                     widget.isToggled = value;
-                    // ignore: avoid_print
-                    print(widget.isToggled);
                   });
                 }
               },
@@ -643,8 +584,6 @@ class _TextAndSwitchWidgetState extends State<TextAndSwitchWidget> {
                 } else {
                   setState(() {
                     widget.isToggled = value;
-                    // ignore: avoid_print
-                    print(widget.isToggled);
                   });
                 }
               },
@@ -763,7 +702,7 @@ class RaportIconTextNumarDetaliiWidget extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {},
                     icon: Image.asset(
-                      iconPath, //./assets/images/numar_pacienti.png
+                      iconPath,
                     ),
                     iconSize: 45,
                   ),
@@ -822,9 +761,7 @@ class RaportIconTextNumarDetaliiWidget extends StatelessWidget {
                   }));
                 }
               },
-              child: Text(
-                  //'Detalii', //old IGV
-                  l.dashboardDetaliiRatingNumarPacienti,
+              child: Text(l.dashboardDetaliiRatingNumarPacienti,
                   style: GoogleFonts.rubik(
                     color: const Color.fromRGBO(103, 114, 148, 1),
                     fontSize: 9,
@@ -893,55 +830,6 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
         [];
   }
 
-/*
-  Future<TotaluriMedic> getTotaluriDashboardMedicPePerioadaInitialGrafic(DateTime dataInceput, DateTime dataSfarsit) async
-  {
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    String user = prefs.getString('user')??'';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5)??'';
-
-    DateFormat inputFormat = DateFormat('ddMMyyyy');
-    //DateTime dateTime = DateTime.now();
-
-    totaluriDashboardMedic = await apiCallFunctions.getTotaluriDashboardMedicPePerioada(
-      pUser: user,
-      pParola: userPassMD5,
-      pDataInceputDDMMYYYY: inputFormat.format(dataInceput).toString(),//'01010001', //old IGV
-      pDataSfarsitDDMMYYYY: inputFormat.format(dataSfarsit).toString(),
-    );
-
-    print('totaluriDashboardMedic: $totaluriDashboardMedic');
-
-    return totaluriDashboardMedic!;
-
-  }
-
-  getPuncteTotaluriDashboardMedicZi() async
-  {
-
-    DateTime astazi = DateTime.now();
-
-
-    listaInitialaTotaluriMedicZi.clear();
-
-    //listaPuncteZi.add(const FlSpot(0.0, 0.0));
-
-    for (int i = 1; i < 24; i++)
-    {
-
-      totaluriDashboardMedic = await getTotaluriDashboardMedicPePerioadaInitialGrafic(astazi.subtract(const Duration(days: 1)), astazi);
-
-      //print('i $i totaluriDashboardMedic ${totaluriDashboardMedic!.totalIncasari}');
-
-      listaInitialaTotaluriMedicZi.add(totaluriDashboardMedic!);
-
-    }
-
-  }
-*/
-
   Future<List<TotaluriMedic>?> getTotaluriDashboardMedicPeZi(DateTime dataInceput) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -949,7 +837,6 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
     DateFormat inputFormat = DateFormat('ddMMyyyy');
-    //DateTime dateTime = DateTime.now();
 
     listaInitialaTotaluriMedicZi!.clear();
 
@@ -988,10 +875,6 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) {
               if (tipSectiune == 3) {
-                // return IncasariFiltratScreen(
-                //   listaInitialaTotaluriMedicZi:
-                //       listaInitialaTotaluriMedicZi ?? [],
-                // );
                 return IncasariPage(
                   totaluriMedic: listaInitialaTotaluriMedicZi!,
                 );
@@ -1027,8 +910,7 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {},
                     icon: Image.asset(
-                      iconPath, //./assets/images/numar_pacienti.png
-                      //fit: BoxFit.cover,
+                      iconPath,
                     ),
                     iconSize: 45,
                   ),
@@ -1054,13 +936,12 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
                       numarText,
                       style:
                           GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontWeight: FontWeight.w500),
-                      maxLines: 1, // Limit the text to 2 lines
-                      minFontSize: 20.0, // Minimum font size
+                      maxLines: 1,
+                      minFontSize: 20.0,
                       maxFontSize: 37,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      //'lei', //old IGV
                       moneda == ron.value ? l.dashboardLei : l.dashboardEuro,
                       style: GoogleFonts.rubik(
                           color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 18, fontWeight: FontWeight.w400),
@@ -1084,10 +965,6 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(builder: (context) {
                       if (tipSectiune == 3) {
-                        // return IncasariFiltratScreen(
-                        //   listaInitialaTotaluriMedicZi:
-                        //       listaInitialaTotaluriMedicZi ?? [],
-                        // );
                         return IncasariPage(
                           totaluriMedic: listaInitialaTotaluriMedicZi!,
                         );
@@ -1106,7 +983,6 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
                 }
               },
               child: Text(
-                //'Detalii', //old IGV
                 l.dashboardDetaliiIncasariSumaDeIncasat,
                 style: GoogleFonts.rubik(
                     color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 9, fontWeight: FontWeight.w400),
