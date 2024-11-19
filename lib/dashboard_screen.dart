@@ -92,16 +92,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isVisibleEstiOnline = newIsVisibleEstiOnline;
       isToggledEstiOnline = newIsVisibleEstiOnline;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isOnline', newIsVisibleEstiOnline);
+
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
-
-    final response = await apiCallFunctions.seteazaStatusuriMedic(
+    await apiCallFunctions.seteazaStatusuriMedic(
       pUser: user,
       pParola: userPassMD5,
       pEsteActiv: isToggledEstiOnline.toString(),
@@ -109,13 +110,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       pInterpreteazaAnalize: isToggledInterpretareAnalize.toString(),
       pPermiteConsultVideo: isToggledConsultatieVideo.toString(),
     );
-
-    if (response?.statusCode == 200) {
-      prefs.setBool(pref_keys.esteActiv, isToggledEstiOnline);
-      prefs.setBool(pref_keys.primesteIntrebari, isToggledPrimesteIntrebari);
-      prefs.setBool(pref_keys.interpreteazaAnalize, isToggledInterpretareAnalize);
-      prefs.setBool(pref_keys.permiteConsultVideo, isToggledConsultatieVideo);
-    }
   }
 
   void callbackPrimesteIntrebari(bool newIsVisiblePrimesteIntrebari) async {
