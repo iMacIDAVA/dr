@@ -37,7 +37,7 @@ class _IntroScreenState extends State<IntroScreen> {
     });
   }
 
-  Future<void> navigateToNotificationScreen(BuildContext context) async {
+  Future<void> navigateToNotificationScreen(BuildContext context, String page) async {
     ApiCallFunctions apiCallFunctions = ApiCallFunctions();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -66,12 +66,14 @@ class _IntroScreenState extends State<IntroScreen> {
           builder: (context) => NotificationDetailsScreen(
             totaluriMedic: resGetTotaluriDashboardMedic,
             contMedicMobile: resGetCont,
+            page: page,
           ),
         ),
-        (route) => false,
+            (route) => false,
       );
     }
   }
+
 
   Future<void> saveNotificationData(OSNotification notification) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,14 +85,15 @@ class _IntroScreenState extends State<IntroScreen> {
     String? alertMessage = notification.body;
     if (alertMessage != null) {
       if (alertMessage.toLowerCase().contains('apel')) {
-        navigateToNotificationScreen(context);
+        navigateToNotificationScreen(context, 'apel');
       } else if (alertMessage.toLowerCase().contains('recomandare')) {
-        navigateToNotificationScreen(context);
+        navigateToNotificationScreen(context, 'recomandare');
       } else if (alertMessage.toLowerCase().contains('întrebare')) {
-        navigateToNotificationScreen(context);
-      } else {}
-    } else {}
+        navigateToNotificationScreen(context, 'întrebare');
+      }
+    }
   }
+
 
   Future<void> ensureDeviceToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

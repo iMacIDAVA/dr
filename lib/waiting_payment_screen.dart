@@ -4,11 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/payment_failed_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_doar_chat_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_medic_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/agora_call_service.dart';
 
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
 class WaitingForPaymentScreen extends StatefulWidget {
-  const WaitingForPaymentScreen({Key? key}) : super(key: key);
+  final String page;
+
+  const WaitingForPaymentScreen({Key? key, required this.page}) : super(key: key);
 
   @override
   State<WaitingForPaymentScreen> createState() => _WaitingForPaymentScreenState();
@@ -17,29 +22,18 @@ class WaitingForPaymentScreen extends StatefulWidget {
 class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
   bool isActive = false;
   bool isNavigating = false;
-  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     isActive = true;
-    startTimer();
     initNotificationListener();
   }
 
   @override
   void dispose() {
     isActive = false;
-    timer?.cancel();
     super.dispose();
-  }
-
-  void startTimer() {
-    timer = Timer(const Duration(seconds: 30), () {
-      if (isActive && !isNavigating) {
-        navigateToRejectScreen("Pacientul nu a plătit");
-      }
-    });
   }
 
   void initNotificationListener() {
@@ -79,8 +73,6 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
     if (isNavigating) return;
     isNavigating = true;
 
-    timer?.cancel();
-
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -91,21 +83,23 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
     );
   }
 
-  void navigateToConfirmScreen(String? body) {
+  Future<void> navigateToConfirmScreen(String? body) async {
     if (isNavigating) return;
     isNavigating = true;
 
-    timer?.cancel();
-
-    // Uncomment and add your success screen here
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => PaymentSuccessScreen(
-    //       body: body ?? "Payment successful.",
-    //     ),
-    //   ),
-    // );
+    if (widget.page == "apel") {
+      CallService callService = CallService();
+      callService.startPolling();
+    }
+    else if (widget.page == "întrebare") {
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RaspundeIntrebareDoarChatScreen(textNume: '', textIntrebare: '', textRaspuns: '', idClient: 13, idMedic: 12, iconPathPacient: '',
+            numePacient: '', onlineStatus: true,),
+        ),
+      );
+    }
   }
 
   @override

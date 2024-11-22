@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:agora_token_service/agora_token_service.dart';
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_medic_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sos_bebe_profil_bebe_doctor/dashboard_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
 const appId = "da37c68ec4f64cd1af4093c758f20869";
 const appCertificate = '69b34ac5d15044a7906063342cc15471';
@@ -25,6 +31,56 @@ class ApelVideoMedicScreen extends StatefulWidget {
 
 class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
   RtcEngine? _engine;
+
+  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+  String oneSignalId = '';
+  TotaluriMedic? totaluriMedic;
+
+  Future<TotaluriMedic?> getTotaluriDashboardMedic() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    totaluriMedic = await apiCallFunctions.getTotaluriDashboardMedic(
+      pUser: user,
+      pParola: userPassMD5,
+    );
+
+    return totaluriMedic;
+  }
+
+  Future<void> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    String deviceToken = prefs.getString('deviceToken') ?? '';
+
+    TotaluriMedic? resGetTotaluriDashboardMedic = await getTotaluriDashboardMedic();
+
+    ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pDeviceToken: deviceToken,
+      pTipDispozitiv: Platform.isAndroid ? '1' : '2',
+      pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
+      pTokenVoip: '',
+    );
+
+    if (resGetCont != null && resGetTotaluriDashboardMedic != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DashboardScreen(
+            contMedicMobile: resGetCont,
+            totaluriMedic: resGetTotaluriDashboardMedic,
+          ),
+        ),
+        (route) => false,
+      );
+    }
+  }
 
   String token = '';
 
@@ -176,16 +232,7 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
                     onPressed: () async {
                       dispose();
                       if (mounted) {
-                        await Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => const RaspundeIntrebareMedicScreen(
-                              textNume: '',
-                              textIntrebare: '',
-                              textRaspuns: '',
-                            ),
-                          ),
-                        );
+                        getUserData();
                       }
                     },
                     icon: Image.asset(

@@ -13,8 +13,9 @@ import '../dashboard_screen.dart';
 class NotificationDetailsScreen extends StatefulWidget {
   final ContMedicMobile contMedicMobile;
   final TotaluriMedic totaluriMedic;
+  final String page;
 
-  const NotificationDetailsScreen({Key? key, required this.contMedicMobile, required this.totaluriMedic})
+  const NotificationDetailsScreen({Key? key, required this.contMedicMobile, required this.totaluriMedic, required this.page})
       : super(key: key);
 
   @override
@@ -239,12 +240,14 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
                                   isLoading = false;
                                 });
 
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const WaitingForPaymentScreen(),
+                                    builder: (context) => WaitingForPaymentScreen(page: widget.page),
                                   ),
                                 );
+
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width,
