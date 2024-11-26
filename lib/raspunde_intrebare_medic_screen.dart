@@ -1,114 +1,149 @@
-import 'dart:convert';
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-//import 'package:auto_size_text/auto_size_text.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:mime/mime.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
-import './utils/chat.dart' as chat;
-import './utils/chat_l10n.dart' as chat_l10n;
-import './utils/chat_theme.dart' as chat_theme;
-import './utils/typing_indicator.dart' as typing_indicator;
+import 'package:open_filex/open_filex.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
+
+ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
 class RaspundeIntrebareMedicScreen extends StatefulWidget {
-
   final String textNume;
-  final String textIntrebare;
-  final String textRaspuns;
+  final int idClient;
+  final int idMedic;
+  final String iconPathPacient;
+  final String numePacient;
 
   const RaspundeIntrebareMedicScreen({
-
-    super.key, required this.textNume, required this.textIntrebare, required this.textRaspuns
-
+    super.key,
+    required this.textNume,
+    required this.idClient,
+    required this.idMedic,
+    required this.iconPathPacient,
+    required this.numePacient,
   });
 
   @override
-  State<RaspundeIntrebareMedicScreen> createState() => _RaspundeIntrebareMedicScreenState();
-
+  State<RaspundeIntrebareMedicScreen> createState() =>
+      _RaspundeIntrebareMedicScreenState();
 }
 
 class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScreen> {
+  final List<Map<String, dynamic>> _messages = [];
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  Timer? _messageUpdateTimer;
 
-  String textNume = '';
-  String textIntrebare = '';
-  String textRaspuns = '';
-
-  List<types.Message> _messages = [];
-
-  final _user = const types.User(
-    id: 'e52552f4-835d-4dbe-ba77-b076e659774d',
-  );
-
-  //final _user = const types.User(id: '12345', imageUrl: 'https://i.pravatar.cc/300', firstName: 'Test', lastName: 'Test');
+  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
   @override
-  initState(){
-
+  void initState() {
     super.initState();
-    //textNume = '';
-    //textIntrebare = '';
-    //textRaspuns = '';
-    _loadMessages();
+    _loadMessagesFromList();
+    _startPeriodicFetching();
 
+    // Suppress notifications while on this screen
+    OneSignal.Notifications.addForegroundWillDisplayListener(_onNotificationDisplayed);
   }
 
-  void _addMessage(types.Message message) {
+  @override
+  void dispose() {
+    _messageUpdateTimer?.cancel();
+    _scrollController.dispose();
+    _messageController.dispose();
+
+    // Remove the listener when leaving the screen
+    OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
+
+    super.dispose();
+  }
+
+  void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
+    final notification = event.notification;
+
+    // Suppress notifications containing "Aveți un mesaj" in the alert text
+    if (notification.body != null && notification.body!.contains('Aveți un mesaj')) {
+      // Suppress the notification
+      OneSignal.Notifications.preventDefault(notification.notificationId!);
+      return;
+    }
+
+    // Allow other notifications to show
+    OneSignal.Notifications.displayNotification(notification.notificationId!);
+  }
+
+  void _startPeriodicFetching() {
+    _messageUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _loadMessagesFromList();
+    });
+  }
+
+  Future<void> _loadMessagesFromList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
+      pUser: user,
+      pParola: userPassMD5,
+      pIdConversatie: widget.idMedic.toString(),
+    ) ?? [];
+
+    if (mounted) {
+      setState(() {
+        _messages.clear();
+        _messages.addAll(
+          listaMesaje.map((e) {
+            bool isDoctorMessage = e.idExpeditor == widget.idMedic;
+            return {
+              "text": e.comentariu,
+              "isDoctorMessage": isDoctorMessage,
+              "filePath": null, // Placeholder for files (if any)
+            };
+          }).toList(),
+        );
+      });
+
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+  }
+
+  void _handleSendMessage() async {
+    if (_messageController.text.isEmpty) return;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    String message = _messageController.text;
+
+    await apiCallFunctions.adaugaMesajDinContMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pIdClient: widget.idClient.toString(),
+      pMesaj: message,
+    );
 
     setState(() {
-      _messages.insert(0, message);
+      _messages.add({"text": message, "isDoctorMessage": true, "filePath": null});
+      _messageController.clear();
     });
 
-  }
-
-  void _handleAttachmentPressed() {
-    
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (BuildContext context) => SafeArea(
-        child: SizedBox(
-          height: 144,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _handleImageSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Imagine'),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _handleFileSelection();
-                },
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Fișier'),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Anulează'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    _scrollToBottom();
   }
 
   void _handleFileSelection() async {
@@ -117,242 +152,108 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     );
 
     if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        mimeType: lookupMimeType(result.files.single.path!),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path!,
-      );
+      String filePath = result.files.single.path!;
+      String fileName = result.files.single.name;
 
-      _addMessage(message);
+      setState(() {
+        _messages.add({
+          "text": fileName,
+          "isDoctorMessage": true,
+          "filePath": filePath, // Add file path for later opening
+        });
+      });
+
+      _scrollToBottom();
     }
   }
 
-  void _handleImageSelection() async {
-    final result = await ImagePicker().pickImage(
-      imageQuality: 70,
-      maxWidth: 1440,
-      source: ImageSource.gallery,
-    );
-
-    if (result != null) {
-      final bytes = await result.readAsBytes();
-      final image = await decodeImageFromList(bytes);
-
-      final message = types.ImageMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: const Uuid().v4(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
-
-      _addMessage(message);
-
-    }
-  }
-
-  void _handleMessageTap(BuildContext _, types.Message message) async {
-    if (message is types.FileMessage) {
-      var localPath = message.uri;
-
-      if (message.uri.startsWith('http')) {
-        try {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
-            isLoading: true,
-          );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
-
-          final client = http.Client();
-          final request = await client.get(Uri.parse(message.uri));
-          final bytes = request.bodyBytes;
-          final documentsDir = (await getApplicationDocumentsDirectory()).path;
-          localPath = '$documentsDir/${message.name}';
-
-          if (!File(localPath).existsSync()) {
-            final file = File(localPath);
-            await file.writeAsBytes(bytes);
-          }
-        } finally {
-
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
-          final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
-            isLoading: null,
-          );
-
-          setState(() {
-            _messages[index] = updatedMessage;
-          });
-        }
-      }
-
-      await OpenFilex.open(localPath);
-    }
-  }
-
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  )
-  {
-
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
-      previewData: previewData,
-    );
-
-    setState(() {
-      _messages[index] = updatedMessage;
-    });
-
-  }
-
-  void _handleSendPressed(types.PartialText message) {
-    
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(),
-      text: message.text,
-    );
-
-    _addMessage(textMessage);
-
-  }
-
-  void _loadMessages() async {
-
-    final response = await rootBundle.loadString('./assets/messages.json');
-
-    //print('test');
-
-    final messages = (jsonDecode(response) as List)
-        .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
-        .toList();
-
-    setState(() {
-      _messages = messages;
-    });
-
-  }
-
-  void callbackTextIntrebare(String newTextIntrebare) {
-    setState(() {
-
-      textIntrebare = newTextIntrebare;
-
-      // ignore: avoid_print
-      //print('is checked alergic: ' + isAlergic.toString());
-
-    });
-  }
-  
-  void callbackTextRaspuns(String newTextRaspuns) {
-    setState(() {
-      textRaspuns = newTextRaspuns;
-
-      // ignore: avoid_print
-      //print('is checked alergic: ' + isAlergic.toString());
-
-    });
+  void _handleFileOpen(String filePath) {
+    OpenFilex.open(filePath);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      //resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 75,
-        title: const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
-        automaticallyImplyLeading: false,
-      ),
-      body:
-      //const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
-      chat.Chat(
-        messages: _messages,
-        onSendPressed: _handleSendPressed,
-        user: _user,
-        onAttachmentPressed: _handleAttachmentPressed,
-        onMessageTap: _handleMessageTap,
-        onPreviewDataFetched: _handlePreviewDataFetched,
-        showUserAvatars: true,
-        showUserNames: true,
-        //l10n: const ChatL10nRo().toChatL10n,
-        l10n: const chat_l10n.ChatL10nEn(
-          attachmentButtonAccessibilityLabel : 'Trimite media',
-          emptyChatPlaceholder : 'Nu aveți nici un mesaj încă',
-          fileButtonAccessibilityLabel : 'Fișier',
-          inputPlaceholder : 'Scrie un mesaj...',
-          sendButtonAccessibilityLabel : 'Trimite',
-          unreadMessagesLabel : 'Marchează mesajul ca necitit',
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
-        typingIndicatorOptions : const typing_indicator.TypingIndicatorOptions(),
-        theme: const chat_theme.DefaultChatTheme(
-          inputBackgroundColor: Color.fromRGBO(255, 255, 255, 1), // Color.fromRGBO(30, 214, 158, 1),
-          inputTextColor: Color.fromRGBO(103, 114, 148, 1), // Color.fromRGBO(30, 214, 158, 1),
-          //backgroundColor: Color.fromRGBO(14, 190, 127, 1), 
-          primaryColor: Color.fromRGBO(14, 190, 127, 1),
-                     
+        title: Text(
+          widget.numePacient,
+          style: GoogleFonts.rubik(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
-      //Column( 
-      //  children: [
-          //const RaspundeIntrebareTopIconsTextWidget(iconPath: './assets/images/raspunde_intrebare_pacienta.png', textNume: 'Nume pacienta',),
-      //    const InkWell(
-      //      child: ChatWidget(),
-      //      ),  
-      //    ),  
-      //  ],
-      //),
-    );
-  }
-}
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isDoctorMessage = message['isDoctorMessage'] as bool;
+                final filePath = message['filePath'];
 
-// ignore: must_be_immutable
-class RaspundeIntrebareTopIconsTextWidget extends StatelessWidget {
-  
-  final String iconPath;
-  final String textNume;
-    
-  const RaspundeIntrebareTopIconsTextWidget({super.key, required this.iconPath, required this.textNume});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 25),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(width: 20),
-            IconButton(
-              onPressed: () => Navigator.pop(context), 
-              icon: Image.asset('./assets/images/inapoi_chat_icon.png'),
-              color: const Color.fromRGBO(103, 114, 148, 1),
+                return Align(
+                  alignment: isDoctorMessage ? Alignment.centerRight : Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: filePath != null ? () => _handleFileOpen(filePath) : null,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isDoctorMessage
+                            ? const Color.fromRGBO(14, 190, 127, 1)
+                            : const Color.fromRGBO(240, 240, 240, 1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        message['text'] as String,
+                        style: TextStyle(
+                          color: isDoctorMessage ? Colors.white : Colors.black,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(width: 5),
-            CircleAvatar(foregroundImage: AssetImage(iconPath), radius: 25),
-            const SizedBox(width: 15),
-            Text(textNume, style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 12, fontWeight: FontWeight.w500)),
-            //const SizedBox(width: 160),
-          ],
-        ),
-      ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.attach_file, color: Colors.grey),
+                  onPressed: _handleFileSelection,
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: "Scrie un mesaj...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  onPressed: _handleSendMessage,
+                  icon: const Icon(Icons.send, color: Color.fromRGBO(14, 190, 127, 1)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

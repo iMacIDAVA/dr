@@ -137,15 +137,15 @@ class ButoaneVizualizareAnalizeScreen extends StatelessWidget {
           child: 
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-
-                  builder: (context) => RaspundeIntrebareDoarChatScreen(textNume: '', textIntrebare: '', textRaspuns: '', idClient: 13, idMedic: 12, iconPathPacient: '',
-                  numePacient: '', onlineStatus: true,),
-
-                ) 
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //
+              //     builder: (context) => RaspundeIntrebareDoarChatScreen(textNume: '', textIntrebare: '', textRaspuns: '', idClient: 13, idMedic: 12, iconPathPacient: '',
+              //     numePacient: '', onlineStatus: true,),
+              //
+              //   )
+              // );
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromRGBO(30, 214, 158, 1),

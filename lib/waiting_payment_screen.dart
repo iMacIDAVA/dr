@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -83,7 +84,48 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
     );
   }
 
+  Map<String, dynamic> _parseAdditionalData(String rawData) {
+    try {
+      String validJson = rawData
+          .replaceAllMapped(
+        RegExp(r'(\w+):'),
+            (match) => '"${match.group(1)}":',
+      )
+          .replaceAll("'", '"')
+          .replaceAllMapped(
+        RegExp(r':\s*([^,}]+)'),
+            (match) => ': "${match.group(1)?.trim()}"',
+      )
+          .replaceAll('}"', '}');
+      return json.decode(validJson) as Map<String, dynamic>;
+    } catch (e) {
+      return {};
+    }
+  }
+
   Future<void> navigateToConfirmScreen(String? body) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('userId') ?? '';
+    String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+    print('rawwwwwww data : $rawData');
+
+    // Parse the raw data
+    Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+    String body = additionalData['body'] ?? '0';
+
+    // Extract the name from the notification body
+    String notificationBody = prefs.getString(pref_keys.notificationBody) ?? '';
+    print('Notification Body: $notificationBody');
+
+    // Extract the name using a regular expression
+    final nameRegex = RegExp(r'Starea plății de la (.+):');
+    final match = nameRegex.firstMatch(notificationBody);
+    String patientName = match != null ? match.group(1) ?? 'Unknown' : 'Unknown';
+
+    int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
+    int UserId = int.parse(user);
+
     if (isNavigating) return;
     isNavigating = true;
 
@@ -92,14 +134,36 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
       callService.startPolling();
     }
     else if (widget.page == "întrebare") {
+
+
       await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => RaspundeIntrebareDoarChatScreen(textNume: '', textIntrebare: '', textRaspuns: '', idClient: 13, idMedic: 12, iconPathPacient: '',
-            numePacient: '', onlineStatus: true,),
+          builder: (context) => RaspundeIntrebareDoarChatScreen(
+            idClient: pIdPacient, // Client ID from additional data
+            idMedic: UserId, // User ID from preferences
+            textNume: 'Patient Name', // Replace with the extracted name
+            iconPathPacient: 'assets/images/default_patient_icon.png', // Default icon path
+            numePacient: patientName, // Extracted patient's name
+          ),
         ),
       );
     }
+    else if (widget.page == "recomandare"){
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RaspundeIntrebareMedicScreen(
+            idClient: pIdPacient, // Client ID from additional data
+            idMedic: UserId, // User ID from preferences
+            textNume: 'Patient Name', // Replace with the extracted name
+            iconPathPacient: 'assets/images/default_patient_icon.png', // Default icon path
+            numePacient: patientName, /// Extracted patient's name
+          ),
+        ),
+      );
+    }
+
   }
 
   @override
