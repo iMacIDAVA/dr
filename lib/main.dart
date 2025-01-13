@@ -1,10 +1,17 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/firebase_options.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
+import 'package:sos_bebe_profil_bebe_doctor/notification_confirm_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -18,8 +25,81 @@ void main() async {
   OneSignal.initialize('bf049046-edaf-41f1-bb07-e2ac883af161');
   await OneSignal.Notifications.requestPermission(true);
 
+
+
+  // Add global notification listeners
+  OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+    handleNotification(event.notification);
+  });
+  OneSignal.Notifications.addClickListener((event) {
+    handleNotification(event.notification);
+  });
+
+
   runApp(const MyApp());
 }
+
+ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+String oneSignalId = '';
+TotaluriMedic? totaluriMedic;
+
+
+Future<void> navigateToNotificationScreen(BuildContext context, String page) async {
+  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  String user = prefs.getString('user') ?? '';
+  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+  String deviceToken = prefs.getString('deviceToken') ?? '';
+
+  TotaluriMedic? resGetTotaluriDashboardMedic = await apiCallFunctions.getTotaluriDashboardMedic(
+    pUser: user,
+    pParola: userPassMD5,
+  );
+
+  ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
+    pUser: user,
+    pParola: userPassMD5,
+    pDeviceToken: deviceToken,
+    pTipDispozitiv: Platform.isAndroid ? '1' : '2',
+    pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
+    pTokenVoip: '',
+  );
+
+  if (resGetCont != null && resGetTotaluriDashboardMedic != null) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NotificationDetailsScreen(
+          totaluriMedic: resGetTotaluriDashboardMedic,
+          contMedicMobile: resGetCont,
+          page: page,
+        ),
+      ),
+          (route) => false,
+    );
+  }
+}
+
+void handleNotification(OSNotification notification) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('notificationTitle', notification.title ?? 'Fără Titlu');
+  await prefs.setString('notificationBody', notification.body ?? 'Fără corp');
+  await prefs.setString('notificationData', notification.additionalData?.toString() ?? 'Fără date');
+
+  String? alertMessage = notification.body;
+  if (alertMessage != null) {
+    if (alertMessage.toLowerCase().contains('apel')) {
+      navigateToNotificationScreen(navigatorKey.currentState!.context, 'apel');
+    } else if (alertMessage.toLowerCase().contains('recomandare')) {
+      navigateToNotificationScreen(navigatorKey.currentState!.context, 'recomandare');
+    } else if (alertMessage.toLowerCase().contains('întrebare')) {
+      navigateToNotificationScreen(navigatorKey.currentState!.context, 'întrebare');
+    }
+  }
+
+}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -51,3 +131,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

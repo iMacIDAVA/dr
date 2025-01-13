@@ -1438,6 +1438,51 @@ class ApiCallFunctions {
     return resStergeRaspunsDeLaFeedbackDinContMedic;
   }
 
+
+  Future<String?> adaugaMesajCuAtasamentDinContMedic({
+    required String pCheie,
+    required String pUser,
+    required String pParolaMD5,
+    required String IdClient,
+    required String pMesaj,
+    required String pDenumireFisier,
+    required String pExtensie,
+    required String pSirBitiDocument,
+  }) async {
+    final body = {
+      "Cheie": pCheie,
+      "User": pUser,
+      "ParolaMD5": pParolaMD5,
+      "IdClient": IdClient,
+      "Mesaj": pMesaj,
+      "DenumireFisier": pDenumireFisier,
+      "Extensie": pExtensie,
+      "SirBitiDocument": pSirBitiDocument,
+    };
+
+    final url = '${api_config.apiUrl}AdaugaMesajCuAtasamentDinContMedic';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        print("File sent successfully: $responseBody");
+        return responseBody as String; // Ensure this matches the backend's returned data format
+      } else {
+        print("Failed to send file: ${response.statusCode}, ${response.body}");
+        return null;
+      }
+    } catch (error) {
+      print("Error sending file: $error");
+      return null;
+    }
+  }
+
   Future<http.Response?> trimitePushPrinOneSignal({
     required String pUser,
     required String pParola,
@@ -1575,49 +1620,47 @@ class ApiCallFunctions {
   }
 
   Future<List<MesajConversatieMobile>?> getListaMesajePeConversatie({
-    //required String pNumeComplet,
     required String pUser,
     required String pParola,
     required String pIdConversatie,
-    //required String pIdMedic,
   }) async {
-    //final String pParolaMD5 = generateMd5(pParola);
     final Map<String, String> parametriiApiCall = {
-      //'pNumeComplet': pNumeComplet,
-      'pUser': pUser, //IGV
-
+      'pUser': pUser,
       'pParolaMD5': pParola,
       'pIdMedic': pIdConversatie,
-      //'pIdMedic': pIdMedic,
     };
+
+    print("Fetching messages with the following parameters:");
+    print(parametriiApiCall);
 
     http.Response? resGetListaMesajePeConversatie;
 
-    resGetListaMesajePeConversatie = await getApelFunctie(parametriiApiCall, 'GetListaMesajePeConversatie');
+    try {
+      resGetListaMesajePeConversatie =
+      await getApelFunctie(parametriiApiCall, 'GetListaMesajePeConversatie');
 
-    if (resGetListaMesajePeConversatie!.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
+      if (resGetListaMesajePeConversatie!.statusCode == 200) {
+        print("Raw response data:");
+        print(resGetListaMesajePeConversatie.body);
 
-      List<MesajConversatieMobile> parseListaMesajePeConversatie(String responseBody) {
-        final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+        List<MesajConversatieMobile> parseListaMesajePeConversatie(String responseBody) {
+          final parsed = (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+          return parsed.map<MesajConversatieMobile>((json) => MesajConversatieMobile.fromJson(json)).toList();
+        }
 
-        return parsed.map<MesajConversatieMobile>((json) => MesajConversatieMobile.fromJson(json)).toList();
+        print('Parsed response data:');
+        print(parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body));
+        return parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body);
+      } else {
+        print("Error fetching messages: ${resGetListaMesajePeConversatie.statusCode}");
+        return null;
       }
-
-      print('resGetListaMedici rezultat parsat: ${parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body)}');
-      return parseListaMesajePeConversatie(resGetListaMesajePeConversatie.body);
-
-      //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
-    } else {
+    } catch (error) {
+      print("Exception while fetching messages: $error");
       return null;
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      //throw Exception('Nu s-a putut crea corect lista de medici din Json-ul rezultat.');
     }
-
-    //return resGetContClient;
   }
+
 
 /*
   Future<http.Response?> trimitePinPentruResetareParolaClient({

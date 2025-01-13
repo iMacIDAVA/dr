@@ -707,16 +707,16 @@ class _ChestionarScreenState extends State<ChestionarScreen> {
             height: 54,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return const RaspundeIntrebareMedicScreen(
-                      textNume: '',
-                      textIntrebare: '',
-                      textRaspuns: '',
-                    );
-                  }),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) {
+                //     return const RaspundeIntrebareMedicScreen(
+                //       textNume: '',
+                //       textIntrebare: '',
+                //       textRaspuns: '',
+                //     );
+                //   }),
+                // );
                 //Navigator.push(
                 //context,
                 //MaterialPageRoute(

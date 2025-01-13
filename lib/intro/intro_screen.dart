@@ -29,12 +29,12 @@ class _IntroScreenState extends State<IntroScreen> {
     await ensureDeviceToken();
     await getUserData();
 
-    OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-      saveNotificationData(event.notification);
-    });
-    OneSignal.Notifications.addClickListener((event) {
-      saveNotificationData(event.notification);
-    });
+    // OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+    //   saveNotificationData(event.notification);
+    // });
+    // OneSignal.Notifications.addClickListener((event) {
+    //   saveNotificationData(event.notification);
+    // });
   }
 
   Future<void> navigateToNotificationScreen(BuildContext context, String page) async {

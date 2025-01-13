@@ -23,19 +23,32 @@ class WaitingForPaymentScreen extends StatefulWidget {
 class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
   bool isActive = false;
   bool isNavigating = false;
+  Timer? _timeoutTimer;
+
 
   @override
   void initState() {
     super.initState();
     isActive = true;
     initNotificationListener();
+
+    // Start a 30-second timer
+    _timeoutTimer = Timer(const Duration(seconds: 150), () {
+
+        // Navigate to the dashboard or home screen
+        navigateToRejectScreen("Timpul de așteptare a expirat"); // Pass a default message
+
+    });
   }
+
 
   @override
   void dispose() {
     isActive = false;
+    _timeoutTimer?.cancel(); // Cancel the timer
     super.dispose();
   }
+
 
   void initNotificationListener() {
     OneSignal.Notifications.addForegroundWillDisplayListener((event) {
@@ -61,6 +74,12 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
 
   void handleNotification(OSNotification notification) async {
     String? alertMessage = notification.body;
+
+    if (_timeoutTimer?.isActive ?? false) {
+      _timeoutTimer?.cancel();
+    }
+
+
     if (alertMessage != null) {
       if (alertMessage.toLowerCase().contains('plătit')) {
         navigateToConfirmScreen(alertMessage);

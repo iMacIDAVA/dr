@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:open_filex/open_filex.dart';
+import 'package:sos_bebe_profil_bebe_doctor/dashboard_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
@@ -99,18 +97,78 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
       setState(() {
         _messages.clear();
         _messages.addAll(
-          listaMesaje.map((e) {
+          listaMesaje
+              .where((e) {
+            final text = e.comentariu.trim();
+            final isUrl = text.startsWith('http://') || text.startsWith('https://');
+            final hasFileAttachment = text.endsWith('.jpg') ||
+                text.endsWith('.png') ||
+                text.endsWith('.jpeg') ||
+                text.endsWith('.gif') ||
+                text.endsWith('.Pacientul a părăsit chatul') ||
+                text.endsWith('.pdf') ||
+                text.contains("File Attachment"
+                );
+            return !isUrl && !hasFileAttachment;
+          })
+              .map((e) {
             bool isDoctorMessage = e.idExpeditor == widget.idMedic;
             return {
               "text": e.comentariu,
               "isDoctorMessage": isDoctorMessage,
-              "filePath": null, // Placeholder for files (if any)
             };
-          }).toList(),
+          })
+              .toList(),
         );
       });
 
+      if (listaMesaje.isNotEmpty &&
+          listaMesaje.last.comentariu.trim() == "Pacientul a părăsit chatul") {
+        navigateToDashboard(context);
+      }
+
       _scrollToBottom();
+    }
+  }
+
+  Future<void> navigateToDashboard(BuildContext context) async {
+
+    ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    String deviceToken = prefs.getString('deviceToken') ?? '';
+
+    try {
+      if (user.isNotEmpty) {
+        TotaluriMedic? resGetTotaluriDashboardMedic =
+        await apiCallFunctions.getTotaluriDashboardMedic(pUser: user, pParola: userPassMD5);
+
+        ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
+          pUser: user,
+          pParola: userPassMD5,
+          pDeviceToken: deviceToken,
+          pTipDispozitiv: Platform.isAndroid ? '1' : '2',
+          pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
+          pTokenVoip: '',
+        );
+
+        if (resGetCont != null && resGetTotaluriDashboardMedic != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardScreen(
+                contMedicMobile: resGetCont,
+                totaluriMedic: resGetTotaluriDashboardMedic,
+              ),
+            ),
+          );
+        } else {}
+      } else {}
+    } catch (e) {
+    } finally {
+
     }
   }
 
@@ -139,36 +197,28 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     );
 
     setState(() {
-      _messages.add({"text": message, "isDoctorMessage": true, "filePath": null});
+      _messages.add({"text": message, "isDoctorMessage": true});
       _messageController.clear();
     });
 
     _scrollToBottom();
   }
 
-  void _handleFileSelection() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    );
+  Future<void> _sendExitMessage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
-    if (result != null && result.files.single.path != null) {
-      String filePath = result.files.single.path!;
-      String fileName = result.files.single.name;
-
-      setState(() {
-        _messages.add({
-          "text": fileName,
-          "isDoctorMessage": true,
-          "filePath": filePath, // Add file path for later opening
-        });
-      });
-
-      _scrollToBottom();
+    try {
+      await apiCallFunctions.adaugaMesajDinContMedic(
+        pUser: user,
+        pParola: userPassMD5,
+        pIdClient: widget.idClient.toString(),
+        pMesaj: "Doctorul a părăsit chatul",
+      );
+    } catch (e) {
+      print("Error sending exit message: $e");
     }
-  }
-
-  void _handleFileOpen(String filePath) {
-    OpenFilex.open(filePath);
   }
 
   @override
@@ -177,8 +227,54 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
       appBar: AppBar(
         toolbarHeight: 75,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.exit_to_app, color: Colors.black),
+          onPressed: () async {
+            // Show confirmation dialog before sending the exit message
+            final shouldExit = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Confirmați Ieșirea"),
+                content: const Text("Chiar vrei să părăsești chat-ul?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text("Anula"),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: const Text("Da"),
+                  ),
+                ],
+              ),
+            );
+
+            if (shouldExit == true) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+
+              try {
+                // Send the exit message explicitly when the user confirms
+                await _sendExitMessage();
+
+                // Navigate to the dashboard
+                Navigator.pop(context); // Close the loading dialog
+                navigateToDashboard(context);
+              } catch (e) {
+                // Close the loading dialog
+                Navigator.pop(context);
+
+                // Show an error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Failed to send exit message")),
+                );
+              }
+            }
+          },
         ),
         title: Text(
           widget.numePacient,
@@ -197,27 +293,36 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
               itemBuilder: (context, index) {
                 final message = _messages[index];
                 final isDoctorMessage = message['isDoctorMessage'] as bool;
-                final filePath = message['filePath'];
 
                 return Align(
                   alignment: isDoctorMessage ? Alignment.centerRight : Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: filePath != null ? () => _handleFileOpen(filePath) : null,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: isDoctorMessage
-                            ? const Color.fromRGBO(14, 190, 127, 1)
-                            : const Color.fromRGBO(240, 240, 240, 1),
-                        borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDoctorMessage
+                          ? const Color.fromRGBO(14, 190, 127, 1)
+                          : const Color.fromRGBO(240, 240, 240, 1),
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(10),
+                        topRight: const Radius.circular(10),
+                        bottomLeft: Radius.circular(isDoctorMessage ? 10 : 0),
+                        bottomRight: Radius.circular(isDoctorMessage ? 0 : 10),
                       ),
-                      child: Text(
-                        message['text'] as String,
-                        style: TextStyle(
-                          color: isDoctorMessage ? Colors.white : Colors.black,
-                          fontSize: 20,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          offset: Offset(0, 3),
+                          blurRadius: 5,
                         ),
+                      ],
+                    ),
+                    child: Text(
+                      message['text'] as String,
+                      style: TextStyle(
+                        color: isDoctorMessage ? Colors.white : Colors.black,
+                        fontSize: 18,
+                        height: 1.5,
                       ),
                     ),
                   ),
@@ -229,17 +334,14 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
             padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.attach_file, color: Colors.grey),
-                  onPressed: _handleFileSelection,
-                ),
                 Expanded(
                   child: TextField(
                     controller: _messageController,
                     decoration: InputDecoration(
                       hintText: "Scrie un mesaj...",
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                     ),
                   ),

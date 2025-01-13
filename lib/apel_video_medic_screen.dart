@@ -117,6 +117,11 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
         },
         onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
           setState(() {});
+
+          if (mounted) {
+            getUserData(); // Navigates to DashboardScreen
+          }
+
         },
       ),
     );
@@ -166,6 +171,12 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
     _stopTimer();
     _engine?.leaveChannel();
     _engine?.release();
+
+    // Add navigation
+    if (mounted) {
+      getUserData(); // Navigates to DashboardScreen
+    }
+
     super.dispose();
   }
 

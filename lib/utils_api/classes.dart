@@ -446,6 +446,7 @@ class MesajConversatieMobile {
   final String comentariu;
   final int idDestinatar;
   final int idExpeditor;
+  final String linkFisier; // Add this property for file attachments
 
   const MesajConversatieMobile({
     required this.id,
@@ -453,6 +454,7 @@ class MesajConversatieMobile {
     required this.comentariu,
     required this.idDestinatar,
     required this.idExpeditor,
+    required this.linkFisier, // Add constructor parameter
   });
 
   factory MesajConversatieMobile.fromJson(Map<String, dynamic> json) {
@@ -464,9 +466,11 @@ class MesajConversatieMobile {
       comentariu: json['Comentariu'] as String,
       idDestinatar: json['IdDestinatar'] as int,
       idExpeditor: json['IdExpeditor'] as int,
+      linkFisier: json['LinkFisier'] ?? '', // Parse the file link, default to an empty string
     );
   }
 }
+
 
 enum EnumStareContMedic {
   nedefinit(0),

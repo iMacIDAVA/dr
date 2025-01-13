@@ -953,8 +953,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
           content: TextFormField(
             controller: _textFieldModificaRaspuns,
             onChanged: (value) {
-              _textFieldModificaRaspuns.text = value;
-              fieldRaspunsDat = value;
+              fieldRaspunsDat = value; // Update only the state variable
             },
             decoration: const InputDecoration(
               hintText: "Mulțumesc..",
@@ -970,11 +969,16 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
             GestureDetector(
               onTap: () async {
                 Navigator.of(context).pop();
-                _textFieldModificaRaspuns.text.isNotEmpty
-                    ? await modificaRaspunsDeLaFeedbackDinContMedic(widget.id, _textFieldModificaRaspuns.text)
-                    : Fluttertoast.showToast(msg: "Introduceți un răspuns");
+                if (_textFieldModificaRaspuns.text.isNotEmpty) {
+                  await modificaRaspunsDeLaFeedbackDinContMedic(
+                    widget.id,
+                    _textFieldModificaRaspuns.text,
+                  );
+                } else {
+                  Fluttertoast.showToast(msg: "Introduceți un răspuns");
+                }
 
-                _textFieldRaspund.clear();
+                _textFieldModificaRaspuns.clear();
                 setState(() {});
               },
               child: const Text('Răspunde'),
@@ -983,6 +987,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
         );
       },
     );
+
   }
 
   _showRaspundDialog() {

@@ -85,9 +85,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     });
   }
-
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Print the new toggle value
+    print('Toggled Online Status: $newIsVisibleEstiOnline');
 
     if (!newIsVisibleEstiOnline) {
       setState(() {
@@ -116,6 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     await seteazaStatusuriMedic();
   }
+
 
   void callbackPrimesteIntrebari(bool newIsVisiblePrimesteIntrebari) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -173,14 +173,14 @@ class ButoaneVizualizareAnalizeScreen extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-
-                  builder: (context) => const RaspundeIntrebareMedicScreen(textNume: '', textIntrebare: '', textRaspuns: '',),
-
-                ) 
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //
+              //     builder: (context) => const RaspundeIntrebareMedicScreen(textNume: '', textIntrebare: '', textRaspuns: '',),
+              //
+              //   )
+              // );
 
             },
             style: ElevatedButton.styleFrom(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class NotificationDetailsScreen extends StatefulWidget {
 
 class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
   bool isLoading = false;
+  Timer? _autoCloseTimer;
 
   Future<Map<String, dynamic>> getNotificationData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -126,7 +128,21 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
   void initState() {
     super.initState();
     resetStateOnEnter();
+
+    // _autoCloseTimer = Timer(const Duration(seconds: 30), () {
+    //   // Automatically navigate when timer expires
+    //   navigateToDashboard(context);
+    // });
+
   }
+
+  @override
+  void dispose() {
+    // Cancel the timer if the user leaves the screen before it expires
+    _autoCloseTimer?.cancel();
+    super.dispose();
+  }
+
 
   Future<void> resetStateOnEnter() async {
     setState(() {
