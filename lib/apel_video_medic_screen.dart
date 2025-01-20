@@ -148,18 +148,25 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer t) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       setState(() {
-        int secundeDeScazut = (_stopwatch.elapsed.inSeconds % 60 == 0) ? 60 : _stopwatch.elapsed.inSeconds % 60;
-        int secunde = 60 - secundeDeScazut;
-        int minuteDeScazut = (_stopwatch.elapsed.inSeconds % 60 == 0) ? 0 : 1;
-        int minute = _stopwatch.elapsed.inSeconds == 0 ? 15 : 15 - _stopwatch.elapsed.inMinutes - minuteDeScazut;
+        int remainingSeconds = (15 * 60) - _stopwatch.elapsed.inSeconds;
 
-        _result = '${minute.toString().padLeft(2, '0')}:${secunde.toString().padLeft(2, '0')}';
+        if (remainingSeconds > 0) {
+          int minutes = remainingSeconds ~/ 60;
+          int seconds = remainingSeconds % 60;
+          _result =
+          '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+        } else {
+          _result = "00:00";
+          _stopTimer();
+        }
       });
     });
+
     _stopwatch.start();
   }
+
 
   void _stopTimer() {
     _timer.cancel();
@@ -169,114 +176,124 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
   @override
   void dispose() {
     _stopTimer();
-    _engine?.leaveChannel();
-    _engine?.release();
 
-    // Add navigation
-    if (mounted) {
-      getUserData(); // Navigates to DashboardScreen
+    if (_engine != null) {
+      _engine!.leaveChannel();
+      _engine!.release();
     }
 
+    getUserData(); // Safe to call directly
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Video Call'),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: _remoteVideo(),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: SizedBox(
-              width: 100,
-              height: 150,
-              child: Center(
-                  child: AgoraVideoView(
-                controller: VideoViewController(
-                  rtcEngine: _engine!,
-                  canvas: const VideoCanvas(uid: 0),
-                ),
-              )),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Video Call'),
+        ),
+        body: Stack(
+          children: [
+            Center(
+              child: _remoteVideo(),
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(height: 480),
-              Container(
-                width: 130,
-                height: 45,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
+            Align(
+              alignment: Alignment.topRight,
+              child: SizedBox(
+                width: 100,
+                height: 150,
+                child: Center(
+                    child: AgoraVideoView(
+                  controller: VideoViewController(
+                    rtcEngine: _engine!,
+                    canvas: const VideoCanvas(uid: 0),
+                  ),
+                )),
+              ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(height: 480),
+                Container(
+                  width: 130,
+                  height: 45,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        width: 25,
+                        height: 17,
+                        "./assets/images/cerc_apel_video.png",
+                      ),
+                      Text(
+                        _stopwatch.elapsed.inSeconds <= 60 ? _result : "14:00",
+                        style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(255, 86, 86, 1),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      width: 25,
-                      height: 17,
-                      "./assets/images/cerc_apel_video.png",
+                    IconButton(
+                      onPressed: () async {
+                        _stopTimer();
+                        if (_engine != null) {
+                          await _engine!.leaveChannel();
+                          await _engine!.release();
+                        }
+                        getUserData(); // Navigate to DashboardScreen
+                      },
+                      icon: Image.asset(
+                        width: 80,
+                        height: 80,
+                        './assets/images/inchide_apel_icon.png',
+                      ),
                     ),
-                    Text(
-                      _stopwatch.elapsed.inSeconds <= 60 ? _result : "14:00",
-                      style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(255, 86, 86, 1),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                    IconButton(
+                      onPressed: () async {
+                        await _engine?.switchCamera();
+                      },
+                      icon: Image.asset(
+                        width: 50,
+                        height: 50,
+                        './assets/images/switch_camera_icon.png',
                       ),
                     ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      dispose();
-                      if (mounted) {
-                        getUserData();
-                      }
-                    },
-                    icon: Image.asset(
-                      width: 80,
-                      height: 80,
-                      './assets/images/inchide_apel_icon.png',
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await _engine?.switchCamera();
-                    },
-                    icon: Image.asset(
-                      width: 50,
-                      height: 50,
-                      './assets/images/switch_camera_icon.png',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _remoteVideo() {
-    return AgoraVideoView(
-      controller: VideoViewController(
-        rtcEngine: _engine!,
-        canvas: VideoCanvas(uid: widget.remoteUid),
-      ),
-    );
+    if (_engine != null) {
+      return AgoraVideoView(
+        controller: VideoViewController(
+          rtcEngine: _engine!,
+          canvas: VideoCanvas(uid: widget.remoteUid),
+        ),
+      );
+    } else {
+      return const CircularProgressIndicator();
+    }
   }
+
 }
