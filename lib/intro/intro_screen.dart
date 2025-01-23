@@ -69,10 +69,11 @@ class _IntroScreenState extends State<IntroScreen> {
             page: page,
           ),
         ),
-        (route) => false,
+            (route) => false,
       );
     }
   }
+
 
   Future<void> saveNotificationData(OSNotification notification) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -92,6 +93,7 @@ class _IntroScreenState extends State<IntroScreen> {
       }
     }
   }
+
 
   Future<void> ensureDeviceToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -144,7 +146,15 @@ class _IntroScreenState extends State<IntroScreen> {
         if (resGetCont == null) {}
 
         if (resGetTotaluriDashboardMedic != null) {
-          navigateToNotificationScreen(context, 'întrebare');;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DashboardScreen(
+                contMedicMobile: resGetCont!,
+                totaluriMedic: resGetTotaluriDashboardMedic,
+              ),
+            ),
+          );
         }
       } else {
         Navigator.push(
