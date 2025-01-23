@@ -89,14 +89,14 @@ class _EditareProfilScreenState extends State<EditareProfilScreen> {
                   icon: widget.contMedicMobile.linkPozaProfil.isEmpty
                       ? Image.asset(
                           './assets/images/user_fara_poza.png',
-                          width: 60,
-                          height: 60,
+                          width: 80,
+                          height: 80,
                           fit: BoxFit.cover,
                         )
                       : Image.network(
                           widget.contMedicMobile.linkPozaProfil,
-                          width: 60,
-                          height: 60,
+                          width: 80,
+                          height: 80,
                           fit: BoxFit.cover,
                         ),
                 ),
@@ -148,14 +148,15 @@ class _EditareProfilScreenState extends State<EditareProfilScreen> {
               customPaddingProfilulMeu(),
               //TextAndSwitchWidget(isToggled: deconectareActivat, text: "Deconectare", callback: callbackDeconectare), //old IGV
               //const IconTextLogOut(text:'Deconectare'), //old IGV
-              IconTextLogOut(text: l.editareProfilDeconectare),
-              customPaddingProfilulMeu(),
               IconTextAndSwitchWidget(
                   isToggled: notificariActivat,
                   //text: "Notificări", //old IGV
                   text: l.editareProfilNotificari,
                   callback: callbackNotificari,
                   icon: './assets/images/notificare_icon.png'),
+              customPaddingProfilulMeu(),
+              IconTextLogOut(text: l.editareProfilDeconectare),
+
               IconTextTermeniConditii(
                 icon: './assets/images/termeniconditii_icon.png',
                 //text:'Termeni și Condiții'), //old IGV
@@ -483,55 +484,58 @@ class _IconTextAndSwitchWidgetState extends State<IconTextAndSwitchWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          //const SizedBox(width:15)
-          margin: EdgeInsets.only(
-              left: MediaQuery.of(context).size.height * 0.015,
-              right: MediaQuery.of(context).size.height * 0.035,
-              top: MediaQuery.of(context).size.height * 0.004),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0 , bottom: 8.0),
+          child: Container(
+            //const SizedBox(width:15)
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.height * 0.015,
+                right: MediaQuery.of(context).size.height * 0.035,
+                top: MediaQuery.of(context).size.height * 0.004),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-            //Text(widget.disease, style: GoogleFonts.rubik(fontSize: 16, fontWeight: FontWeight.w400)), old
+              //Text(widget.disease, style: GoogleFonts.rubik(fontSize: 16, fontWeight: FontWeight.w400)), old
 
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Image.asset(widget.icon),
-                  ),
-                  Text(widget.text,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(112, 112, 112, 1), fontSize: 14, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              FlutterSwitch(
-                value: widget.isToggled,
-                height: 20,
-                width: 40,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: Image.asset(widget.icon),
+                    ),
+                    Text(widget.text,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(112, 112, 112, 1), fontSize: 14, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                FlutterSwitch(
+                  value: widget.isToggled,
+                  height: 20,
+                  width: 40,
 
-                //activeColor: const Color.fromARGB(255, 103, 197, 108),
+                  //activeColor: const Color.fromARGB(255, 103, 197, 108),
 
-                //added by George Valentin Iordache
-                activeColor: const Color.fromRGBO(30, 214, 158, 1),
+                  //added by George Valentin Iordache
+                  activeColor: const Color.fromRGBO(30, 214, 158, 1),
 
-                inactiveColor: Colors.grey[200]!,
-                onToggle: (value) {
-                  if (widget.callback != null) {
-                    setState(() {
-                      widget.callback!(value);
-                    });
-                  } else {
-                    setState(() {
-                      widget.isToggled = value;
-                      // ignore: avoid_print
-                      print(widget.isToggled);
-                    });
-                  }
-                },
-              ),
-            ],
+                  inactiveColor: Colors.grey[200]!,
+                  onToggle: (value) {
+                    if (widget.callback != null) {
+                      setState(() {
+                        widget.callback!(value);
+                      });
+                    } else {
+                      setState(() {
+                        widget.isToggled = value;
+                        // ignore: avoid_print
+                        print(widget.isToggled);
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -564,7 +568,8 @@ class IconTextTermeniConditii extends StatelessWidget {
             margin: EdgeInsets.only(
                 left: MediaQuery.of(context).size.height * 0.015,
                 right: MediaQuery.of(context).size.height * 0.035,
-                top: MediaQuery.of(context).size.height * 0.12),
+                top: MediaQuery.of(context).size.height * 0.12
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

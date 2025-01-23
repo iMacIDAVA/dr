@@ -365,7 +365,7 @@ class _LoginMedicScreenState extends State<LoginMedicScreen> {
                       // Text("OR", style: GoogleFonts.rubik(color: Colors.black45, fontWeight: FontWeight.w500)), old
                     ],
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 150),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,13 +398,14 @@ class _LoginMedicScreenState extends State<LoginMedicScreen> {
                                   l.loginClickAiciParola,
                                   style: GoogleFonts.rubik(
                                     color: const Color.fromRGBO(14, 190, 127, 1),
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   )),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(height: 15),
                       SizedBox(
                         width: 380,
                         height: 20,
@@ -433,7 +434,7 @@ class _LoginMedicScreenState extends State<LoginMedicScreen> {
                                   l.loginClickAiciCont,
                                   style: GoogleFonts.rubik(
                                     color: const Color.fromRGBO(14, 190, 127, 1),
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   )),
                             ),

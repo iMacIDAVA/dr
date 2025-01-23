@@ -28,8 +28,7 @@ class RaspundeIntrebareDoarChatScreen extends StatefulWidget {
   });
 
   @override
-  State<RaspundeIntrebareDoarChatScreen> createState() =>
-      _RaspundeIntrebareDoarChatScreenState();
+  State<RaspundeIntrebareDoarChatScreen> createState() => _RaspundeIntrebareDoarChatScreenState();
 }
 
 class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarChatScreen> {
@@ -40,13 +39,20 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
 
   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
+  bool isTyping = false;
+
   @override
   void initState() {
     super.initState();
     _loadMessagesFromList();
     _startPeriodicFetching();
 
-    // Suppress notifications while on this screen
+    _messageController.addListener(() {
+      setState(() {
+        isTyping = _messageController.text.isNotEmpty;
+      });
+    });
+
     OneSignal.Notifications.addForegroundWillDisplayListener(_onNotificationDisplayed);
   }
 
@@ -56,7 +62,6 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     _scrollController.dispose();
     _messageController.dispose();
 
-    // Remove the listener when leaving the screen
     OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
 
     super.dispose();
@@ -65,14 +70,11 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
   void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
     final notification = event.notification;
 
-    // Suppress notifications containing "Aveți un mesaj" in the alert text
     if (notification.body != null && notification.body!.contains('Aveți un mesaj')) {
-      // Suppress the notification
       OneSignal.Notifications.preventDefault(notification.notificationId!);
       return;
     }
 
-    // Allow other notifications to show
     OneSignal.Notifications.displayNotification(notification.notificationId!);
   }
 
@@ -88,17 +90,17 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
     List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
-      pUser: user,
-      pParola: userPassMD5,
-      pIdConversatie: widget.idMedic.toString(),
-    ) ?? [];
+          pUser: user,
+          pParola: userPassMD5,
+          pIdConversatie: widget.idMedic.toString(),
+        ) ??
+        [];
 
     if (mounted) {
       setState(() {
         _messages.clear();
         _messages.addAll(
-          listaMesaje
-              .where((e) {
+          listaMesaje.where((e) {
             final text = e.comentariu.trim();
             final isUrl = text.startsWith('http://') || text.startsWith('https://');
             final hasFileAttachment = text.endsWith('.jpg') ||
@@ -107,23 +109,19 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
                 text.endsWith('.gif') ||
                 text.endsWith('.Pacientul a părăsit chatul') ||
                 text.endsWith('.pdf') ||
-                text.contains("File Attachment"
-                );
+                text.contains("File Attachment");
             return !isUrl && !hasFileAttachment;
-          })
-              .map((e) {
+          }).map((e) {
             bool isDoctorMessage = e.idExpeditor == widget.idMedic;
             return {
               "text": e.comentariu,
               "isDoctorMessage": isDoctorMessage,
             };
-          })
-              .toList(),
+          }).toList(),
         );
       });
 
-      if (listaMesaje.isNotEmpty &&
-          listaMesaje.last.comentariu.trim() == "Pacientul a părăsit chatul") {
+      if (listaMesaje.isNotEmpty && listaMesaje.last.comentariu.trim() == "Pacientul a părăsit chatul") {
         navigateToDashboard(context);
       }
 
@@ -132,7 +130,6 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
   }
 
   Future<void> navigateToDashboard(BuildContext context) async {
-
     ApiCallFunctions apiCallFunctions = ApiCallFunctions();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -143,7 +140,7 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     try {
       if (user.isNotEmpty) {
         TotaluriMedic? resGetTotaluriDashboardMedic =
-        await apiCallFunctions.getTotaluriDashboardMedic(pUser: user, pParola: userPassMD5);
+            await apiCallFunctions.getTotaluriDashboardMedic(pUser: user, pParola: userPassMD5);
 
         ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
           pUser: user,
@@ -167,9 +164,7 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
         } else {}
       } else {}
     } catch (e) {
-    } finally {
-
-    }
+    } finally {}
   }
 
   void _scrollToBottom() {
@@ -225,64 +220,64 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
         toolbarHeight: 75,
-        leading: IconButton(
-          icon: const Icon(Icons.exit_to_app, color: Colors.black),
-          onPressed: () async {
-            // Show confirmation dialog before sending the exit message
-            final shouldExit = await showDialog<bool>(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Confirmați Ieșirea"),
-                content: const Text("Chiar vrei să părăsești chat-ul?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: const Text("Anula"),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: const Text("Da"),
-                  ),
-                ],
-              ),
-            );
-
-            if (shouldExit == true) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => const Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-
-              try {
-                // Send the exit message explicitly when the user confirms
-                await _sendExitMessage();
-
-                // Navigate to the dashboard
-                Navigator.pop(context); // Close the loading dialog
-                navigateToDashboard(context);
-              } catch (e) {
-                // Close the loading dialog
-                Navigator.pop(context);
-
-                // Show an error message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Failed to send exit message")),
-                );
-              }
-            }
-          },
-        ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.exit_to_app, color: Colors.black),
+        //   onPressed: () async {
+        //     // Show confirmation dialog before sending the exit message
+        //     final shouldExit = await showDialog<bool>(
+        //       context: context,
+        //       builder: (context) => AlertDialog(
+        //         title: const Text("Confirmați Ieșirea"),
+        //         content: const Text("Chiar vrei să părăsești chat-ul?"),
+        //         actions: [
+        //           TextButton(
+        //             onPressed: () => Navigator.pop(context, false),
+        //             child: const Text("Anula"),
+        //           ),
+        //           TextButton(
+        //             onPressed: () => Navigator.pop(context, true),
+        //             child: const Text("Da"),
+        //           ),
+        //         ],
+        //       ),
+        //     );
+        //
+        //     if (shouldExit == true) {
+        //       showDialog(
+        //         context: context,
+        //         barrierDismissible: false,
+        //         builder: (context) => const Center(
+        //           child: CircularProgressIndicator(),
+        //         ),
+        //       );
+        //
+        //       try {
+        //         // Send the exit message explicitly when the user confirms
+        //         await _sendExitMessage();
+        //
+        //         // Navigate to the dashboard
+        //         Navigator.pop(context); // Close the loading dialog
+        //         navigateToDashboard(context);
+        //       } catch (e) {
+        //         // Close the loading dialog
+        //         Navigator.pop(context);
+        //
+        //         // Show an error message
+        //         ScaffoldMessenger.of(context).showSnackBar(
+        //           SnackBar(content: Text("Failed to send exit message")),
+        //         );
+        //       }
+        //     }
+        //   },
+        // ),
+        leading: const SizedBox(),
         title: Text(
           widget.numePacient,
-          style: GoogleFonts.rubik(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
         ),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -309,7 +304,7 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
                         bottomLeft: Radius.circular(isDoctorMessage ? 10 : 0),
                         bottomRight: Radius.circular(isDoctorMessage ? 0 : 10),
                       ),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black12,
                           offset: Offset(0, 3),
@@ -335,22 +330,59 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: "Scrie un mesaj...",
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+                  child: Stack(
+                    children: [
+                      TextField(
+                        controller: _messageController,
+                        decoration: const InputDecoration(
+                            hintText: "Scrie text...",
+                            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: InputBorder.none),
                       ),
-                    ),
+                      Positioned(
+                        right: 10,
+                        top: 5,
+                        bottom: 5,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color: Color.fromRGBO(14, 190, 127, 1),
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                          child: isTyping
+                              ? IconButton(
+                                  onPressed: _handleSendMessage,
+                                  icon: const Icon(
+                                    Icons.send,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                    child: const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                                        child: Text(
+                                          'GATA',
+                                          style:
+                                              TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 10),
-                IconButton(
-                  onPressed: _handleSendMessage,
-                  icon: const Icon(Icons.send, color: Color.fromRGBO(14, 190, 127, 1)),
-                ),
               ],
             ),
           ),

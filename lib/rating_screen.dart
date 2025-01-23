@@ -210,10 +210,16 @@ class _RatingScreenState extends State<RatingScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(
+              height: 20,
+            ),
             //TopIconsTextWidget(topText: 'Alege perioada', listaRecenziiByMedicRating: widget.listaRecenziiByMedicRating,), //old IGV
-            TopIconsTextWidget(
-              topText: l.ratingAlegePerioada,
-              listaRecenziiByMedicRating: widget.listaRecenziiByMedicRating,
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: TopIconsTextWidget(
+                topText: l.ratingAlegePerioada,
+                listaRecenziiByMedicRating: widget.listaRecenziiByMedicRating,
+              ),
             ),
             const SizedBox(height: 15),
             Row(
@@ -223,7 +229,7 @@ class _RatingScreenState extends State<RatingScreen> {
                 //Text('Rating-uri', style: GoogleFonts.rubik(color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 28, fontWeight: FontWeight.w400)), //old IGV
                 Text(l.ratingRatinguri,
                     style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 28, fontWeight: FontWeight.w400)),
+                        color: const Color.fromRGBO(14, 190, 127, 1), fontSize: 24, fontWeight: FontWeight.w400)),
               ],
             ),
             const SizedBox(height: 20),
@@ -735,7 +741,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
   Widget build(BuildContext context) {
     LocalizationsApp l = LocalizationsApp.of(context)!;
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.only(left: 20.0 , right: 20.0 , top: 5 , bottom: 5),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -744,7 +750,17 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
             color: const Color(0xff0EBE7F),
             width: 0,
           ),
-          color: Colors.white,
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xff0EBE7F),
+              Color(0xff0EBE7F),
+              Colors.white,
+              Colors.white,
+            ],
+            stops: [0.0, 0.02, 0.02, 1.0],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
@@ -780,8 +796,8 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                   Text(
                     widget.textNume,
                     style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
                       color: Color(0xff677294),
                     ),
                   ),
@@ -841,7 +857,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                         child: Text(
                           widget.textData,
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w300,
                             color: Color(0xff677294),
                           ),
@@ -857,7 +873,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                               Text(
                                 l.ratingRaspunde,
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xff0EBE7F),
                                 ),
@@ -987,7 +1003,6 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
         );
       },
     );
-
   }
 
   _showRaspundDialog() {

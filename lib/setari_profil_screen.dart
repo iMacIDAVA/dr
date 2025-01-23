@@ -907,7 +907,7 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.0005),
+                // SizedBox(height: MediaQuery.of(context).size.height * 0.0005),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -916,26 +916,26 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                         if (_selectedImage.path == '')
                           ClipOval(
                             child: SizedBox(
-                              height: 75,
-                              width: 75,
+                              height: 85,
+                              width: 85,
                               child: pozaStearsa
                                   ? Image.asset(
                                       './assets/images/user_fara_poza.png',
-                                      width: 75,
-                                      height: 75,
+                                      width: 85,
+                                      height: 85,
                                       fit: BoxFit.cover,
                                     )
                                   : widget.contMedicMobile.linkPozaProfil.isEmpty
                                       ? Image.asset(
                                           './assets/images/user_fara_poza.png',
-                                          width: 75,
-                                          height: 75,
+                                          width: 85,
+                                          height: 85,
                                           fit: BoxFit.cover,
                                         )
                                       : Image.network(
                                           widget.contMedicMobile.linkPozaProfil,
-                                          width: 75,
-                                          height: 75,
+                                          width: 85,
+                                          height: 85,
                                           fit: BoxFit.cover,
                                         ),
                             ),
@@ -1243,14 +1243,6 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                           ),
                         ),
                         SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-
-
-
-
-
-
-
-
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 10, 40, 10),
                           child: GestureDetector(
@@ -1279,13 +1271,6 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                             ),
                           ),
                         ),
-
-
-
-
-
-
-
                       ],
                     ),
                   ),
@@ -1308,23 +1293,26 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                    child: Container(
-                      // margin:
-                      //     const EdgeInsets.only(left: 25, right: 25, top: 50),
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 18.0, left: 18.0),
+                      child: Container(
+                        // margin:
+                        //     const EdgeInsets.only(left: 25, right: 25, top: 50),
 
-                      width: MediaQuery.of(context).size.width,
-                      height: 36,
-                      decoration: BoxDecoration(
-                          color: const Color.fromRGBO(30, 214, 158, 1), borderRadius: BorderRadius.circular(20)),
-                      child: Center(
-                        child: Text(
-                          //'Salvează', //old IGV
-                          l.setariProfilSalveaza,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontFamily: 'SF Pro Text',
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(255, 255, 255, 1),
+                        width: MediaQuery.of(context).size.width / 0.6,
+                        height: 56,
+                        decoration: BoxDecoration(
+                            color: const Color.fromRGBO(30, 214, 158, 1), borderRadius: BorderRadius.circular(10)),
+                        child: Center(
+                          child: Text(
+                            //'Salvează', //old IGV
+                            'SALVEAZĂ',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'SF Pro Text',
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                            ),
                           ),
                         ),
                       ),

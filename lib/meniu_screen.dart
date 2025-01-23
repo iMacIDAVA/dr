@@ -172,7 +172,6 @@ class _MeniuScreenState extends State<MeniuScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 25),
-                //TopIconTextAndSwitchWidget(isToggled: isToggledEstiOnline, topText: isToggledEstiOnline? "Ești ON": "Ești OFF", callback: callbackEstiOnline), //old IGV
                 TopIconTextAndSwitchWidget(
                   isToggled: isToggledEstiOnline,
                   topText: isToggledEstiOnline ? l.meniuEstiON : l.meniuEstiOFF,
@@ -180,114 +179,60 @@ class _MeniuScreenState extends State<MeniuScreen> {
                   contMedicMobile: widget.contMedicMobile,
                   totaluriMedic: widget.totaluriMedic,
                 ),
-
-                /*Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left:90),
-                        child:
-                      ),
+                    const SizedBox(
+                      height: 30,
                     ),
-                  ],
-                ),
-                */
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            //Container(
-                            //  decoration: const BoxDecoration(
-                            //    color: Colors.white,
-                            //    ),
-                            //    child:
-                            //CircleAvatar(
-                            //  child:
-
-                            widget.contMedicMobile.linkPozaProfil.isEmpty
-                                ? Image.asset(
-                                    //old IGV
-                                    './assets/images/user_fara_poza.png',
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Image.network(
-                                    widget.contMedicMobile.linkPozaProfil,
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                  ),
-                            /*
-                              Image.asset( //old IGV
-                                './assets/images/doctor_daniela_preoteasa.png',
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                              ),
-                              */
-                            //),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          //"Bun venit,", //old IGV
-                          l.meniuBunVenit,
-                          style: GoogleFonts.rubik(
-                            color: const Color.fromRGBO(255, 255, 255, 1),
-                            fontWeight: FontWeight.w300,
-                            fontSize: 12,
+                    widget.contMedicMobile.linkPozaProfil.isEmpty
+                        ? Image.asset(
+                            './assets/images/user_fara_poza.png',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.network(
+                            widget.contMedicMobile.linkPozaProfil,
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
                           ),
-                        ),
-                        //const SizedBox(height: 10),
-                        //Text('Dr. Daniela Preoteasa',
-                        //    style: GoogleFonts.rubik(color:const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500)), //old IGV
-                        Text('${widget.contMedicMobile.titulatura}. ${widget.contMedicMobile.numeComplet}',
-                            style: GoogleFonts.rubik(
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500)),
 
-                        //Text('AIS Clinic & Hospital Bucharest',
-                        //    style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 12, fontWeight: FontWeight.w300)), //old IGV
-                        Text(widget.contMedicMobile.locDeMunca,
-                            style: GoogleFonts.rubik(
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300)),
-                        Text(widget.contMedicMobile.adresaLocDeMunca,
-                            style: GoogleFonts.rubik(
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w300)),
+                    // Text(
+                    //   l.meniuBunVenit,
+                    //   style: GoogleFonts.rubik(
+                    //     color: const Color.fromRGBO(255, 255, 255, 1),
+                    //     fontWeight: FontWeight.w300,
+                    //     fontSize: 12,
+                    //   ),
+                    // ),
+                    //const SizedBox(height: 10),
+                    //Text('Dr. Daniela Preoteasa',
+                    //    style: GoogleFonts.rubik(color:const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500)), //old IGV
+                    Text('${widget.contMedicMobile.titulatura}. ${widget.contMedicMobile.numeComplet}',
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500)),
 
-                        //Text('Pediatrie, doctor primar',
-                        //  style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 9, fontWeight: FontWeight.w300)), //old IGV
-                        Text('${widget.contMedicMobile.specializarea}, ${widget.contMedicMobile.functia}',
-                            style: GoogleFonts.rubik(
-                                color: const Color.fromRGBO(255, 255, 255, 1),
-                                fontSize: 9,
-                                fontWeight: FontWeight.w300)),
-                        const SizedBox(height: 5),
-                      ],
-                    ),
-                    const SizedBox(width: 65),
+                    //Text('AIS Clinic & Hospital Bucharest',
+                    //    style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 12, fontWeight: FontWeight.w300)), //old IGV
+                    Text(widget.contMedicMobile.locDeMunca,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 12, fontWeight: FontWeight.w300)),
+                    Text(widget.contMedicMobile.adresaLocDeMunca,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 12, fontWeight: FontWeight.w300)),
+
+                    //Text('Pediatrie, doctor primar',
+                    //  style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 9, fontWeight: FontWeight.w300)), //old IGV
+                    Text('${widget.contMedicMobile.specializarea}, ${widget.contMedicMobile.functia}',
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 9, fontWeight: FontWeight.w300)),
+                    const SizedBox(height: 5),
                   ],
                 ),
-                const SizedBox(height: 15),
-
+                const SizedBox(width: 65),
                 SizedBox(
                   //width: 360, //old IGV
                   //height: 420, // old IGV
@@ -305,11 +250,21 @@ class _MeniuScreenState extends State<MeniuScreen> {
                   ),
                   */
                   child: Padding(
-                    padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.06,
-                    ),
+                    padding: const EdgeInsets.only(top: 20),
                     child: Column(
                       children: [
+                        const SizedBox(height: 5),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Divider(
+                            height: 1,
+                            thickness: 1,
+                            indent: 0,
+                            endIndent: 0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
                         //MeniuIconLink(linkText: "Număr pacienți", iconPath: "./assets/images/numar_pacienti_meniu.png",
                         //  tipSectiune: 1, contMedicMobile: widget.contMedicMobile,), //old IGV
                         MeniuIconLink(
@@ -382,6 +337,17 @@ class _MeniuScreenState extends State<MeniuScreen> {
                           contMedicMobile: widget.contMedicMobile,
                         ),
                         const SizedBox(height: 5),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Divider(
+                            height: 1,
+                            thickness: 1,
+                            indent: 0,
+                            endIndent: 0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
@@ -442,11 +408,14 @@ class _TopIconTextAndSwitchWidgetState extends State<TopIconTextAndSwitchWidget>
                 ),
                 //const SizedBox(width: 190),
 
-                Column(
+                Row(
                   children: [
                     Text(widget.topText,
                         style: GoogleFonts.rubik(
                             color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     FlutterSwitch(
                       value: widget.isToggled,
                       height: 25,

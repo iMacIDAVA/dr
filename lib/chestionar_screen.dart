@@ -11,10 +11,12 @@ ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
 class ChestionarScreen extends StatefulWidget {
   final ChestionarClientMobile chestionar;
+  final VoidCallback onContinue;
+  final String page;
 
   const ChestionarScreen({
     super.key,
-    required this.chestionar,
+    required this.chestionar, required this.onContinue, required this.page,
   });
 
   @override
@@ -707,6 +709,8 @@ class _ChestionarScreenState extends State<ChestionarScreen> {
             height: 54,
             child: ElevatedButton(
               onPressed: () {
+                widget.onContinue();
+
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute(builder: (context) {

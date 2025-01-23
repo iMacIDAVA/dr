@@ -35,9 +35,9 @@ class TermeniSiConditiiScreen extends StatelessWidget {
             Text(
               l.termeniSiConditiiTitlu,
               style: GoogleFonts.rubik(
-                  color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
+                  color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 13, fontWeight: FontWeight.w500),
             ),
-            SizedBox(width: MediaQuery.of(context).size.width * 0.28),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.3),
           ],
         ),
         centerTitle: false,
@@ -79,7 +79,7 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                           //child: const Text('Ultima actualizare : 27 / 03 / 2023', //old IGV
                           child: Text(l.termeniSiConditiiUltimaActualizare,
                               style: const TextStyle(
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontFamily: 'SF Pro Text',
                                 fontWeight: FontWeight.w400,
                                 color: Color.fromRGBO(255, 255, 255, 1),
@@ -117,109 +117,130 @@ class TermeniSiConditiiScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 width: 355,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("• ",
-                        style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(30, 214, 158, 1),
-                          fontSize: 40,
-                          fontWeight: FontWeight.w300,
-                        )),
-                    SizedBox(
-                      width: 280,
-                      child: AutoSizeText.rich(
-                        // old value RichText(
-                        TextSpan(
-                          style: GoogleFonts.rubik(
-                            color: const Color.fromRGBO(111, 139, 164, 1),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                          ),
-                          children: <TextSpan>[
-                            //TextSpan(text: 'Donec molestie ultricies dolor, nec feugiat tellus laoreet ac praesent eu quam.'), //old IGV
-                            TextSpan(text: l.termeniSiConditiiTextCentral2),
-                          ],
+                    Row(
+                      children :[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 45.0),
+                          child: Text("• ",
+                            style: GoogleFonts.rubik(
+                              color: const Color.fromRGBO(30, 214, 158, 1),
+                              fontSize: 40,
+                              fontWeight: FontWeight.w300,
+                            )),
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                      ),
+                        SizedBox(
+                          width: 276,
+                          child: AutoSizeText.rich(
+                            // old value RichText(
+                            TextSpan(
+                              style: GoogleFonts.rubik(
+                                color: const Color.fromRGBO(111, 139, 164, 1),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w300,
+                              ),
+                              children: <TextSpan>[
+                                //TextSpan(text: 'Donec molestie ultricies dolor, nec feugiat tellus laoreet ac praesent eu quam.'), //old IGV
+                                TextSpan(text: l.termeniSiConditiiTextCentral2),
+                              ],
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ]
                     ),
-                    const SizedBox(width: 25),
+
                   ],
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 0),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 width: 355,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("• ",
-                        style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(30, 214, 158, 1),
-                          fontSize: 40,
-                          fontWeight: FontWeight.w300,
-                        )),
-                    SizedBox(
-                      width: 280,
-                      child: AutoSizeText.rich(
-                        // old value RichText(
-                        TextSpan(
-                          style: GoogleFonts.rubik(
-                            color: const Color.fromRGBO(111, 139, 164, 1),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
+                    Row(
+                        children :[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 45.0),
+                            child: Text("• ",
+                                style: GoogleFonts.rubik(
+                                  color: const Color.fromRGBO(30, 214, 158, 1),
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w300,
+                                )),
                           ),
-                          children: <TextSpan>[
-                            //TextSpan(text: 'Maecenas pharetra ligula sed consequat imperdiet. Integer rhoncus sed nisl vitae.'), //old IGV
-                            TextSpan(text: l.termeniSiConditiiTextCentral3),
-                          ],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                      ),
+                          SizedBox(
+                            width: 276,
+                            child: AutoSizeText.rich(
+                              // old value RichText(
+                              TextSpan(
+                                style: GoogleFonts.rubik(
+                                  color: const Color.fromRGBO(111, 139, 164, 1),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                children: <TextSpan>[
+                                  //TextSpan(text: 'Donec molestie ultricies dolor, nec feugiat tellus laoreet ac praesent eu quam.'), //old IGV
+                                  TextSpan(text: l.termeniSiConditiiTextCentral3),
+                                ],
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          // const SizedBox(width: 25),
+                        ]
                     ),
-                    const SizedBox(width: 25),
+
                   ],
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 0),
               Container(
                 padding: const EdgeInsets.only(left: 10.0, right: 10.0),
                 width: 355,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("• ",
-                        style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(30, 214, 158, 1),
-                          fontSize: 40,
-                          fontWeight: FontWeight.w300,
-                        )),
-                    SizedBox(
-                      width: 280,
-                      child: AutoSizeText.rich(
-                        // old value RichText(
-                        TextSpan(
-                          style: GoogleFonts.rubik(
-                            color: const Color.fromRGBO(111, 139, 164, 1),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
+                    Row(
+                        children :[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 25.0),
+                            child: Text("• ",
+                                style: GoogleFonts.rubik(
+                                  color: const Color.fromRGBO(30, 214, 158, 1),
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w300,
+                                )),
                           ),
-                          children: <TextSpan>[
-                            //TextSpan(text: 'Donec commodo gravida risus, ac volutpat mauris tristique interdum.'), //old IGV
-                            TextSpan(text: l.termeniSiConditiiTextCentral4),
-                          ],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                      ),
+                          SizedBox(
+                            width: 276,
+                            child: AutoSizeText.rich(
+                              // old value RichText(
+                              TextSpan(
+                                style: GoogleFonts.rubik(
+                                  color: const Color.fromRGBO(111, 139, 164, 1),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                children: <TextSpan>[
+                                  //TextSpan(text: 'Donec molestie ultricies dolor, nec feugiat tellus laoreet ac praesent eu quam.'), //old IGV
+                                  TextSpan(text: l.termeniSiConditiiTextCentral4),
+                                ],
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          const SizedBox(width: 25),
+                        ]
                     ),
-                    const SizedBox(width: 25),
+
                   ],
                 ),
               ),

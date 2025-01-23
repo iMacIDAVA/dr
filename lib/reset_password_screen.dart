@@ -91,11 +91,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               fontSize: 12,
                               fontWeight: FontWeight.w300,
                             ),
-                            children: <TextSpan>[
+                            children: const <TextSpan>[
                               TextSpan(
                                 text:
                                     //'Introdu numărul de telefon pentru a-ți schimba parola contului' //old IGV
-                                    l.resetPasswordReseteazaParolaTextMijloc,
+                                    'Introdu numărul de telefon pentru a schimba schimba parola contului',
                               ),
                             ],
                           ),
@@ -260,7 +260,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         )),
                     child: Text(
                         //'Send code', //old IGV
-                        l.resetPasswordSendCode,
+                        'TRIMITE COD',
                         style: GoogleFonts.rubik(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w300)),
                   ),
                 ),

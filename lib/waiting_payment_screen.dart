@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sos_bebe_profil_bebe_doctor/chestionar_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/first_intermediate_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/payment_failed_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_doar_chat_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_medic_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/second_intermediate_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/third_intermediate_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/agora_call_service.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
@@ -23,8 +29,26 @@ class WaitingForPaymentScreen extends StatefulWidget {
 class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
   bool isActive = false;
   bool isNavigating = false;
-  Timer? _timeoutTimer;
+  // Timer? _timeoutTimer;
 
+  int remainingTime = 180;
+  Timer? countdownTimer;
+
+  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+
+
+  ValueNotifier<int> remainingTimeNotifier = ValueNotifier(180);
+
+  void startTimer() {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTimeNotifier.value > 0) {
+        remainingTimeNotifier.value--;
+      } else {
+        timer.cancel();
+        navigateToRejectScreen('Pacientul nu a plătit în 3 minute');
+      }
+    });
+  }// 3 minutes
 
   @override
   void initState() {
@@ -32,20 +56,25 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
     isActive = true;
     initNotificationListener();
 
+    startTimer();
+
     // Start a 30-second timer
-    _timeoutTimer = Timer(const Duration(seconds: 150), () {
-
-        // Navigate to the dashboard or home screen
-        navigateToRejectScreen("Timpul de așteptare a expirat"); // Pass a default message
-
-    });
+    // _timeoutTimer = Timer(const Duration(seconds: 150), () {
+    //
+    //     // Navigate to the dashboard or home screen
+    //     navigateToRejectScreen("Timpul de așteptare a expirat"); // Pass a default message
+    //
+    // });
   }
 
 
   @override
   void dispose() {
     isActive = false;
-    _timeoutTimer?.cancel(); // Cancel the timer
+    // _timeoutTimer?.cancel(); // Cancel the timer
+
+    remainingTimeNotifier.dispose();
+
     super.dispose();
   }
 
@@ -59,6 +88,83 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
       saveNotificationData(event.notification);
     });
   }
+
+  Future<void> navigateToIntermediateScreen(String alertMessage) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userEmail = prefs.getString('userEmail');
+    String? userPassMD5 = prefs.getString('userPassMD5');
+
+    if (userEmail == null || userPassMD5 == null) {
+      return;
+    }
+
+    ChestionarClientMobile? resGetUltimulChestionarCompletatByContMedic =
+    await apiCallFunctions.getUltimulChestionarCompletatByContMedic(
+      pUser: userEmail,
+      pParola: userPassMD5,
+      pIdClient: '1',
+    );
+
+    if (isNavigating) return;
+    isNavigating = true;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FirstIntermediateScreen(
+          onContinueToSecond: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SecondIntermediateScreen(
+                  onContinueToConfirm: () {
+                    if (widget.page == "întrebare" || widget.page == "apel") {
+                      if (resGetUltimulChestionarCompletatByContMedic != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChestionarScreen(
+                              chestionar: resGetUltimulChestionarCompletatByContMedic,
+                              page: widget.page,
+                              onContinue: () {
+                                navigateToConfirmScreen(alertMessage);
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        debugPrint('Failed to fetch chestionar data.');
+                      }
+                    } else if (widget.page == "recomandare") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecomandareScreen(
+                            onContinue: () {
+                              navigateToConfirmScreen(alertMessage);
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      navigateToConfirmScreen(alertMessage); // Final step
+                    }
+                  },
+                  page: widget.page,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+
+
+
+
+
 
   Future<void> saveNotificationData(OSNotification notification) async {
     if (!isActive || isNavigating) return;
@@ -75,19 +181,19 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
   void handleNotification(OSNotification notification) async {
     String? alertMessage = notification.body;
 
-    if (_timeoutTimer?.isActive ?? false) {
-      _timeoutTimer?.cancel();
+    if (countdownTimer != null && countdownTimer!.isActive) {
+      countdownTimer!.cancel();
     }
-
 
     if (alertMessage != null) {
       if (alertMessage.toLowerCase().contains('plătit')) {
-        navigateToConfirmScreen(alertMessage);
+        navigateToIntermediateScreen(alertMessage);
       } else if (alertMessage.toLowerCase().contains('a eșuat')) {
         navigateToRejectScreen(alertMessage);
       }
     }
   }
+
 
   void navigateToRejectScreen(String? body) {
     if (isNavigating) return;
@@ -190,21 +296,21 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 90,
-        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-        foregroundColor: Colors.white,
-        title: Text(
-          'Plata in asteptare',
-          style: GoogleFonts.rubik(
-            color: const Color.fromRGBO(255, 255, 255, 1),
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   toolbarHeight: 90,
+      //   backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+      //   foregroundColor: Colors.white,
+      //   title: Text(
+      //     'Plata in asteptare',
+      //     style: GoogleFonts.rubik(
+      //       color: const Color.fromRGBO(255, 255, 255, 1),
+      //       fontSize: 16,
+      //       fontWeight: FontWeight.w500,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      // ),
       body: WillPopScope(
         onWillPop: () async {
           return false;
@@ -226,19 +332,29 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Astept ca pacientul sa plateasca',
+                    'Așteptați confirmarea plății',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Colors.blueGrey,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 50),
-                  CircularProgressIndicator(
-                    strokeWidth: 4,
-                    color: Colors.grey,
+                  SizedBox(height: 30),
+
+                  Text(
+                    'Aceasta operațiune poate dura \n maxim 3 minute',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.blueGrey,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
+                  // CircularProgressIndicator(
+                  //   strokeWidth: 4,
+                  //   color: Colors.grey,
+                  // ),
                 ],
               ),
             ),

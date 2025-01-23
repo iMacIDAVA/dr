@@ -35,6 +35,19 @@ class _PaymentConfirmationRejectState extends State<PaymentConfirmationReject> {
     return totaluriMedic;
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(seconds: 4), () {
+      if (mounted) {
+        getUserData();
+      }
+    });
+  }
+
+
+
   Future<void> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -75,72 +88,71 @@ class _PaymentConfirmationRejectState extends State<PaymentConfirmationReject> {
       onWillPop: () async {
         return false;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false, 
-          title: const Text(
-            'Plata nu a reușit',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          backgroundColor: const Color.fromRGBO(14, 190, 127, 1),
-          foregroundColor: Colors.white,
-        ),
+      child: const Scaffold(
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   title: const Text(
+        //     'Plata nu a reușit',
+        //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        //   ),
+        //   centerTitle: true,
+        //   backgroundColor: const Color.fromRGBO(14, 190, 127, 1),
+        //   foregroundColor: Colors.white,
+        // ),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(24.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10.0,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    widget.body,
+               Text(
+                    'Ne pare rău',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    getUserData();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(14, 190, 127, 1),
-                    padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                  ),
-                  child: const Text(
-                    'Acasă',
                     style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.red,
                     ),
                   ),
+
+                SizedBox(height: 40),
+
+                Text(
+                  'Pacientul nu a plătii',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.blueGrey,
+                  ),
                 ),
+
+
+                // ElevatedButton(
+                //   onPressed: () {
+                //     getUserData();
+                //   },
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: const Color.fromRGBO(14, 190, 127, 1),
+                //     padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 40.0),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(12.0),
+                //     ),
+                //   ),
+                //   child: const Text(
+                //     'Acasă',
+                //     style: TextStyle(
+                //       fontSize: 16.0,
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.white,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
         ),
-        backgroundColor: const Color(0xFFF7F8FA), // Light background color
+        backgroundColor: Color(0xFFF7F8FA), // Light background color
       ),
     );
   }

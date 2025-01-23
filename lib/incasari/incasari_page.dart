@@ -153,7 +153,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                   l.sumeIncasariFiltratSoldCurent,
                                   style: GoogleFonts.rubik(
                                       color: const Color.fromRGBO(255, 255, 255, 1),
-                                      fontSize: 14,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Row(
@@ -202,7 +202,7 @@ class _IncasariPageState extends State<IncasariPage> {
                                   l.sumeIncasariFiltratDeIncasat,
                                   style: GoogleFonts.rubik(
                                       color: const Color.fromRGBO(30, 214, 158, 1),
-                                      fontSize: 14,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.w500),
                                 ),
                                 Row(

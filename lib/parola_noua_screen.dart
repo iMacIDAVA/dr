@@ -185,7 +185,7 @@ class _ParolaNouaScreenState extends State<ParolaNouaScreen> {
                   child: Column(
                     children: [
                       SizedBox(
-                        width: 250,
+                        width: 290,
                         child: AutoSizeText.rich(
                           // old value RichText(
                           TextSpan(
@@ -197,7 +197,7 @@ class _ParolaNouaScreenState extends State<ParolaNouaScreen> {
                             children: <TextSpan>[
                               TextSpan(
                                 //text: 'Introduceți o nouă parolă'), //old IGV
-                                text: l.parolaNouaTextMijloc,
+                                text: 'Introdu noua parolă, de minim 6 caractere',
                               ),
                             ],
                           ),
@@ -432,7 +432,7 @@ class _ParolaNouaScreenState extends State<ParolaNouaScreen> {
                               )),
                           child: Text(
                               //'Confirmă', //IGV
-                              l.parolaNouaConfirma,
+                              'CONFIRMĂ',
                               style: GoogleFonts.rubik(
                                   color: Colors.white,
                                   fontSize: 14,

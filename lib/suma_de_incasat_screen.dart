@@ -132,28 +132,28 @@ class _SumaIncasatScreenState extends State<SumaIncasatScreen> {
                   ),
                 ],
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     IconButton(
-              //       onPressed: () {},
-              //       icon: Image.asset('./assets/images/incasari_appbar_transparent.png'),
-              //     ),
-              //   ],
-              // ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     const SizedBox(width: 10),
-              //     Text(
-              //       //'SOLD CURENT - ' //AUGUST', //old IGV
-              //       l.sumaDeIncasatSoldCurent + DateFormat.MMMM(l.sumaDeIncasatLanguage).format(DateTime.now()).toUpperCase(),
-              //       style: TextStyle(color: const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.7), fontSize: 18, fontWeight: FontWeight.w500),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Image.asset('./assets/images/incasari_appbar_transparent.png'),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 10),
+                  Text(
+                    //'SOLD CURENT - ' //AUGUST', //old IGV
+                    l.sumaDeIncasatSoldCurent + DateFormat.MMMM(l.sumaDeIncasatLanguage).format(DateTime.now()).toUpperCase(),
+                    style: TextStyle(color: const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.7), fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +307,7 @@ class _IconNumeDataSuma extends State<IconNumeDataSuma> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.only(left: 20.0 , right: 20.0 , top: 5 , bottom: 5),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
         decoration: BoxDecoration(
@@ -316,7 +316,17 @@ class _IconNumeDataSuma extends State<IconNumeDataSuma> {
             color: const Color(0xff0EBE7F), // Uniform color for all sides
             width: 0,
           ),
-          color: Colors.white,
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xff0EBE7F),
+              Color(0xff0EBE7F),
+              Colors.white,
+              Colors.white,
+            ],
+            stops: [0.0, 0.02, 0.02, 1.0],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),

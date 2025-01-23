@@ -32,6 +32,9 @@ class ApelVideoMedicScreen extends StatefulWidget {
 class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
   RtcEngine? _engine;
 
+  bool isVideoEnabled = true;
+  bool isMicEnabled = true;
+
   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
   String oneSignalId = '';
   TotaluriMedic? totaluriMedic;
@@ -86,11 +89,14 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
 
   final Stopwatch _stopwatch = Stopwatch();
   late Timer _timer;
-  String _result = '15:00';
+  String _result = '14:00';
 
   @override
   void initState() {
     super.initState();
+
+    isVideoEnabled = true;
+    isMicEnabled = true;
 
     _initializeAgora();
     _startTimer();
@@ -119,9 +125,8 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
           setState(() {});
 
           if (mounted) {
-            getUserData(); // Navigates to DashboardScreen
+            getUserData();
           }
-
         },
       ),
     );
@@ -155,18 +160,18 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
         if (remainingSeconds > 0) {
           int minutes = remainingSeconds ~/ 60;
           int seconds = remainingSeconds % 60;
-          _result =
-          '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+          _result = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
         } else {
           _result = "00:00";
+
           _stopTimer();
+          getUserData();
         }
       });
     });
 
     _stopwatch.start();
   }
-
 
   void _stopTimer() {
     _timer.cancel();
@@ -182,20 +187,15 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
       _engine!.release();
     }
 
-    getUserData(); // Safe to call directly
+    getUserData();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Text('Video Call'),
-        ),
         body: Stack(
           children: [
             Center(
@@ -216,7 +216,7 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
               ),
             ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const SizedBox(height: 480),
                 Container(
@@ -235,7 +235,7 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
                         "./assets/images/cerc_apel_video.png",
                       ),
                       Text(
-                        _stopwatch.elapsed.inSeconds <= 60 ? _result : "14:00",
+                        _result,
                         style: GoogleFonts.rubik(
                           color: const Color.fromRGBO(255, 86, 86, 1),
                           fontSize: 18,
@@ -246,35 +246,134 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    IconButton(
-                      onPressed: () async {
+                    // Video On/Off Button
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isVideoEnabled = !isVideoEnabled;
+                          if (_engine != null) {
+                            if (isVideoEnabled) {
+                              _engine!.enableVideo();
+                            } else {
+                              _engine!.disableVideo();
+                            }
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.withOpacity(0.3),
+                        ),
+                        child: Icon(
+                          isVideoEnabled ? Icons.videocam : Icons.videocam_off,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    // Microphone On/Off Button
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isMicEnabled = !isMicEnabled;
+                          if (_engine != null) {
+                            if (isMicEnabled) {
+                              _engine!.enableLocalAudio(true);
+                            } else {
+                              _engine!.enableLocalAudio(false);
+                            }
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.withOpacity(0.3),
+                        ),
+                        child: Icon(
+                          isMicEnabled ? Icons.mic : Icons.mic_off,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    // End Call Button
+                    GestureDetector(
+                      onTap: () async {
                         _stopTimer();
                         if (_engine != null) {
                           await _engine!.leaveChannel();
                           await _engine!.release();
                         }
-                        getUserData(); // Navigate to DashboardScreen
+                        getUserData();
                       },
-                      icon: Image.asset(
-                        width: 80,
-                        height: 80,
-                        './assets/images/inchide_apel_icon.png',
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            './assets/images/inchide_apel_icon.png',
+                            width: 80,
+                            height: 80,
+                          ),
+                        ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () async {
+                    // Switch Camera Button
+                    GestureDetector(
+                      onTap: () async {
                         await _engine?.switchCamera();
                       },
-                      icon: Image.asset(
+                      child: Container(
                         width: 50,
                         height: 50,
-                        './assets/images/switch_camera_icon.png',
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.withOpacity(0.3),
+                        ),
+                        child: const Icon(
+                          Icons.cameraswitch,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    // Chat Button
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.withOpacity(0.3),
+                        ),
+                        child: const Icon(
+                          Icons.chat,
+                          color: Colors.white,
+                          size: 30,
+                        ),
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Glisați în sus pentru a afișa chatul',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(height: 50),
               ],
             ),
           ],
@@ -295,5 +394,4 @@ class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
       return const CircularProgressIndicator();
     }
   }
-
 }

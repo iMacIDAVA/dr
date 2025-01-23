@@ -429,16 +429,19 @@ class _CVEditPageState extends State<CVEditPage> {
                           ? const CircularProgressIndicator(
                               color: Color.fromRGBO(30, 214, 158, 1),
                             )
-                          : Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(30, 214, 158, 1),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: const Center(
-                                child: Text(
-                                  "Salveaza CV",
-                                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 18.0, right: 18.0),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                    color: const Color.fromRGBO(30, 214, 158, 1),
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: const Center(
+                                  child: Text(
+                                    "SALVEAZĂ CV",
+                                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
+                                  ),
                                 ),
                               ),
                             ),

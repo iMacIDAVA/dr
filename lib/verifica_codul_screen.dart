@@ -102,53 +102,53 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
                             child: SizedBox(
                               width: 200,
                               height:80,  
-                              child: PinCodeTextField(
-                                length: 4,
-                                //obscureText: false,
-                                textStyle: const TextStyle(color: Colors.white),
-                                keyboardType: TextInputType.number,
-                                //animationType: AnimationType.fade,
-                                appContext: context,
-                                pinTheme: PinTheme(
-                                  shape: PinCodeFieldShape.circle,
-                                  borderRadius: BorderRadius.zero,
-                                  fieldHeight: 40,
-                                  fieldWidth: 40,
-                                  activeFillColor: const Color.fromRGBO(14, 190, 127, 1),
-                                  inactiveColor: const Color.fromRGBO(103, 114, 148, 1),
-                                  inactiveFillColor: const Color.fromRGBO(103, 114, 148, 1),
-                                  selectedFillColor: const Color.fromRGBO(103, 114, 148, 1),
-                                  selectedColor: const Color.fromRGBO(103, 114, 148, 1),
-                                  activeColor: const Color.fromRGBO(103, 114, 148, 1),
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 17.0 ,right: 32 , left: 32),
+                                child: PinCodeTextField(
+                                  length: 4,
+                                  //obscureText: false,
+                                  textStyle: const TextStyle(color: Colors.white),
+                                  keyboardType: TextInputType.number,
+                                  //animationType: AnimationType.fade,
+                                  appContext: context,
+                                  pinTheme: PinTheme(
+                                    shape: PinCodeFieldShape.circle,
+                                    borderRadius: BorderRadius.zero,
+                                    fieldHeight: 15,
+                                    fieldWidth: 15,
+                                    activeFillColor: const Color.fromRGBO(14, 190, 127, 1),
+                                    inactiveColor: const Color.fromRGBO(103, 114, 148, 1),
+                                    inactiveFillColor: const Color.fromRGBO(103, 114, 148, 1),
+                                    selectedFillColor: const Color.fromRGBO(103, 114, 148, 1),
+                                    selectedColor: const Color.fromRGBO(103, 114, 148, 1),
+                                    activeColor: const Color.fromRGBO(103, 114, 148, 1),
+                                  ),
+                                  animationDuration: const Duration(milliseconds: 300),
+                                  //cursorColor: const Color.fromRGBO(103, 114, 148, 1),
+                                  backgroundColor: Colors.transparent,
+                                  enableActiveFill: true,
+                                  //errorAnimationController: errorController,
+                                  //controller: textEditingController,
+                                  onCompleted: (v)
+                                  {
+
+
+                                  },
+                                  onChanged: (value)
+                                  {
+
+                                    setState(() {
+                                      currentPIN = value;
+                                    });
+
+
+                                  },
+                                  beforeTextPaste: (text) {
+                                    //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                                    //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                                    return true;
+                                  },
                                 ),
-                                animationDuration: const Duration(milliseconds: 300),
-                                //cursorColor: const Color.fromRGBO(103, 114, 148, 1),
-                                backgroundColor: Colors.transparent,
-                                enableActiveFill: true,
-                                //errorAnimationController: errorController,
-                                //controller: textEditingController,
-                                onCompleted: (v) 
-                                {
-                                  
-                                  print("Completed");
-
-                                },
-                                onChanged: (value) 
-                                {
-                                  
-                                  setState(() {
-                                    currentPIN = value;
-                                  });
-
-                                  print('pinValue: $value currentPIN: $currentPIN');
-
-                                },
-                                beforeTextPaste: (text) {
-                                  print("Allowing to paste $text");
-                                  //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                                  //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                                  return true;
-                                },
                               ),
                             ),  
                           ),
@@ -162,8 +162,8 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
                         GestureDetector(
                           onTap: () async
                           {                               
-                            http.Response? resTrimitePin;
-                            resTrimitePin = await trimitePinPentruResetareParolaMedic();
+                            // http.Response? resTrimitePin;
+                            // resTrimitePin = await trimitePinPentruResetareParolaMedic();
                             /*
                             if(context.mounted)
                             {
@@ -214,7 +214,6 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
                           if (int.parse(resVerificaPin!.body) == 200)
                           {
 
-                            print('verifica_codul_pacient resVerificaPin!.body: ${resVerificaPin!.body}');
 
                             Navigator.push(
                               context,
@@ -284,7 +283,6 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
 
         //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
 
-        print('Cod verificat cu succes!');
 
         //if (context.mounted)
         //{
@@ -304,7 +302,6 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
       else if (int.parse(resVerificaCodPin.body) == 400)
       {
 
-        print('Apel invalid!');
 
         //if (context.mounted)
         //{
@@ -321,12 +318,11 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
         //return resVerificaCodPin;
 
       }
-      else if (int.parse(resVerificaCodPin!.body) == 401)
+      else if (int.parse(resVerificaCodPin.body) == 401)
       {
 
         //prefs.setString(pref_keys.userEmail, controllerEmail.text);
         //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
-        print('Eroare! Codul nu a putut fi verificat!');
 
         //if (context.mounted)
         //{
@@ -343,11 +339,10 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
         //return resVerificaCodPin;
 
       }
-      else if (int.parse(resVerificaCodPin!.body) == 405)
+      else if (int.parse(resVerificaCodPin.body) == 405)
       {
 
         
-        print('Informații insuficiente!');
 
         //textMessage = 'Informații insuficiente!'; //old IGV
 
@@ -365,11 +360,10 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
         //return resVerificaCodPin;
 
       }
-      else if (int.parse(resVerificaCodPin!.body) == 500)
+      else if (int.parse(resVerificaCodPin.body) == 500)
       {
 
-        print('A apărut o eroare la execuția metodei!');
-        
+
         //textMessage = 'A apărut o eroare la execuția metodei!'; //old IGV
         textMessage = l.verificaCodulAAparutOEroareLaExecutiaMetodei;
         backgroundColor = Colors.red;
@@ -411,7 +405,6 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
 
         //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
 
-        print('Cod trimis cu succes!');
 
         //textMessage = 'Cod trimis cu succes!'; //old IGV
         textMessage = l.resetPasswordCodTrimisCuSucces;
@@ -424,7 +417,6 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
       else if (int.parse(resTrimitePinPentruResetareParolaMedic.body) == 400)
       {
 
-        print('Apel invalid!');
 
         //textMessage = 'Apel invalid!'; //old IGV
         textMessage = l.resetPasswordApelInvalid;
@@ -432,12 +424,11 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
         textColor = Colors.black;
 
       }
-      else if (int.parse(resTrimitePinPentruResetareParolaMedic!.body) == 401)
+      else if (int.parse(resTrimitePinPentruResetareParolaMedic.body) == 401)
       {
 
         //prefs.setString(pref_keys.userEmail, controllerEmail.text);
         //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
-        print('Cont inexistent');
 
         //textMessage = 'Cont inexistent!'; //old IGV
 
@@ -446,12 +437,11 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
         textColor = Colors.black;
 
       }
-      else if (int.parse(resTrimitePinPentruResetareParolaMedic!.body) == 405)
+      else if (int.parse(resTrimitePinPentruResetareParolaMedic.body) == 405)
       {
 
 
-        print('Cont existent dar clientul nu are date de contact!');
-        
+
         //textMessage = 'Cont existent dar clientul nu are date de contact!'; //old IGV
 
         textMessage = l.resetPasswordContExistentDarClientulNuAreDateDeContact; //old IGV
@@ -460,10 +450,9 @@ class _VerificaCodulScreenState extends State<VerificaCodulScreen> {
         textColor = Colors.black;
 
       }
-      else if (int.parse(resTrimitePinPentruResetareParolaMedic!.body) == 500)
+      else if (int.parse(resTrimitePinPentruResetareParolaMedic.body) == 500)
       {
 
-        print('A apărut o eroare la execuția metodei');
 
         //textMessage = 'A apărut o eroare la execuția metodei!'; //old IGV
         

@@ -347,14 +347,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: widget.contMedicMobile.linkPozaProfil.isEmpty
                             ? Image.asset(
                                 './assets/images/user_fara_poza.png',
-                                width: 60,
-                                height: 60,
+                                width: 80,
+                                height: 80,
                                 fit: BoxFit.cover,
                               )
                             : Image.network(
                                 widget.contMedicMobile.linkPozaProfil,
-                                width: 60,
-                                height: 60,
+                                width: 80,
+                                height: 80,
                                 fit: BoxFit.cover,
                               ),
                       ),

@@ -3,11 +3,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils/utils_widgets.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
-import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart'
-    as pref_keys;
+import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
 
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 
@@ -47,13 +45,12 @@ class RatingWidgets extends StatelessWidget {
 
     //print('Sfarsit perioada: $sfarsitPerioada ' + DateTime.utc(sfarsitPerioada.year, sfarsitPerioada.month, sfarsitPerioada.day).toString());
 
-    List<RecenzieMobile> listaFiltrata = filterListRecenzieMobileByIntervalData(
-        startPerioada, sfarsitPerioada, listaRecenziiByMedicRating);
+    List<RecenzieMobile> listaFiltrata =
+        filterListRecenzieMobileByIntervalData(startPerioada, sfarsitPerioada, listaRecenziiByMedicRating);
 
     //List<RatingItem> listaFiltrata = [];   //listaRating;
 
-    var length = listaFiltrata.length;
-    print('Size lista: $length');
+    // var length = listaFiltrata.length;
 
     listaFiltrata.asMap().forEach((index, value) {
       if (index < listaFiltrata.length - 1) {
@@ -65,8 +62,7 @@ class RatingWidgets extends StatelessWidget {
               textComentariu: value.comentariu,
               //iconPath:value.linkPozaProfil, textData: DateFormat('dd MMMM yyyy', 'ro').format(value.dataRecenzie), textRating: value.rating.toString()), //old IGV
               iconPath: value.linkPozaProfil,
-              textData: DateFormat('dd MMMM yyyy', l.ratingWidgetsLimba)
-                  .format(value.dataRecenzie),
+              textData: DateFormat('dd MMMM yyyy', l.ratingWidgetsLimba).format(value.dataRecenzie),
               textRating: value.rating.toString()),
         );
         mywidgets.add(
@@ -81,15 +77,14 @@ class RatingWidgets extends StatelessWidget {
               textComentariu: value.comentariu,
               //iconPath:value.linkPozaProfil, textData: DateFormat('dd MMMM yyyy', 'ro').format(value.dataRecenzie), textRating: value.rating.toString()), //old IGV
               iconPath: value.linkPozaProfil,
-              textData: DateFormat('dd MMMM yyyy', l.ratingWidgetsLimba)
-                  .format(value.dataRecenzie),
+              textData: DateFormat('dd MMMM yyyy', l.ratingWidgetsLimba).format(value.dataRecenzie),
               textRating: value.rating.toString()),
         );
       }
     });
     if (listaFiltrata.isEmpty) {
-      mywidgets.add(Padding(
-        padding: const EdgeInsets.all(8.0),
+      mywidgets.add(const Padding(
+        padding: EdgeInsets.all(8.0),
         child: Text(
           "Nu există rating-uri pentru perioada selectată.",
           style: TextStyle(fontSize: 18),
@@ -104,19 +99,14 @@ class RatingWidgets extends StatelessWidget {
   }
 }
 
-class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget
-    extends StatelessWidget {
+class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget extends StatelessWidget {
   final String textNume;
   final String textOras;
   final String iconPath;
   final String textDurata;
 
   const IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget(
-      {super.key,
-      required this.textNume,
-      required this.textOras,
-      required this.iconPath,
-      required this.textDurata});
+      {super.key, required this.textNume, required this.textOras, required this.iconPath, required this.textDurata});
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +122,7 @@ class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget
             border: Border.all(
               color: const Color.fromRGBO(255, 255, 255, 1),
             ),
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            // borderRadius: const BorderRadius.all(Radius.circular(10)),
             boxShadow: const [
               BoxShadow(
                 color: Color.fromRGBO(220, 220, 220, 1),
@@ -216,7 +206,7 @@ class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget
                       height: 16.0,
                       decoration: const BoxDecoration(
                         color: Color.fromRGBO(14, 190, 127, 1),
-                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        // borderRadius: BorderRadius.all(Radius.circular(3)),
                       ),
                       alignment: Alignment.center,
                       //child: Text('Apel video', style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 11, fontWeight: FontWeight.w400)), //old IGV
@@ -236,7 +226,7 @@ class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget
                       height: 16.0,
                       decoration: const BoxDecoration(
                         color: Color.fromRGBO(241, 201, 0, 1),
-                        borderRadius: BorderRadius.all(Radius.circular(3)),
+                        // borderRadius: BorderRadius.all(Radius.circular(3)),
                       ),
                       alignment: Alignment.center,
                       //child: Text('Recomandare', style: GoogleFonts.rubik(color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 11, fontWeight: FontWeight.w400)), //old IGV
@@ -246,9 +236,7 @@ class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget
                               fontSize: 11,
                               fontWeight: FontWeight.w400)),
                     ),
-                    onTap: () {
-                      //print("Click event on Recomandare");
-                    },
+                    onTap: () {},
                   ),
                 ],
               ),
@@ -296,8 +284,8 @@ class FadingListViewWidget extends StatelessWidget {
         /*child: ListView.builder(
             itemCount: 1,
             itemBuilder: (BuildContext context, int index) {
-              return IconNumeRatingTextDataRaspunde(iconPath: iconPath, textNume: textNume, textComentariu: textComentariu, textData: textData, textRating: textRating); 
-            },  
+              return IconNumeRatingTextDataRaspunde(iconPath: iconPath, textNume: textNume, textComentariu: textComentariu, textData: textData, textRating: textRating);
+            },
           ),
           */
         child: IconNumeRatingTextDataRaspunde(
@@ -333,13 +321,11 @@ class IconNumeRatingTextDataRaspunde extends StatefulWidget {
       required this.id});
 
   @override
-  State<IconNumeRatingTextDataRaspunde> createState() =>
-      _IconNumeRatingTextDataRaspunde();
+  State<IconNumeRatingTextDataRaspunde> createState() => _IconNumeRatingTextDataRaspunde();
 }
 
-class _IconNumeRatingTextDataRaspunde
-    extends State<IconNumeRatingTextDataRaspunde> {
-  double? _ratingValue = 4.9;
+class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspunde> {
+  // double? _ratingValue = 4.9;
 
   bool raspunsCorect = false;
   bool showButonRaspunde = false;
@@ -353,8 +339,7 @@ class _IconNumeRatingTextDataRaspunde
   final TextEditingController raspunsController = TextEditingController();
   final GlobalKey<FormState> _keyDialogForm = GlobalKey<FormState>();
 
-  Future<http.Response?> raspundeLaFeedbackDinContMedic(
-      String idFeedback, String comentariu) async {
+  Future<http.Response?> raspundeLaFeedbackDinContMedic(String idFeedback, String comentariu) async {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     String textMessage = '';
@@ -366,8 +351,7 @@ class _IconNumeRatingTextDataRaspunde
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
-    http.Response? resRaspundeLaFeedbackDinContMedic =
-        await apiCallFunctions.raspundeLaFeedbackDinContMedic(
+    http.Response? resRaspundeLaFeedbackDinContMedic = await apiCallFunctions.raspundeLaFeedbackDinContMedic(
       pUser: user,
       pParola: userPassMD5,
       pIdFeedback: idFeedback,
@@ -386,8 +370,6 @@ class _IconNumeRatingTextDataRaspunde
 
       //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
 
-      print('Răspuns salvat cu succes!');
-
       //textMessage = 'Răspuns salvat cu succes!'; //old IGV
       textMessage = l.ratingRaspunsSalvatCuSucces;
 
@@ -399,8 +381,6 @@ class _IconNumeRatingTextDataRaspunde
         showButonRaspunde = true;
       });
 
-      print('Apel invalid!');
-
       //textMessage = 'Apel invalid!'; //old IGV
       textMessage = l.ratingRaspundeLaFeedbackDinContMedicApelInvalid;
       backgroundColor = Colors.red;
@@ -408,7 +388,6 @@ class _IconNumeRatingTextDataRaspunde
     } else if (int.parse(resRaspundeLaFeedbackDinContMedic.body) == 401) {
       //prefs.setString(pref_keys.userEmail, controllerEmail.text);
       //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
-      print('Eroare la adăugare răspuns!');
 
       setState(() {
         raspunsCorect = false;
@@ -416,30 +395,24 @@ class _IconNumeRatingTextDataRaspunde
       });
 
       //textMessage = 'Eroare la adăugare răspuns!'; //old IGV
-      textMessage =
-          l.ratingRaspundeLaFeedbackDinContMedicEroareLaAdaugareRaspuns;
+      textMessage = l.ratingRaspundeLaFeedbackDinContMedicEroareLaAdaugareRaspuns;
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (int.parse(resRaspundeLaFeedbackDinContMedic!.body) == 405) {
+    } else if (int.parse(resRaspundeLaFeedbackDinContMedic.body) == 405) {
       setState(() {
         raspunsCorect = false;
         showButonRaspunde = true;
       });
-
-      print('Informații insuficiente!');
 
       //textMessage = 'Informații insuficiente!'; //old IGV
-      textMessage =
-          l.ratingRaspundeLaFeedbackDinContMedicInformatiiInsuficiente;
+      textMessage = l.ratingRaspundeLaFeedbackDinContMedicInformatiiInsuficiente;
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (int.parse(resRaspundeLaFeedbackDinContMedic!.body) == 500) {
+    } else if (int.parse(resRaspundeLaFeedbackDinContMedic.body) == 500) {
       setState(() {
         raspunsCorect = false;
         showButonRaspunde = true;
       });
-
-      print('A apărut o eroare la execuția metodei!');
 
       //textMessage = 'A apărut o eroare la execuția metodei!';
       textMessage = l.ratingRaspundeLaFeedbackDinContMedicAAparutOEroare;
@@ -455,8 +428,7 @@ class _IconNumeRatingTextDataRaspunde
     return null;
   }
 
-  Future<http.Response?> modificaRaspunsDeLaFeedbackDinContMedic(
-      String idFeedback, String comentariu) async {
+  Future<http.Response?> modificaRaspunsDeLaFeedbackDinContMedic(String idFeedback, String comentariu) async {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     String textMessage = '';
@@ -488,29 +460,24 @@ class _IconNumeRatingTextDataRaspunde
 
       //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
 
-      print('Răspuns modificat cu succes!');
-
       //textMessage = 'Răspuns modificat cu succes!'; //old IGV
       textMessage = l.ratingModificaRaspunsDeLaFeedbackRaspunsModificatCuSucces;
 
       backgroundColor = const Color.fromARGB(255, 14, 190, 127);
       textColor = Colors.white;
-    } else if (resModificaRaspunsDeLaFeedbackDinContMedic!.statusCode == 400) {
+    } else if (resModificaRaspunsDeLaFeedbackDinContMedic.statusCode == 400) {
       setState(() {
         modificareRaspuns = false;
         showButonModifica = true;
       });
 
-      print('Apel invalid!');
-
       //textMessage = 'Apel invalid!'; //old IGV
       textMessage = l.ratingModificaRaspunsDeLaFeedbackApelInvalid;
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (resModificaRaspunsDeLaFeedbackDinContMedic!.statusCode == 401) {
+    } else if (resModificaRaspunsDeLaFeedbackDinContMedic.statusCode == 401) {
       //prefs.setString(pref_keys.userEmail, controllerEmail.text);
       //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
-      print('Eroare la modificare răspuns!');
 
       setState(() {
         modificareRaspuns = false;
@@ -518,30 +485,25 @@ class _IconNumeRatingTextDataRaspunde
       });
 
       //textMessage = 'Eroare la modificare răspuns!'; //old IGV
-      textMessage =
-          l.ratingModificaRaspunsDeLaFeedbackEroareLaModificareRaspuns;
+      textMessage = l.ratingModificaRaspunsDeLaFeedbackEroareLaModificareRaspuns;
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (resModificaRaspunsDeLaFeedbackDinContMedic!.statusCode == 405) {
+    } else if (resModificaRaspunsDeLaFeedbackDinContMedic.statusCode == 405) {
       setState(() {
         modificareRaspuns = false;
         showButonModifica = true;
       });
-
-      print('Informații insuficiente!');
 
       //textMessage = 'Informații insuficiente!'; //old IGV
       textMessage = l
           .ratingModificaRaspunsDeLaFeedbackInformatiiInsuficiente; //ratingRaspundeLaFeedbackDinContMedicInformatiiInsuficiente;
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (resModificaRaspunsDeLaFeedbackDinContMedic!.statusCode == 500) {
+    } else if (resModificaRaspunsDeLaFeedbackDinContMedic.statusCode == 500) {
       setState(() {
         modificareRaspuns = false;
         showButonModifica = true;
       });
-
-      print('A apărut o eroare la execuția metodei!');
 
       //textMessage = 'A apărut o eroare la execuția metodei!';
       textMessage = l.ratingModificaRaspunsDeLaFeedbackAAparutOEroare;
@@ -557,8 +519,7 @@ class _IconNumeRatingTextDataRaspunde
     return null;
   }
 
-  Future<http.Response?> stergeRaspunsDeLaFeedbackDinContMedic(
-      String idFeedback) async {
+  Future<http.Response?> stergeRaspunsDeLaFeedbackDinContMedic(String idFeedback) async {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -590,28 +551,23 @@ class _IconNumeRatingTextDataRaspunde
 
       //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
 
-      print('Răspuns șters cu succes!');
-
       //textMessage = 'Răspuns șters cu succes!'; //old IGV
-      textMessage = l
-          .ratingStergeRaspunsDeLaFeedbackRaspunsStersCuSucces; //setariProfilEducatieStearsaCuSucces;
+      textMessage = l.ratingStergeRaspunsDeLaFeedbackRaspunsStersCuSucces; //setariProfilEducatieStearsaCuSucces;
 
       backgroundColor = const Color.fromARGB(255, 14, 190, 127);
       textColor = Colors.white;
-    } else if (resStergeRaspunsDeLaFeedbackDinContMedic!.statusCode == 400) {
+    } else if (resStergeRaspunsDeLaFeedbackDinContMedic.statusCode == 400) {
       setState(() {
         stergereRaspuns = false;
         showButonSterge = true;
       });
-
-      print('Apel invalid!');
 
       //textMessage = 'Apel invalid!'; //old IGV
       textMessage = l.ratingStergeRaspunsDeLaFeedbackApelInvalid;
 
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (resStergeRaspunsDeLaFeedbackDinContMedic!.statusCode == 401) {
+    } else if (resStergeRaspunsDeLaFeedbackDinContMedic.statusCode == 401) {
       setState(() {
         stergereRaspuns = false;
         showButonSterge = true;
@@ -619,34 +575,28 @@ class _IconNumeRatingTextDataRaspunde
 
       //prefs.setString(pref_keys.userEmail, controllerEmail.text);
       //prefs.setString(pref_keys.userPassMD5, apiCallFunctions.generateMd5(controllerPass.text));
-      print('Eroare! Răspunsul nu a putut fi șters!');
 
       //textMessage = 'Eroare! Răspunsul nu a putut fi șters!'; //old IGV
-      textMessage =
-          l.ratingStergeRaspunsDeLaFeedbackEroareRaspunsulNuAPututFiSters;
+      textMessage = l.ratingStergeRaspunsDeLaFeedbackEroareRaspunsulNuAPututFiSters;
 
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (resStergeRaspunsDeLaFeedbackDinContMedic!.statusCode == 405) {
+    } else if (resStergeRaspunsDeLaFeedbackDinContMedic.statusCode == 405) {
       setState(() {
         stergereRaspuns = false;
         showButonSterge = true;
       });
-
-      print('Informații insuficiente!');
 
       //textMessage = 'Informații insuficiente!'; //old IGV
       textMessage = l.ratingStergeRaspunsDeLaFeedbackInformatiiInsuficiente;
 
       backgroundColor = Colors.red;
       textColor = Colors.black;
-    } else if (resStergeRaspunsDeLaFeedbackDinContMedic!.statusCode == 500) {
+    } else if (resStergeRaspunsDeLaFeedbackDinContMedic.statusCode == 500) {
       setState(() {
         stergereRaspuns = false;
         showButonSterge = true;
       });
-
-      print('A apărut o eroare la execuția metodei!');
 
       //textMessage = 'A apărut o eroare la execuția metodei!'; //old IGV
       textMessage = l.ratingStergeRaspunsDeLaFeedbackAAparutOEroare;
@@ -721,9 +671,9 @@ class _IconNumeRatingTextDataRaspunde
   }
 
   String fieldRaspunsDat = '';
-  TextEditingController _textFieldRaspund = TextEditingController();
+  final TextEditingController _textFieldRaspund = TextEditingController();
 
-  TextEditingController _textFieldModificaRaspuns = TextEditingController();
+  final TextEditingController _textFieldModificaRaspuns = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -733,7 +683,7 @@ class _IconNumeRatingTextDataRaspunde
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          // borderRadius: BorderRadius.circular(15),
           border: const Border(
             left: BorderSide(
               width: 7,
@@ -756,8 +706,7 @@ class _IconNumeRatingTextDataRaspunde
             Container(
               height: 45,
               width: 45,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.grey[400]),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey[400]),
               child: widget.iconPath.isEmpty
                   ? Image.asset(
                       './assets/images/user_fara_poza.png',
@@ -774,15 +723,28 @@ class _IconNumeRatingTextDataRaspunde
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.textNume,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff677294),
-                    ),
-                  ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        widget.textNume,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff677294),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      // const Icon(
+                      //   Icons.notifications_none,
+                      //   size: 25,
+                      //   color: Colors.black38,
+                      // ),
+                    ],
+                  ),
+                  const Row(
                     children: [
                       Icon(
                         Icons.star,
@@ -804,24 +766,23 @@ class _IconNumeRatingTextDataRaspunde
                         Icons.star,
                         color: Colors.yellow,
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 5,
                       ),
                       Text(
                         '4.9',
-                        style: TextStyle(
-                            color: Colors.yellow, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
-                  Text(
-                    widget.textComentariu,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff677294),
-                    ),
-                  ),
+                  // Text(
+                  //   widget.textComentariu,
+                  //   style: const TextStyle(
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.w500,
+                  //     color: Color(0xff677294),
+                  //   ),
+                  // ),
                   const SizedBox(
                     height: 20,
                   ),
@@ -830,7 +791,7 @@ class _IconNumeRatingTextDataRaspunde
                     color: Colors.grey[300],
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 7,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -863,22 +824,19 @@ class _IconNumeRatingTextDataRaspunde
                               const SizedBox(
                                 width: 5,
                               ),
-                              Image.asset(
-                                  './assets/images/raspunde_rating.png'),
+                              Image.asset('./assets/images/raspunde_rating.png'),
                             ],
                           ),
                         )
                     ],
                   ),
-                  if (widget.textRaspuns.isNotEmpty || raspunsCorect)
-                    const SizedBox(height: 10),
+                  if (widget.textRaspuns.isNotEmpty || raspunsCorect) const SizedBox(height: 10),
                   if (widget.textRaspuns.isNotEmpty || raspunsCorect)
                     Divider(
                       height: 1,
                       color: Colors.grey[300],
                     ),
-                  if (widget.textRaspuns.isNotEmpty || raspunsCorect)
-                    const SizedBox(height: 10),
+                  if (widget.textRaspuns.isNotEmpty || raspunsCorect) const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -899,50 +857,43 @@ class _IconNumeRatingTextDataRaspunde
                     ],
                   ),
                   if (raspunsCorect)
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              widget.textRaspuns.isNotEmpty
-                                  ? _textFieldModificaRaspuns.text =
-                                      widget.textRaspuns
-                                  : raspunsCorect
-                                      ? _textFieldModificaRaspuns.text =
-                                          fieldRaspunsDat
-                                      : null;
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      GestureDetector(
+                        onTap: () async {
+                          widget.textRaspuns.isNotEmpty
+                              ? _textFieldModificaRaspuns.text = widget.textRaspuns
+                              : raspunsCorect
+                                  ? _textFieldModificaRaspuns.text = fieldRaspunsDat
+                                  : null;
 
-                              _showEditareDialog();
-                            },
-                            child: SizedBox(
-                              //child: Text('Modifică', //old IGV
-                              child: Text(l.ratingModifica,
-                                  style: GoogleFonts.rubik(
-                                      color:
-                                          const Color.fromRGBO(14, 190, 127, 1),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400)),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              await stergeRaspunsDeLaFeedbackDinContMedic(
-                                  widget.id);
-                              setState(() {
-                                raspunsCorect = false;
-                              });
-                            },
-                            child: SizedBox(
-                              //child: Text('Șterge', //old IGV
-                              child: Text(l.ratingSterge,
-                                  style: GoogleFonts.rubik(
-                                      color:
-                                          const Color.fromRGBO(14, 190, 127, 1),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400)),
-                            ),
-                          ),
-                        ])
+                          _showEditareDialog();
+                        },
+                        child: SizedBox(
+                          //child: Text('Modifică', //old IGV
+                          child: Text(l.ratingModifica,
+                              style: GoogleFonts.rubik(
+                                  color: const Color.fromRGBO(14, 190, 127, 1),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400)),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          await stergeRaspunsDeLaFeedbackDinContMedic(widget.id);
+                          setState(() {
+                            raspunsCorect = false;
+                          });
+                        },
+                        child: SizedBox(
+                          //child: Text('Șterge', //old IGV
+                          child: Text(l.ratingSterge,
+                              style: GoogleFonts.rubik(
+                                  color: const Color.fromRGBO(14, 190, 127, 1),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400)),
+                        ),
+                      ),
+                    ])
                 ],
               ),
             )
@@ -957,14 +908,14 @@ class _IconNumeRatingTextDataRaspunde
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Răspunde'),
+          title: const Text('Răspunde'),
           content: TextFormField(
             controller: _textFieldModificaRaspuns,
             onChanged: (value) {
               _textFieldModificaRaspuns.text = value;
               fieldRaspunsDat = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: "Mulțumesc..",
             ),
           ),
@@ -973,20 +924,19 @@ class _IconNumeRatingTextDataRaspunde
               onTap: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Anulează'),
+              child: const Text('Anulează'),
             ),
             GestureDetector(
               onTap: () async {
                 Navigator.of(context).pop();
                 _textFieldModificaRaspuns.text.isNotEmpty
-                    ? await modificaRaspunsDeLaFeedbackDinContMedic(
-                        widget.id, _textFieldModificaRaspuns.text)
+                    ? await modificaRaspunsDeLaFeedbackDinContMedic(widget.id, _textFieldModificaRaspuns.text)
                     : Fluttertoast.showToast(msg: "Introduceți un răspuns");
 
                 _textFieldRaspund.clear();
                 setState(() {});
               },
-              child: Text('Răspunde'),
+              child: const Text('Răspunde'),
             ),
           ],
         );
@@ -999,14 +949,14 @@ class _IconNumeRatingTextDataRaspunde
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Răspunde'),
+          title: const Text('Răspunde'),
           content: TextFormField(
             controller: _textFieldRaspund,
             onChanged: (value) {
               _textFieldRaspund.text = value;
               fieldRaspunsDat = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: "Mulțumesc..",
             ),
           ),
@@ -1015,20 +965,19 @@ class _IconNumeRatingTextDataRaspunde
               onTap: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Anulează'),
+              child: const Text('Anulează'),
             ),
             GestureDetector(
               onTap: () async {
                 Navigator.of(context).pop();
                 _textFieldRaspund.text.isNotEmpty
-                    ? await raspundeLaFeedbackDinContMedic(
-                        widget.id, _textFieldRaspund.text)
+                    ? await raspundeLaFeedbackDinContMedic(widget.id, _textFieldRaspund.text)
                     : Fluttertoast.showToast(msg: "Introduceți un răspuns");
 
                 _textFieldRaspund.clear();
                 setState(() {});
               },
-              child: Text('Răspunde'),
+              child: const Text('Răspunde'),
             ),
           ],
         );

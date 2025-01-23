@@ -24,6 +24,56 @@ class NotificationDetailsScreen extends StatefulWidget {
 }
 
 class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
+
+  int remainingTime = 180;
+  Timer? countdownTimer;
+
+  ValueNotifier<int> remainingTimeNotifier = ValueNotifier(180);
+
+
+  void startTimer() {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTimeNotifier.value > 0) {
+        remainingTimeNotifier.value--;
+      } else {
+        timer.cancel();
+        handleTimeout();
+      }
+    });
+  }
+
+
+
+  void handleTimeout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+    Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+
+    String body = additionalData['body'] ?? '0';
+    String tip = additionalData['tip']?.toString() ?? 'unknown';
+
+    String patientId = prefs.getString(pref_keys.userId) ?? '';
+    String patientNume = prefs.getString(pref_keys.userNume) ?? '';
+    String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
+
+    String pCheie = keyAppPacienti;
+    String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
+    String pMesaj = 'Răspunsul doctorului Respingere';
+
+    ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+    await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
+      pCheie: pCheie,
+      pIdPacient: int.tryParse(body) ?? 0,
+      pTip: tip,
+      pMesaj: pMesaj,
+      pObservatii: pObservatii,
+    );
+
+    navigateToDashboard(context);
+  }
+
+
+
   bool isLoading = false;
   Timer? _autoCloseTimer;
 
@@ -82,18 +132,17 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
     }
   }
 
-  Widget _getRequestIcon(dynamic tip) {
+  Widget _getRequestIcon() {
     IconData icon;
-    if (tip is String) tip = int.tryParse(tip);
-    switch (tip) {
-      case 1:
-        icon = Icons.phone;
+    switch (widget.page.toLowerCase()) {
+      case 'întrebare':
+        icon = Icons.chat_rounded;
         break;
-      case 2:
+      case 'recomandare':
         icon = Icons.analytics;
         break;
-      case 3:
-        icon = Icons.chat;
+      case 'apel':
+        icon = Icons.phone;
         break;
       default:
         icon = Icons.help;
@@ -101,9 +150,10 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
     return Icon(
       icon,
       size: 80,
-      color: const Color.fromRGBO(30, 214, 158, 1),
+      color: Colors.white,
     );
   }
+
 
   Map<String, dynamic> _parseAdditionalData(String rawData) {
     try {
@@ -129,6 +179,8 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
     super.initState();
     resetStateOnEnter();
 
+    startTimer();
+
     // _autoCloseTimer = Timer(const Duration(seconds: 30), () {
     //   // Automatically navigate when timer expires
     //   navigateToDashboard(context);
@@ -139,7 +191,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
   @override
   void dispose() {
     // Cancel the timer if the user leaves the screen before it expires
-    _autoCloseTimer?.cancel();
+    remainingTimeNotifier.dispose();
     super.dispose();
   }
 
@@ -157,21 +209,21 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
         Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            toolbarHeight: 90,
-            backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-            foregroundColor: Colors.white,
-            title: Text(
-              'Confirmare',
-              style: GoogleFonts.rubik(
-                color: const Color.fromRGBO(255, 255, 255, 1),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            centerTitle: true,
-          ),
+          // appBar: AppBar(
+          //   automaticallyImplyLeading: false,
+          //   toolbarHeight: 90,
+          //   backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+          //   foregroundColor: Colors.white,
+          //   title: Text(
+          //     'Confirmare',
+          //     style: GoogleFonts.rubik(
+          //       color: const Color.fromRGBO(255, 255, 255, 1),
+          //       fontSize: 16,
+          //       fontWeight: FontWeight.w500,
+          //     ),
+          //   ),
+          //   centerTitle: true,
+          // ),
           body: WillPopScope(
             onWillPop: () async => false,
             child: FutureBuilder<Map<String, dynamic>>(
@@ -188,167 +240,213 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
 
                   final Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
 
-                  return Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 88.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(30, 214, 158, 1),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      color: Colors.white,
-                    ),
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            const SizedBox(height: 50),
-                            _getRequestIcon(additionalData['tip']),
-                            const SizedBox(height: 20),
-                            Text(
-                              body,
-                              style: GoogleFonts.rubik(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 130),
-                            GestureDetector(
-                              onTap: () async {
-                                setState(() {
-                                  isLoading = true;
-                                });
-
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
-                                Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
-                                String body = additionalData['body'] ?? '0';
-                                String tip = additionalData['tip']?.toString() ?? 'unknown';
-
-                                String patientId = prefs.getString(pref_keys.userId) ?? '';
-                                String patientNume = prefs.getString(pref_keys.userNume) ?? '';
-                                String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
-
-                                int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
-                                String pTip = tip;
-                                String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
-
-                                String pCheie = keyAppPacienti;
-                                String pMesaj =
-                                    'Răspunsul doctorului ${widget.contMedicMobile.titulatura} ${widget.contMedicMobile.numeComplet} : Confirmare';
-
-                                ApiCallFunctions apiCallFunctions = ApiCallFunctions();
-                                await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-                                  pCheie: pCheie,
-                                  pIdPacient: pIdPacient,
-                                  pTip: pTip,
-                                  pMesaj: pMesaj,
-                                  pObservatii: pObservatii,
-                                );
-
-                                await Future.delayed(const Duration(seconds: 2));
-
-                                setState(() {
-                                  isLoading = false;
-                                });
-
-
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WaitingForPaymentScreen(page: widget.page),
-                                  ),
-                                );
-
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(30, 214, 158, 1),
-                                  borderRadius: BorderRadius.circular(20),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              const SizedBox(height: 50),
+                              _getRequestIcon(),
+                              const SizedBox(height: 20),
+                              Text(
+                                body,
+                                style: GoogleFonts.rubik(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
-                                child: const Center(
-                                  child: Text(
-                                    "Confirmare",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 130),
+                              GestureDetector(
+                                onTap: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+                                  Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+                                  String body = additionalData['body'] ?? '0';
+                                  String tip = additionalData['tip']?.toString() ?? 'unknown';
+
+                                  String patientId = prefs.getString(pref_keys.userId) ?? '';
+                                  String patientNume = prefs.getString(pref_keys.userNume) ?? '';
+                                  String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
+
+                                  int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
+                                  String pTip = tip;
+                                  String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
+
+                                  String pCheie = keyAppPacienti;
+                                  String pMesaj =
+                                      'Răspunsul doctorului ${widget.contMedicMobile.titulatura} ${widget.contMedicMobile.numeComplet} : Confirmare';
+
+                                  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+                                  await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
+                                    pCheie: pCheie,
+                                    pIdPacient: pIdPacient,
+                                    pTip: pTip,
+                                    pMesaj: pMesaj,
+                                    pObservatii: pObservatii,
+                                  );
+
+                                  await Future.delayed(const Duration(seconds: 2));
+
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => WaitingForPaymentScreen(page: widget.page),
+                                    ),
+                                  );
+
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color:  Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "ACCEPTĂ",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: const Color.fromRGBO(30, 214, 158, 1),
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 17),
-                            GestureDetector(
-                              onTap: () async {
+                              const SizedBox(height: 27),
+                              GestureDetector(
+                                onTap: () async {
 
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
-                                Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
-                                String body = additionalData['body'] ?? '0';
-                                String tip = additionalData['tip']?.toString() ?? 'unknown';
+                                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                                  String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+                                  Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+                                  String body = additionalData['body'] ?? '0';
+                                  String tip = additionalData['tip']?.toString() ?? 'unknown';
 
-                                String patientId = prefs.getString(pref_keys.userId) ?? '';
-                                String patientNume = prefs.getString(pref_keys.userNume) ?? '';
-                                String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
+                                  String patientId = prefs.getString(pref_keys.userId) ?? '';
+                                  String patientNume = prefs.getString(pref_keys.userNume) ?? '';
+                                  String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
 
-                                int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
-                                String pTip = tip;
-                                String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
+                                  int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
+                                  String pTip = tip;
+                                  String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
 
-                                String pCheie = keyAppPacienti;
-                                String pMesaj =
-                                    'Răspunsul doctorului ${widget.contMedicMobile.titulatura} ${widget.contMedicMobile.numeComplet} : Respingere';
+                                  String pCheie = keyAppPacienti;
+                                  String pMesaj =
+                                      'Răspunsul doctorului ${widget.contMedicMobile.titulatura} ${widget.contMedicMobile.numeComplet} : Respingere';
 
-                                ApiCallFunctions apiCallFunctions = ApiCallFunctions();
-                                await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-                                  pCheie: pCheie,
-                                  pIdPacient: pIdPacient,
-                                  pTip: pTip,
-                                  pMesaj: pMesaj,
-                                  pObservatii: pObservatii,
-                                );
+                                  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+                                  await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
+                                    pCheie: pCheie,
+                                    pIdPacient: pIdPacient,
+                                    pTip: pTip,
+                                    pMesaj: pMesaj,
+                                    pObservatii: pObservatii,
+                                  );
 
-                                await Future.delayed(const Duration(seconds: 2));
+                                  await Future.delayed(const Duration(seconds: 2));
 
-                                setState(() {
-                                  isLoading = false;
-                                });
-                                // setState(() {
-                                //   isLoading = true;
-                                // });
-                                navigateToDashboard(context);
-                                // setState(() {
-                                //   isLoading = false;
-                                // });
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromRGBO(30, 214, 158, 1),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    "Respingere",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  // setState(() {
+                                  //   isLoading = true;
+                                  // });
+                                  navigateToDashboard(context);
+                                  // setState(() {
+                                  //   isLoading = false;
+                                  // });
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color:  Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      "REFUZĂ",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color:  Colors.red,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 100),
-                          ],
+
+                              const SizedBox(height: 18),
+
+                              Padding(
+                                padding: const EdgeInsets.only(left: 98.0, right: 98.0),
+                                child: Container(
+                                  color: Colors.white.withOpacity(0.3), // Faded white background
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AnimatedContainer(
+                                        duration: const Duration(milliseconds: 500),
+                                        width: 10,
+                                        height: 10,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      ValueListenableBuilder<int>(
+                                        valueListenable: remainingTimeNotifier,
+                                        builder: (context, remainingTime, _) {
+                                          return Text(
+                                            "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}", // Format as MM:SS
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      const SizedBox(width: 8),
+                                      const Icon(
+                                        Icons.timer,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+                              const SizedBox(height: 100),
+                            ],
+                          ),
                         ),
                       ),
                     ),
