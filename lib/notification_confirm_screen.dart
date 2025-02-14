@@ -44,33 +44,37 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
 
 
 
-  void handleTimeout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
-    Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+void handleTimeout() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+  Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
 
-    String body = additionalData['body'] ?? '0';
-    String tip = additionalData['tip']?.toString() ?? 'unknown';
+  String body = additionalData['body'] ?? '0';
+  String tip = additionalData['tip']?.toString() ?? 'unknown';
 
-    String patientId = prefs.getString(pref_keys.userId) ?? '';
-    String patientNume = prefs.getString(pref_keys.userNume) ?? '';
-    String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
+  String patientId = prefs.getString(pref_keys.userId) ?? '';
+  String patientNume = prefs.getString(pref_keys.userNume) ?? '';
+  String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
 
-    String pCheie = keyAppPacienti;
-    String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
-    String pMesaj = 'Răspunsul doctorului Respingere';
+  String pCheie = keyAppPacienti;
+  String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
+  String pMesaj = 'Răspunsul doctorului: Respingere (Doctor nu a răspuns în timp)';
 
-    ApiCallFunctions apiCallFunctions = ApiCallFunctions();
-    await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-      pCheie: pCheie,
-      pIdPacient: int.tryParse(body) ?? 0,
-      pTip: tip,
-      pMesaj: pMesaj,
-      pObservatii: pObservatii,
-    );
+  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
+  await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
+    pCheie: pCheie,
+    pIdPacient: int.tryParse(body) ?? 0,
+    pTip: tip,
+    pMesaj: pMesaj,
+    pObservatii: pObservatii,
+  );
 
-    navigateToDashboard(context);
-  }
+  print("📢 Timeout: Rejection notification sent to patient!");
+
+  // ✅ Navigate to Dashboard
+  navigateToDashboard(context);
+}
+
 
 
 

@@ -233,6 +233,7 @@ class _ChestionarScreenState extends State<ChestionarScreen> {
       resizeToAvoidBottomInset: false,
       body: Column(
         children: [
+         
           const TopIconsTextWidget(),
           const SizedBox(height: 7),
           customPaddingChestionar(),
@@ -669,18 +670,14 @@ class _ChestionarScreenState extends State<ChestionarScreen> {
           const SizedBox(
             height: 35,
           ),
+          if (widget.page == "apel")
           SizedBox(
             width: 330,
             height: 54,
             child: ElevatedButton(
               onPressed: () {
-                // Navigator.push(context, MaterialPageRoute
-                //   (
-                //     builder: (context) {
-                //       return const ApelVideoMedicScreen();
-                //     }
-                //   ),
-                // );
+                print("🟢 Button Clicked in ChestionarScreen");
+                widget.onContinue();
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
@@ -704,11 +701,13 @@ class _ChestionarScreenState extends State<ChestionarScreen> {
           const SizedBox(
             height: 8,
           ),
+          if (widget.page == "întrebare")
           SizedBox(
             width: 330,
             height: 54,
             child: ElevatedButton(
               onPressed: () {
+                print("🟢 Button Clicked in ChestionarScreen");
                 widget.onContinue();
 
                 // Navigator.push(
@@ -775,6 +774,7 @@ class TopIconsTextWidget extends StatelessWidget {
             ),
           ],
         ),
+            const SizedBox(height: 77),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [

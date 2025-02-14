@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-class SecondIntermediateScreen extends StatelessWidget {
+class SecondIntermediateScreen extends StatefulWidget {
   final VoidCallback onContinueToConfirm;
   final String page;
 
@@ -12,19 +12,34 @@ class SecondIntermediateScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    Timer(const Duration(seconds: 4), onContinueToConfirm);
+  _SecondIntermediateScreenState createState() => _SecondIntermediateScreenState();
+}
 
+class _SecondIntermediateScreenState extends State<SecondIntermediateScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // ✅ Start the timer properly in initState
+    Timer(const Duration(seconds: 4), () {
+      if (mounted) {
+        widget.onContinueToConfirm();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     String displayText = '';
     IconData displayIcon = Icons.article;
 
-    if (page == "întrebare") {
+    if (widget.page == "întrebare") {
       displayText = "Citește chestionarul";
       displayIcon = Icons.sticky_note_2_outlined;
-    } else if (page == "recomandare") {
+    } else if (widget.page == "recomandare") {
       displayText = "Vezi analize";
       displayIcon = Icons.analytics_outlined;
-    } else if (page == "apel") {
+    } else if (widget.page == "apel") {
       displayText = "Citește chestionarul";
       displayIcon = Icons.videocam;
     }

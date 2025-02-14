@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sos_bebe_profil_bebe_doctor/apel_video_medic_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/chestionar_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/first_intermediate_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/fouth_intermidate_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/payment_failed_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_doar_chat_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/raspunde_intrebare_medic_screen.dart';
@@ -88,66 +90,178 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
       saveNotificationData(event.notification);
     });
   }
+  Future<void> navigateToIntermediateScreen(String alertMessage,) async {
 
-  Future<void> navigateToIntermediateScreen(String alertMessage) async {
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userEmail = prefs.getString('userEmail');
+    String? user = prefs.getString('user');
     String? userPassMD5 = prefs.getString('userPassMD5');
 
-    if (userEmail == null || userPassMD5 == null) {
+
+    String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+    print('📡 Raw Notification Data: $rawData');
+
+    // Parse the raw data
+    Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+    String bodyString = additionalData['body'] ?? '0';
+
+    // Extract the name from the notification body
+    String notificationBody = prefs.getString(pref_keys.notificationBody) ?? '';
+    print('📩 Notification Body: $notificationBody');
+
+    // Extract Patient Name
+    final nameRegex = RegExp(r'Starea plății de la (.+):');
+    final match = nameRegex.firstMatch(notificationBody);
+    String patientName = match != null ? match.group(1) ?? 'Unknown' : 'Unknown';
+
+    int pIdPacient = int.tryParse(bodyString.replaceAll('\$', '').trim()) ?? 0;
+    int userId = int.tryParse(user!) ?? 0;
+
+    if ( userPassMD5 == null) {
+      print("❌ Error: Missing user credentials.");
       return;
     }
 
+    print("📡 Fetching Chestionar with:");
+    print("  - pUser: $user");
+    print("  - pParola: $userPassMD5");
+    print("  - pIdClient: $pIdPacient");
+
     ChestionarClientMobile? resGetUltimulChestionarCompletatByContMedic =
     await apiCallFunctions.getUltimulChestionarCompletatByContMedic(
-      pUser: userEmail,
+      pUser: user,
       pParola: userPassMD5,
-      pIdClient: '1',
+      pIdClient: pIdPacient.toString(),
     );
 
-    if (isNavigating) return;
+    if (resGetUltimulChestionarCompletatByContMedic == null) {
+      print("❌ API returned NULL for Chestionar! Continuing navigation...");
+      resGetUltimulChestionarCompletatByContMedic = ChestionarClientMobile(
+        numeCompletat: "",
+        prenumeCompletat: "",
+        dataNastereCompletata: DateTime.now(),
+        greutateCompletata: "",
+        listaRaspunsuri: [],
+      );
+    }
+
+    try {
+      print("✅ API Response Received: ${jsonEncode(resGetUltimulChestionarCompletatByContMedic)}");
+    } catch (e) {
+      print("❌ Error serializing ChestionarClientMobile: $e");
+    }
+
+    if (isNavigating) {
+      print("⚠️ Already navigating, ignoring...");
+      return;
+    }
     isNavigating = true;
 
+    print("🚀 Proceeding with Navigation...");
+
+    // ✅ **Step 1: Navigate to FirstIntermediateScreen**
+    print("🛑 Navigating to FirstIntermediateScreen...");
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => FirstIntermediateScreen(
           onContinueToSecond: () {
+            print("✅ FirstIntermediateScreen Completed. Moving to SecondIntermediateScreen...");
+
+            // ✅ **Step 2: Navigate to SecondIntermediateScreen**
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => SecondIntermediateScreen(
                   onContinueToConfirm: () {
+                    print("✅ SecondIntermediateScreen Completed. Checking if ThirdIntermediateScreen is needed...");
+
                     if (widget.page == "întrebare" || widget.page == "apel") {
-                      if (resGetUltimulChestionarCompletatByContMedic != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChestionarScreen(
-                              chestionar: resGetUltimulChestionarCompletatByContMedic,
-                              page: widget.page,
-                              onContinue: () {
-                                navigateToConfirmScreen(alertMessage);
-                              },
-                            ),
+                      print("🛑 Navigating to ThirdIntermediateScreen...");
+                      // ✅ **Step 3: Navigate to ThirdIntermediateScreen**
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ThirdIntermediateScreen(
+                            done: () {
+                              print("✅ ThirdIntermediateScreen Done. Navigating to ChestionarScreen...");
+                              // ✅ **Final Step: Move to ChestionarScreen**
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChestionarScreen(
+                                    chestionar: resGetUltimulChestionarCompletatByContMedic!,
+                                    page: widget.page,
+                                    onContinue: () async {
+                                      print("✅ ChestionarScreen Completed. Moving to Confirm Screen...");
+                                  if (widget.page == "apel"){
+                                    CallService callService = CallService();
+                                    callService.startPolling();
+
+                                    //     await Navigator.pushReplacement(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => ApelVideoMedicScreen(
+                                    //      remoteUid: 1,
+                                    //     ),
+                                    //   ),
+                                    // );
+                                  }
+                                  else if (widget.page == "întrebare"){
+                                    await Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => RaspundeIntrebareDoarChatScreen(
+                                          idClient: pIdPacient,
+                                          idMedic: userId,
+                                          textNume: 'Patient Name',
+                                          iconPathPacient: 'assets/images/default_patient_icon.png',
+                                          numePacient: patientName,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            failed: () {
+                              print("❌ ThirdIntermediateScreen Failed. Navigating to Reject Screen...");
+                              navigateToRejectScreen("Pacientul nu a reușit să termine întrebările");
+                            },
                           ),
-                        );
-                      } else {
-                        debugPrint('Failed to fetch chestionar data.');
-                      }
+                        ),
+                      );
                     } else if (widget.page == "recomandare") {
+                      print("🛑 Skipping ThirdIntermediateScreen, Navigating to RecomandareScreen...");
+                      // ✅ Skip ThirdIntermediateScreen, go directly to RecomandareScreen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => RecomandareScreen(
-                            onContinue: () {
-                              navigateToConfirmScreen(alertMessage);
+                            onContinue: () async {
+                              print("✅ RecomandareScreen Completed. Moving to Confirm Screen...");
+                              await Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RaspundeIntrebareMedicScreen(
+                                    idClient: pIdPacient,
+                                    idMedic: userId,
+                                    textNume: 'Patient Name',
+                                    iconPathPacient: 'assets/images/default_patient_icon.png',
+                                    numePacient: patientName,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),
                       );
                     } else {
-                      navigateToConfirmScreen(alertMessage); // Final step
+                      print("🛑 Directly Navigating to Confirm Screen...");
+                      navigateToConfirmScreen(alertMessage);
                     }
                   },
                   page: widget.page,
@@ -162,6 +276,28 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
 
 
 
+
+
+// Future<void> navigateToIntermediateScreen(String alertMessage) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? userEmail = prefs.getString('userEmail');
+//   String? userPassMD5 = prefs.getString('userPassMD5');
+
+//   if (userEmail == null || userPassMD5 == null) {
+//     return;
+//   }
+
+//   if (isNavigating) return;
+//   isNavigating = true;
+
+//   // 🚀 Directly call navigateToConfirmScreen based on widget.page
+//   if (widget.page == "apel") {
+//     CallService callService = CallService();
+//     callService.startPolling();
+//   }
+
+//   navigateToConfirmScreen(alertMessage);
+// }
 
 
 
@@ -185,14 +321,30 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
       countdownTimer!.cancel();
     }
 
-    if (alertMessage != null) {
-      if (alertMessage.toLowerCase().contains('plătit')) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+    Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+
+    String bodyString = additionalData['body']?.toString() ?? '0';
+    int pIdPacient = int.tryParse(bodyString.replaceAll('\$', '').trim()) ?? 0;
+
+    print("Extracted pIdPacient: $pIdPacient");
+
+    if (alertMessage != null && alertMessage.toLowerCase().contains('plătit')) {
+      if (pIdPacient > 0) {
         navigateToIntermediateScreen(alertMessage);
-      } else if (alertMessage.toLowerCase().contains('a eșuat')) {
-        navigateToRejectScreen(alertMessage);
+        // navigateToConfirmScreen(alertMessage);
+      } else {
+        print("Error: Invalid pIdPacient extracted.");
       }
+    } else if (alertMessage!.toLowerCase().contains('a eșuat')) {
+      navigateToRejectScreen(alertMessage);
+    } else if (alertMessage.toLowerCase().contains('părăsit sesiunea')) {
+      navigateToRejectScreen("Pacientul a părăsit sesiunea după 3 minute.");
     }
   }
+
+
 
 
   void navigateToRejectScreen(String? body) {
@@ -229,67 +381,81 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
   }
 
   Future<void> navigateToConfirmScreen(String? body) async {
+    print("🚀 navigateToConfirmScreen CALLED with body: $body");
+
+    if (isNavigating) {
+      print("⚠️ Already navigating, resetting flag...");
+      isNavigating = false; // Reset isNavigating so navigation can proceed
+    }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('userId') ?? '';
     String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
-    print('rawwwwwww data : $rawData');
+    print('📡 Raw Notification Data: $rawData');
 
     // Parse the raw data
     Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
-    String body = additionalData['body'] ?? '0';
+    String bodyString = additionalData['body'] ?? '0';
 
     // Extract the name from the notification body
     String notificationBody = prefs.getString(pref_keys.notificationBody) ?? '';
-    print('Notification Body: $notificationBody');
+    print('📩 Notification Body: $notificationBody');
 
-    // Extract the name using a regular expression
+    // Extract Patient Name
     final nameRegex = RegExp(r'Starea plății de la (.+):');
     final match = nameRegex.firstMatch(notificationBody);
     String patientName = match != null ? match.group(1) ?? 'Unknown' : 'Unknown';
 
-    int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
-    int UserId = int.parse(user);
+    int pIdPacient = int.tryParse(bodyString.replaceAll('\$', '').trim()) ?? 0;
+    int userId = int.tryParse(user) ?? 0;
 
-    if (isNavigating) return;
+    if (isNavigating) {
+      print("⚠️ Still navigating, skipping...");
+      return;
+    }
     isNavigating = true;
 
-    if (widget.page == "apel") {
-      CallService callService = CallService();
-      callService.startPolling();
-    }
-    else if (widget.page == "întrebare") {
+    print("✅ Proceeding with navigation...");
 
-
-      await Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RaspundeIntrebareDoarChatScreen(
-            idClient: pIdPacient, // Client ID from additional data
-            idMedic: UserId, // User ID from preferences
-            textNume: 'Patient Name', // Replace with the extracted name
-            iconPathPacient: 'assets/images/default_patient_icon.png', // Default icon path
-            numePacient: patientName, // Extracted patient's name
+    try {
+      if (widget.page == "apel") {
+        CallService callService = CallService();
+        callService.startPolling();
+      } else if (widget.page == "întrebare") {
+        await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RaspundeIntrebareDoarChatScreen(
+              idClient: pIdPacient,
+              idMedic: userId,
+              textNume: 'Patient Name',
+              iconPathPacient: 'assets/images/default_patient_icon.png',
+              numePacient: patientName,
+            ),
           ),
-        ),
-      );
-    }
-    else if (widget.page == "recomandare"){
-      await Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RaspundeIntrebareMedicScreen(
-            idClient: pIdPacient, // Client ID from additional data
-            idMedic: UserId, // User ID from preferences
-            textNume: 'Patient Name', // Replace with the extracted name
-            iconPathPacient: 'assets/images/default_patient_icon.png', // Default icon path
-            numePacient: patientName, /// Extracted patient's name
+        );
+      } else if (widget.page == "recomandare") {
+        await Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RaspundeIntrebareMedicScreen(
+              idClient: pIdPacient,
+              idMedic: userId,
+              textNume: 'Patient Name',
+              iconPathPacient: 'assets/images/default_patient_icon.png',
+              numePacient: patientName,
+            ),
           ),
-        ),
-      );
+        );
+      }
+    } catch (e) {
+      print("❌ Error during navigation: $e");
+    } finally {
+      print("🔄 Resetting isNavigating...");
+      isNavigating = false; // Ensure flag resets after navigation completes
     }
-
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -47,6 +47,8 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     _loadMessagesFromList();
     _startPeriodicFetching();
 
+
+
     _messageController.addListener(() {
       setState(() {
         isTyping = _messageController.text.isNotEmpty;
@@ -67,16 +69,176 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     super.dispose();
   }
 
+
+  int remainingTime = 180;
+  Timer? countdownTimer;
+
+  ValueNotifier<int> remainingTimeNotifier = ValueNotifier(180);
+
+  void startTimer() {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTimeNotifier.value > 0) {
+        remainingTimeNotifier.value--;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void _showWaitingForPaymentDialog() {
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+    remainingTimeNotifier.value = 180;
+    countdownTimer?.cancel(); // Prevent multiple timers
+    if (countdownTimer == null || !countdownTimer!.isActive) {
+  startTimer();
+}
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent accidental dismissal
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              titlePadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              backgroundColor: Colors.white,
+              title: Column(
+                children: [
+                  // Timer Icon
+                  const Icon(
+                    Icons.timer,
+                    size: 50,
+                    color: Color.fromRGBO(30, 214, 158, 1), // Same Green as Buttons
+                  ),
+                  const SizedBox(height: 10),
+                  // Countdown Timer with Animated Dot
+                  ValueListenableBuilder<int>(
+                    valueListenable: remainingTimeNotifier,
+                    builder: (context, remainingTime, _) {
+                      if (remainingTime == 0) {
+                        _closeDialogAndNavigate();
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: remainingTime % 2 == 0
+                                  ? Colors.red
+                                  : Colors.transparent, // Blinking effect
+                              border: Border.all(color: Colors.red, width: 1.5),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(30, 214, 158, 1),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  // Title Text
+                  Text(
+                    "Așteptați plata pacientului",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(103, 114, 148, 1),
+                    ),
+                  ),
+                ],
+              ),
+              content: const Text(
+                "Vă rugăm să așteptați până când pacientul efectuează plata.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+                   actions: [
+              TextButton(
+                onPressed: () {
+                  _closeDialogAndNavigate(); // ✅ Close dialog when button is pressed
+                },
+                child: const Text(
+                  "Închide", // "Close" in Romanian
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+// Method to close the dialog and navigate to Dashboard
+  void _closeDialogAndNavigate() {
+   if (countdownTimer != null && countdownTimer!.isActive) {
+  countdownTimer?.cancel();
+}
+Navigator.pop(context);
+
+  }
+
+// Method to Dispose Resources and Navigate
+  void _disposeAndNavigate() {
+    countdownTimer?.cancel();
+    _messageUpdateTimer?.cancel();
+    _scrollController.dispose();
+    _messageController.dispose();
+
+    if (_isExiting) return; // Prevent duplicate navigation
+_isExiting = true;
+
+Future.delayed(const Duration(milliseconds: 300), () {
+  if (mounted) {
+    navigateToDashboard(context);
+  }
+});
+  }
+
+
   void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
     final notification = event.notification;
+    final String? notificationBody = notification.body?.trim();
 
-    if (notification.body != null && notification.body!.contains('Aveți un mesaj')) {
-      OneSignal.Notifications.preventDefault(notification.notificationId!);
-      return;
+    if (notificationBody != null) {
+      if (notificationBody.contains("Pacientul a părăsit consultația")) {
+        print("📢 Notification: Patient left the consultation!");
+
+        Future.delayed(Duration(seconds: 1), () {
+          navigateToDashboard(context); // 🚀 Auto-navigate to the dashboard
+        });
+      } else if (notificationBody.contains("Vă rugăm să așteptați plata pacientului")) {
+        print("📢 Notification: Waiting for payment!");
+
+        // 🚀 Show a confirmation dialog or perform an action
+        _showWaitingForPaymentDialog();
+      }
     }
 
     OneSignal.Notifications.displayNotification(notification.notificationId!);
   }
+
+
 
   void _startPeriodicFetching() {
     _messageUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
@@ -84,50 +246,44 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     });
   }
 
-  Future<void> _loadMessagesFromList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+Future<void> _loadMessagesFromList() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String user = prefs.getString('user') ?? '';
+    String medicId = prefs.getString('userId') ?? '';
+  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
-    List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
-          pUser: user,
-          pParola: userPassMD5,
-          pIdConversatie: widget.idMedic.toString(),
-        ) ??
-        [];
+  List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
+        pUser: user,
+        pParola: userPassMD5,
+        pIdConversatie: medicId, // ✅ Use correct conversation ID
+      ) ?? [];
 
-    if (mounted) {
-      setState(() {
-        _messages.clear();
-        _messages.addAll(
-          listaMesaje.where((e) {
-            final text = e.comentariu.trim();
-            final isUrl = text.startsWith('http://') || text.startsWith('https://');
-            final hasFileAttachment = text.endsWith('.jpg') ||
-                text.endsWith('.png') ||
-                text.endsWith('.jpeg') ||
-                text.endsWith('.gif') ||
-                text.endsWith('.Pacientul a părăsit chatul') ||
-                text.endsWith('.pdf') ||
-                text.contains("File Attachment");
-            return !isUrl && !hasFileAttachment;
-          }).map((e) {
-            bool isDoctorMessage = e.idExpeditor == widget.idMedic;
-            return {
-              "text": e.comentariu,
-              "isDoctorMessage": isDoctorMessage,
-            };
-          }).toList(),
-        );
-      });
+  if (!mounted) return;
 
-      if (listaMesaje.isNotEmpty && listaMesaje.last.comentariu.trim() == "Pacientul a părăsit chatul") {
-        navigateToDashboard(context);
-      }
 
-      _scrollToBottom();
-    }
+  for (var msg in listaMesaje) {
+  
   }
+
+  setState(() {
+    _messages.clear(); // ✅ Clear messages to avoid duplication
+
+    _messages.addAll(
+      listaMesaje.map((e) {
+        bool isDoctorMessage = e.idExpeditor.toString() == medicId; // ✅ Convert to string for comparison
+ // ✅ Identify doctor messages
+        return {
+          "text": e.comentariu,
+          "isDoctorMessage": isDoctorMessage,
+        };
+      }).toList(),
+    );
+  });
+
+  Future.delayed(const Duration(milliseconds: 100), () {
+    if (mounted) _scrollToBottom();
+  });
+}
 
   Future<void> navigateToDashboard(BuildContext context) async {
     ApiCallFunctions apiCallFunctions = ApiCallFunctions();
@@ -199,7 +355,11 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     _scrollToBottom();
   }
 
+  bool _isExiting = false;
   Future<void> _sendExitMessage() async {
+    if (_isExiting) return;
+    _isExiting = true;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
@@ -209,12 +369,15 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
         pUser: user,
         pParola: userPassMD5,
         pIdClient: widget.idClient.toString(),
-        pMesaj: "Doctorul a părăsit chatul",
+        pMesaj: "medicul a părăsit consultația",
       );
+      _disposeAndNavigate();
     } catch (e) {
-      print("Error sending exit message: $e");
+      print("⚠️ Error sending exit message: $e");
     }
+    navigateToDashboard(context);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -335,48 +498,62 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
                       TextField(
                         controller: _messageController,
                         decoration: const InputDecoration(
-                            hintText: "Scrie text...",
-                            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: InputBorder.none),
+                          hintText: "Scrie text...",
+                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: InputBorder.none,
+                        ),
                       ),
                       Positioned(
                         right: 10,
                         top: 5,
                         bottom: 5,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Color.fromRGBO(14, 190, 127, 1),
-                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                          child: isTyping
-                              ? IconButton(
-                                  onPressed: _handleSendMessage,
-                                  icon: const Icon(
-                                    Icons.send,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                                    child: const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                                        child: Text(
-                                          'GATA',
-                                          style:
-                                              TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),
-                                        ),
-                                      ),
-                                    ),
+                        child: Visibility(
+                          visible: isTyping, // ✅ Hide when not typing
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Color.fromRGBO(14, 190, 127, 1), // ✅ Green background (only when typing)
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            child: IconButton(
+                              onPressed: _handleSendMessage,
+                              icon: const Icon(
+                                Icons.send,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 10,
+                        top: 5,
+                        bottom: 5,
+                        child: Visibility(
+                          visible: !isTyping, // ✅ Hide "GATA" when typing
+                          child: GestureDetector(
+                            onTap: () async {
+                              await _sendExitMessage();
+                              _disposeAndNavigate();
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                              child: const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                                  child: Text(
+                                    'GATA',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),
                                   ),
                                 ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-class FirstIntermediateScreen extends StatelessWidget {
+class FirstIntermediateScreen extends StatefulWidget {
   final VoidCallback onContinueToSecond;
 
   const FirstIntermediateScreen({
@@ -11,9 +10,24 @@ class FirstIntermediateScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    Timer(const Duration(seconds: 4), onContinueToSecond);
+  _FirstIntermediateScreenState createState() => _FirstIntermediateScreenState();
+}
 
+class _FirstIntermediateScreenState extends State<FirstIntermediateScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    // ✅ Start the timer properly in initState
+    Timer(const Duration(seconds: 4), () {
+      if (mounted) {
+        widget.onContinueToSecond();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Colors.white,
       body: Center(

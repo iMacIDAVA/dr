@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -1342,44 +1343,50 @@ class _SetariProfilScreenState extends State<SetariProfilScreen> {
 
   Future<void> _takePhoto() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Uint8List? selectedImageBytes;
-
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
-      final bytes = await photo.readAsBytes();
+      Uint8List imageBytes = await photo.readAsBytes(); // ✅ Read image bytes
+      String base64Image = base64Encode(imageBytes); // ✅ Encode to Base64
+
       setState(() {
         pozaStearsa = false;
-        selectedImageBytes = Uint8List.fromList(bytes);
         _selectedImage = File(photo.path);
         apiCallFunctions.uploadPicture(
-            pExtensie: '.jpg', pUser: user, pParola: userPassMD5, pSirBitiDocument: selectedImageBytes.toString());
+          pExtensie: '.jpg',
+          pUser: user,
+          pParola: userPassMD5,
+          pSirBitiDocument: base64Image, // ✅ Send proper Base64 string
+        );
       });
     }
   }
 
   Future<void> _chooseFromGallery() async {
-    Uint8List? selectedImageBytes;
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
     final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
     if (photo != null) {
-      final bytes = await photo.readAsBytes();
+      Uint8List imageBytes = await photo.readAsBytes(); // ✅ Read image bytes
+      String base64Image = base64Encode(imageBytes); // ✅ Encode to Base64
+
       setState(() {
         pozaStearsa = false;
-        selectedImageBytes = Uint8List.fromList(bytes);
         _selectedImage = File(photo.path);
         apiCallFunctions.uploadPicture(
-            pExtensie: 'jpg', pUser: user, pParola: userPassMD5, pSirBitiDocument: selectedImageBytes.toString());
+          pExtensie: '.jpg',
+          pUser: user,
+          pParola: userPassMD5,
+          pSirBitiDocument: base64Image, // ✅ Send proper Base64 string
+        );
       });
     }
   }
+
 
   _updatePhotoDialog() {
     showDialog(

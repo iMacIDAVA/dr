@@ -83,6 +83,7 @@ dependencies:
   firebase_messaging: ^14.7.8
   shared_preferences: ^2.2.2
   camera: ^0.10.5+9
+  image: ^4.0.15
   agora_rtm: ^1.5.9
   onesignal_flutter: ^5.2.4
   firebase_core: ^2.24.2

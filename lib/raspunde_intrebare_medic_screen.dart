@@ -74,11 +74,169 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     super.dispose();
   }
 
-  void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
-    if (event.notification.body?.contains('Aveți un mesaj') ?? false) {
-      OneSignal.Notifications.preventDefault(event.notification.notificationId);
+ void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
+  final notification = event.notification;
+  final String? notificationBody = notification.body?.trim();
+
+  if (notificationBody != null) {
+    if (notificationBody.contains("Pacientul a părăsit consultația")) {
+      print("📢 Notification: Patient left the consultation!");
+      
+      Future.delayed(Duration(seconds: 1), () {
+        navigateToDashboard(context); // 🚀 Auto-navigate to the dashboard
+      });
+
+    } else if (notificationBody.contains("Vă rugăm să așteptați plata pacientului")) {
+      print("📢 Notification: Waiting for payment!");
+      
+      // 🚀 Show a confirmation dialog or perform an action
+      _showWaitingForPaymentDialog();
     }
   }
+
+  OneSignal.Notifications.displayNotification(notification.notificationId!);
+}
+
+  int remainingTime = 180;
+  Timer? countdownTimer;
+
+  ValueNotifier<int> remainingTimeNotifier = ValueNotifier(180);
+
+  void startTimer() {
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTimeNotifier.value > 0) {
+        remainingTimeNotifier.value--;
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void _showWaitingForPaymentDialog() {
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+    remainingTimeNotifier.value = 180;
+    countdownTimer?.cancel(); // Prevent multiple timers
+    startTimer();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent accidental dismissal
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              titlePadding: const EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              backgroundColor: Colors.white,
+              title: Column(
+                children: [
+                  // Timer Icon
+                  const Icon(
+                    Icons.timer,
+                    size: 50,
+                    color: Color.fromRGBO(30, 214, 158, 1), // Same Green as Buttons
+                  ),
+                  const SizedBox(height: 10),
+                  // Countdown Timer with Animated Dot
+                  ValueListenableBuilder<int>(
+                    valueListenable: remainingTimeNotifier,
+                    builder: (context, remainingTime, _) {
+                      if (remainingTime == 0) {
+                        _closeDialogAndNavigate();
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: remainingTime % 2 == 0
+                                  ? Colors.red
+                                  : Colors.transparent, // Blinking effect
+                              border: Border.all(color: Colors.red, width: 1.5),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromRGBO(30, 214, 158, 1),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  // Title Text
+                  Text(
+                    "Așteptați plata pacientului",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(103, 114, 148, 1),
+                    ),
+                  ),
+                ],
+              ),
+              content: const Text(
+                "Vă rugăm să așteptați până când pacientul efectuează plata.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _closeDialogAndNavigate();
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(30, 214, 158, 1), // Same Green
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  ),
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+// Method to close the dialog and navigate to Dashboard
+  void _closeDialogAndNavigate() {
+    countdownTimer?.cancel(); // Stop the timer
+    Navigator.pop(context); // Close dialog
+    _disposeAndNavigate(); // Dispose resources and navigate
+  }
+
+// Method to Dispose Resources and Navigate
+  void _disposeAndNavigate() {
+    countdownTimer?.cancel();
+    _messageUpdateTimer?.cancel();
+    _scrollController.dispose();
+    _messageController.dispose();
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      navigateToDashboard(context);
+    });
+  }
+
 
   void _startPeriodicFetching() {
     _messageUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
@@ -86,33 +244,45 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     });
   }
 
-  Future<void> _loadMessagesFromList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+Future<void> _loadMessagesFromList() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String user = prefs.getString('user') ?? '';
+  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
-    try {
-      List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
-            pUser: user,
-            pParola: userPassMD5,
-            pIdConversatie: widget.idMedic.toString(),
-          ) ??
-          [];
+  try {
+    List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
+          pUser: user,
+          pParola: userPassMD5,
+          pIdConversatie: widget.idMedic.toString(),
+        ) ??
+        [];
 
-      if (mounted) {
-        setState(() {
-          _messages.clear();
-          _messages.addAll(listaMesaje);
-        });
+    if (mounted) {
+      setState(() {
+        _messages.clear();
+        _messages.addAll(
+          listaMesaje.where((e) => 
+            e.comentariu.trim() != "Pacientul a părăsit consultația" &&
+            e.comentariu.trim() != "Vă rugăm să așteptați plata pacientului"
+          ).toList()
+        );
+      });
 
-        if (listaMesaje.isNotEmpty && listaMesaje.last.comentariu.trim() == "Pacientul a părăsit chatul") {
+      if (listaMesaje.isNotEmpty && listaMesaje.last.comentariu.trim() == "Pacientul a părăsit consultația") {
+        Future.delayed(Duration(seconds: 1), () {
           navigateToDashboard(context);
-        }
-
-        _scrollToBottom();
+        });
       }
-    } catch (error) {}
-  }
+
+      if (listaMesaje.isNotEmpty && listaMesaje.last.comentariu.trim() == "Pacientul a părăsit chatul") {
+        navigateToDashboard(context);
+      }
+
+      _scrollToBottom();
+    }
+  } catch (error) {}
+}
+
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -265,6 +435,8 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
       } else {}
     } catch (error) {}
   }
+
+
 
   Widget _buildMessageList() {
     return ListView.builder(
@@ -453,7 +625,10 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
                             ),
                           )
                         : GestureDetector(
-                            onTap: () {},
+                            onTap: () async {
+                              await _sendExitMessage();
+                              _disposeAndNavigate();
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.red,
@@ -519,7 +694,11 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     } finally {}
   }
 
+  bool _isExiting = false;
   Future<void> _sendExitMessage() async {
+    if (_isExiting) return;
+    _isExiting = true;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('user') ?? '';
     String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
@@ -529,10 +708,14 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
         pUser: user,
         pParola: userPassMD5,
         pIdClient: widget.idClient.toString(),
-        pMesaj: "Doctorul a părăsit chatul",
+        pMesaj: "medicul a părăsit consultația",
       );
-    } catch (e) {}
+      _disposeAndNavigate();
+    } catch (e) {
+      print("⚠️ Error sending exit message: $e");
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
