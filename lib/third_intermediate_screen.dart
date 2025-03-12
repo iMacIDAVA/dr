@@ -7,7 +7,7 @@ import 'package:pdf_render/pdf_render.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 
 class RecomandareScreen extends StatefulWidget {
-  final VoidCallback onContinue;
+  final Function(List<File>) onContinue;
 
   const RecomandareScreen({Key? key, required this.onContinue}) : super(key: key);
 
@@ -32,6 +32,8 @@ class _RecomandareScreenState extends State<RecomandareScreen> {
       });
     }
   }
+
+
 
   void _chooseFromPhone() async {
     if (_selectedFiles.length >= _maxFiles) return;
@@ -59,7 +61,9 @@ class _RecomandareScreenState extends State<RecomandareScreen> {
     return Uint8List.fromList(pageImage.pixels);
   }
 
-  void _saveFiles() {}
+  void _saveFiles() {  if (_selectedFiles.isNotEmpty) {
+      widget.onContinue(_selectedFiles); // Send files to next screen
+    }}
 
   void _viewFile(File file) {
     Navigator.push(

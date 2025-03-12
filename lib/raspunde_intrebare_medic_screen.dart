@@ -27,6 +27,7 @@ class RaspundeIntrebareMedicScreen extends StatefulWidget {
   final int idMedic;
   final String iconPathPacient;
   final String numePacient;
+  // final List<File> receivedFiles;
 
   const RaspundeIntrebareMedicScreen({
     super.key,
@@ -35,6 +36,7 @@ class RaspundeIntrebareMedicScreen extends StatefulWidget {
     required this.idMedic,
     required this.iconPathPacient,
     required this.numePacient,
+    // this.receivedFiles = const []
   });
 
   @override
@@ -49,11 +51,20 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
 
   bool isTyping = false;
 
-  @override
-  void initState() {
+  String medicId = '';
+
+@override
+void initState() {  // ✅ Remove 'async' from initState()
     super.initState();
+
+    _initializeData();  // ✅ No 'await' here, let it complete in the background
     _loadMessagesFromList();
+    
     _startPeriodicFetching();
+    
+    // if (widget.receivedFiles.isNotEmpty) {
+    //   _uploadReceivedFiles();
+    // }
 
     _messageController.addListener(() {
       setState(() {
@@ -62,40 +73,98 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     });
 
     OneSignal.Notifications.addForegroundWillDisplayListener(_onNotificationDisplayed);
+}
+
+
+
+Future<void> _initializeData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    medicId = prefs.getString('userId') ?? '';  // ✅ Ensure `medicId` is set before fetching messages
+}
+
+
+  
+
+  //   Future<void> _uploadReceivedFiles() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String user = prefs.getString('user') ?? '';
+  //   String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+  //   String pCheie = keyAppPacienti;
+  //
+  //   for (File file in widget.receivedFiles) {
+  //     try {
+  //       String fileName = path.basenameWithoutExtension(file.path);
+  //       String extension = path.extension(file.path);
+  //       List<int> fileBytes = await file.readAsBytes();
+  //       String base64File = base64Encode(fileBytes);
+  //
+  //       String? fileUrl = await apiCallFunctions.adaugaMesajCuAtasamentDinContMedic(
+  //         pCheie: pCheie,
+  //         pUser: user,
+  //         pParolaMD5: userPassMD5,
+  //         IdClient: widget.idClient.toString(),
+  //         pMesaj: "File Attachment: $fileName$extension",
+  //         pDenumireFisier: fileName,
+  //         pExtensie: extension,
+  //         pSirBitiDocument: base64File,
+  //       );
+  //
+  //       if (fileUrl != null) {
+  //         await apiCallFunctions.adaugaMesajDinContMedic(
+  //           pUser: user,
+  //           pParola: userPassMD5,
+  //           pIdClient: widget.idClient.toString(),
+  //           pMesaj: fileUrl,
+  //         );
+  //
+  //         print("✅ File uploaded: $fileUrl");
+  //       } else {
+  //         print("❌ Failed to upload file: $file.path");
+  //       }
+  //     } catch (error) {
+  //       print("⚠️ Error sending file: $error");
+  //     }
+  //   }
+  // }
+
+@override
+void dispose() {
+  _messageUpdateTimer?.cancel();
+
+  if (mounted) {
+    _messageController.removeListener(() {});
   }
 
-  @override
-  void dispose() {
-    _messageUpdateTimer?.cancel();
-    _scrollController.dispose();
-    _messageController.dispose();
+  _messageController.dispose(); // ✅ Dispose safely
+  _scrollController.dispose();
 
-    OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
-    super.dispose();
-  }
+  OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
+  
+  super.dispose();
+}
+
 
  void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
-  final notification = event.notification;
-  final String? notificationBody = notification.body?.trim();
+    final notification = event.notification;
+    final String? notificationBody = notification.body?.trim();
 
-  if (notificationBody != null) {
-    if (notificationBody.contains("Pacientul a părăsit consultația")) {
-      print("📢 Notification: Patient left the consultation!");
-      
-      Future.delayed(Duration(seconds: 1), () {
-        navigateToDashboard(context); // 🚀 Auto-navigate to the dashboard
-      });
+    if (notificationBody != null) {
+      if (notificationBody.contains("Pacientul a părăsit consultația")) {
+        print("📢 Notification: Patient left the consultation!");
 
-    } else if (notificationBody.contains("Vă rugăm să așteptați plata pacientului")) {
-      print("📢 Notification: Waiting for payment!");
-      
-      // 🚀 Show a confirmation dialog or perform an action
-      _showWaitingForPaymentDialog();
+        Future.delayed(Duration(seconds: 1), () {
+          navigateToDashboard(context); // 🚀 Auto-navigate to the dashboard
+        });
+      } else if (notificationBody.contains("Vă rugăm să așteptați plata pacientului")) {
+        print("📢 Notification: Waiting for payment!");
+
+        // 🚀 Show a confirmation dialog or perform an action
+        _showWaitingForPaymentDialog();
+      }
     }
-  }
 
-  OneSignal.Notifications.displayNotification(notification.notificationId!);
-}
+    OneSignal.Notifications.displayNotification(notification.notificationId!);
+  }
 
   int remainingTime = 180;
   Timer? countdownTimer;
@@ -116,7 +185,9 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     if (ModalRoute.of(context)?.isCurrent != true) return;
     remainingTimeNotifier.value = 180;
     countdownTimer?.cancel(); // Prevent multiple timers
-    startTimer();
+    if (countdownTimer == null || !countdownTimer!.isActive) {
+  startTimer();
+}
 
     showDialog(
       context: context,
@@ -193,24 +264,20 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    _closeDialogAndNavigate();
-                  },
-                  style: TextButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(30, 214, 158, 1), // Same Green
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                  ),
-                  child: const Text(
-                    "OK",
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                   actions: [
+              TextButton(
+                onPressed: () {
+                  _closeDialogAndNavigate(); // ✅ Close dialog when button is pressed
+                },
+                child: const Text(
+                  "Închide", // "Close" in Romanian
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
+              ),
+            ],
             );
           },
         );
@@ -225,17 +292,35 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
     _disposeAndNavigate(); // Dispose resources and navigate
   }
 
-// Method to Dispose Resources and Navigate
-  void _disposeAndNavigate() {
-    countdownTimer?.cancel();
-    _messageUpdateTimer?.cancel();
-    _scrollController.dispose();
+void _disposeAndNavigate() {
+  if (!mounted) return;
+
+  countdownTimer?.cancel();
+  _messageUpdateTimer?.cancel();
+
+  if (!_isExiting) {
+    _isExiting = true;
+
+    // ✅ Clear and remove TextField controller before disposal
+    setState(() {
+      _messageController.text = ""; // Clear text
+    });
+
+    _messageController.removeListener(() {});
     _messageController.dispose();
 
+    if (_scrollController.hasClients) {
+      _scrollController.dispose();
+    }
+
     Future.delayed(const Duration(milliseconds: 300), () {
-      navigateToDashboard(context);
+      if (mounted) {
+        navigateToDashboard(context);
+      }
     });
   }
+}
+
 
 
   void _startPeriodicFetching() {
@@ -247,13 +332,14 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
 Future<void> _loadMessagesFromList() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String user = prefs.getString('user') ?? '';
+   String medicId = prefs.getString('userId') ?? '';
   String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
   try {
     List<MesajConversatieMobile> listaMesaje = await apiCallFunctions.getListaMesajePeConversatie(
           pUser: user,
           pParola: userPassMD5,
-          pIdConversatie: widget.idMedic.toString(),
+          pIdConversatie: medicId,
         ) ??
         [];
 
@@ -263,7 +349,8 @@ Future<void> _loadMessagesFromList() async {
         _messages.addAll(
           listaMesaje.where((e) => 
             e.comentariu.trim() != "Pacientul a părăsit consultația" &&
-            e.comentariu.trim() != "Vă rugăm să așteptați plata pacientului"
+            e.comentariu.trim() != "Vă rugăm să așteptați plata pacientului" &&
+            e.comentariu.trim() != "medicul a părăsit consultația"
           ).toList()
         );
       });
@@ -439,12 +526,17 @@ Future<void> _loadMessagesFromList() async {
 
 
   Widget _buildMessageList() {
+
+   
     return ListView.builder(
       controller: _scrollController,
       itemCount: _messages.length,
       itemBuilder: (context, index) {
+
+
         final message = _messages[index];
-        final isDoctorMessage = message.idExpeditor == widget.idMedic;
+        final isDoctorMessage = message.idExpeditor.toString() == medicId;
+
 
         if (message.comentariu.contains("File Attachment") || message.comentariu == "Doctorul a părăsit chatul") {
           return const SizedBox.shrink();
@@ -719,22 +811,25 @@ Future<void> _loadMessagesFromList() async {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 75,
-        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-        leading: const SizedBox(),
-        title: Text(
-          widget.numePacient,
-          style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+    return WillPopScope(
+       onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 75,
+          backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+          leading: const SizedBox(),
+          title: Text(
+            widget.numePacient,
+            style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(child: _buildMessageList()),
-          _buildMessageInput(),
-        ],
+        body: Column(
+          children: [
+            Expanded(child: _buildMessageList()),
+            _buildMessageInput(),
+          ],
+        ),
       ),
     );
   }

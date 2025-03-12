@@ -14,6 +14,9 @@ class CallService {
   Timer? _pollingTimer;
   late RtcEngine _engine;
   int? _remoteUid;
+  int idClient;
+
+  CallService({required this.idClient});
 
   Future<void> startPolling() async {
     await _initAgora();
@@ -25,7 +28,8 @@ class CallService {
         navigatorKey.currentState?.pushReplacement(
           MaterialPageRoute(
             builder: (context) => ApelVideoMedicScreen(
-              remoteUid: _remoteUid!,
+              idClient: idClient,
+              remoteUid: 1,
             ),
           ),
         );

@@ -669,6 +669,84 @@ class ApiCallFunctions {
     }
   }
 
+  Future<List<RecenzieMobile>?> getListaRecenziiByIdMedic({
+    //required String pNumeComplet,
+    required String pUser,
+    required String pParola,
+    required String pIdMedic,
+    required String pNrMaxim,
+  }) async
+  {
+
+    //final String pParolaMD5 = generateMd5(pParola);
+    final Map<String, String> parametriiApiCall = {
+      //'pNumeComplet': pNumeComplet,
+      'pUser': pUser, //IGV
+
+      'pParolaMD5': pParola,
+      'pIdMedic': pIdMedic,
+      'pNrMaxim': pNrMaxim,
+    };
+
+    print("🔵 Calling API: GetListaRecenziiByIdMedic with params: $parametriiApiCall");
+
+    http.Response? resGetListaRecenziiByIdMedic;
+
+    resGetListaRecenziiByIdMedic = await getApelFunctie(parametriiApiCall, 'GetListaRecenziiByIdMedic');
+
+    if (resGetListaRecenziiByIdMedic != null) {
+      print("🟢 API Response Status Code: ${resGetListaRecenziiByIdMedic.statusCode}");
+      print("🟢 API Response Body: ${resGetListaRecenziiByIdMedic.body}");
+    } else {
+      print("🔴 API Call Failed: Response is null");
+    }
+
+
+    if (resGetListaRecenziiByIdMedic!.statusCode == 200)
+    {
+
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      print("🟡 Parsing API Response...");
+
+
+      List<RecenzieMobile> parseRecenzii(String responseBody)
+      {
+        final parsed =
+        (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
+
+        return parsed.map<RecenzieMobile>((json) => RecenzieMobile.fromJson(json)).toList();
+      }
+      List<RecenzieMobile> recenzii = parseRecenzii(resGetListaRecenziiByIdMedic.body);
+      print("🟡 Parsed Reviews Count: ${recenzii.length}");
+
+      for (var review in recenzii) {
+        print("🔹 Review Parsed -> ID: ${review.id}, Name: ${review.identitateClient}, Date: ${review.dataRecenzie}");
+      }
+
+
+      print('resGetListaMedici rezultat parsat: ${parseRecenzii(resGetListaRecenziiByIdMedic.body)}');
+      return parseRecenzii(resGetListaRecenziiByIdMedic.body);
+
+      //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
+
+
+
+    }
+    else
+    {
+      return null;
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      //throw Exception('Nu s-a putut crea corect lista de medici din Json-ul rezultat.');
+    }
+
+    //return resGetContClient;
+
+  }
+
+
+
 /*
   Future<List<MedicMobile>?> getListaMedici({
     //required String pNumeComplet,
@@ -753,61 +831,6 @@ class ApiCallFunctions {
       return const MedicMobile(id: -1, linkPozaProfil: '', titulatura: '', numeleComplet: '', locDeMunca: '', functia: '',
         specializarea: '', medieReviewuri: -1.0, nrLikeuri: -1, status: -1, primesteIntrebari: false, interpreteazaAnalize: false, consultatieVideo: false, monedaPreturi: -1, pretIntrebare: -1.0, pretConsultatieVideo: -1.0,
         pretInterpretareAnalize: -1.0, experienta: '', adresaLocDeMunca: '', totalClienti: 0, totalTestimoniale: 0, procentRating: 0.0, esteFavorit: false);
-    }
-
-    //return resGetContClient;
-
-  }
-
-  Future<List<RecenzieMobile>?> getListaRecenziiByIdMedic({
-    //required String pNumeComplet,
-    required String pUser,
-    required String pParola,
-    required String pIdMedic,
-    required String pNrMaxim,
-  }) async
-  {
-
-    //final String pParolaMD5 = generateMd5(pParola);
-    final Map<String, String> parametriiApiCall = {
-      //'pNumeComplet': pNumeComplet,
-      'pUser': pUser, //IGV
-
-      'pParolaMD5': pParola,
-      'pIdMedic': pIdMedic,
-      'pNrMaxim': pNrMaxim,
-    };
-
-    http.Response? resGetListaRecenziiByIdMedic;
-
-    resGetListaRecenziiByIdMedic = await getApelFunctie(parametriiApiCall, 'GetListaRecenziiByIdMedic');
-
-    if (resGetListaRecenziiByIdMedic!.statusCode == 200)
-    {
-
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
-
-      List<RecenzieMobile> parseRecenzii(String responseBody)
-      {
-        final parsed =
-            (jsonDecode(responseBody) as List).cast<Map<String, dynamic>>();
-
-        return parsed.map<RecenzieMobile>((json) => RecenzieMobile.fromJson(json)).toList();
-      }
-
-      print('resGetListaMedici rezultat parsat: ${parseRecenzii(resGetListaRecenziiByIdMedic.body)}');
-      return parseRecenzii(resGetListaRecenziiByIdMedic.body);
-
-      //return ContClientMobile.fromJson(jsonDecode(resGetContClient.body) as Map<String, dynamic>);
-
-    }
-    else
-    {
-      return null;
-      // If the server did not return a 201 CREATED response,
-      // then throw an exception.
-      //throw Exception('Nu s-a putut crea corect lista de medici din Json-ul rezultat.');
     }
 
     //return resGetContClient;

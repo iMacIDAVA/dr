@@ -27,11 +27,44 @@ class RatingScreen extends StatefulWidget {
 }
 
 class _RatingScreenState extends State<RatingScreen> {
+
+  List<RecenzieMobile> listaRecenzii = [];
+
+
   @override
   void initState() {
     // Do some other stuff
     super.initState();
+    fetchReviews();
   }
+
+  Future<void> fetchReviews() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userId = prefs.getString('userId') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    String medicId = userId;
+    String nrMaxim = "50";
+
+    List<RecenzieMobile>? newList = await apiCallFunctions.getListaRecenziiByIdMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pIdMedic: medicId,
+      pNrMaxim: nrMaxim,
+    );
+
+    print("Fetched ${newList?.length ?? 0} reviews");
+
+    if (newList != null && newList.isNotEmpty) {
+      print("First review: ID=${newList[0].id}, Name=${newList[0].identitateClient}");
+    }
+
+    setState(() {
+      // Instead of modifying widget.listaRecenziiByMedicRating directly
+      listaRecenzii = newList ?? [];
+    });
+  }
+
 
   /*
   List<RatingItem> filterListByIndex()
@@ -153,36 +186,21 @@ class _RatingScreenState extends State<RatingScreen> {
       ));
     }
 
-    listaFiltrata.asMap().forEach((index, value) {
-      if (index < listaFiltrata.length - 1) {
-        mywidgets.add(
-          IconNumeRatingTextDataRaspunde(
-            id: value.id.toString(), textNume: value.identitateClient,
-            textComentariu: value.comentariu,
-            //iconPath:value.linkPozaProfil, textData: DateFormat('dd MMMM yyyy', 'ro').format(value.dataRecenzie), textRating: value.rating.toString()),
-            iconPath: value.linkPozaProfil,
-            textData: DateFormat('dd MMMM yyyy', l.ratingLimba).format(value.dataRecenzie),
-            textRating: value.rating.toString(),
-            textRaspuns: value.raspuns,
-          ),
-        );
-        mywidgets.add(
-          const SizedBox(height: 15),
-        );
-      } else {
-        mywidgets.add(
-          IconNumeRatingTextDataRaspunde(
-            id: value.id.toString(), textNume: value.identitateClient,
-            textComentariu: value.comentariu,
-            //iconPath:value.linkPozaProfil, textData: DateFormat('dd MMMM yyyy', 'ro').format(value.dataRecenzie), textRating: value.rating.toString()), //old IGV
-            iconPath: value.linkPozaProfil,
-            textData: DateFormat('dd MMMM yyyy', l.ratingLimba).format(value.dataRecenzie),
-            textRating: value.rating.toString(),
-            textRaspuns: value.raspuns,
-          ),
-        );
-      }
-    });
+    for (var review in listaFiltrata) {
+      print("Rendering Review: ID=${review.id}, Name=${review.identitateClient}");
+
+      mywidgets.add(
+        IconNumeRatingTextDataRaspunde(
+          id: review.id.toString(),
+          textNume: review.identitateClient,
+          textComentariu: review.comentariu,
+          iconPath: review.linkPozaProfil,
+          textData: DateFormat('dd MMMM yyyy', l.ratingLimba).format(review.dataRecenzie),
+          textRating: review.rating.toString(),
+          textRaspuns: review.raspuns,
+        ),
+      );
+    }
     //else
     /*
       else if (index == listaFiltrata.length-2)

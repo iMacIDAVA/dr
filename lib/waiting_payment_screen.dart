@@ -195,7 +195,7 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
                                     onContinue: () async {
                                       print("✅ ChestionarScreen Completed. Moving to Confirm Screen...");
                                   if (widget.page == "apel"){
-                                    CallService callService = CallService();
+                                    CallService callService = CallService(idClient: pIdPacient);
                                     callService.startPolling();
 
                                     //     await Navigator.pushReplacement(
@@ -240,25 +240,17 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RecomandareScreen(
-                            onContinue: () async {
-                              print("✅ RecomandareScreen Completed. Moving to Confirm Screen...");
-                              await Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RaspundeIntrebareMedicScreen(
-                                    idClient: pIdPacient,
-                                    idMedic: userId,
-                                    textNume: 'Patient Name',
-                                    iconPathPacient: 'assets/images/default_patient_icon.png',
-                                    numePacient: patientName,
-                                  ),
-                                ),
-                              );
-                            },
+                          builder: (context) => RaspundeIntrebareMedicScreen(
+                            idClient: pIdPacient,
+                            idMedic: userId,
+                            textNume: 'Patient Name',
+                            iconPathPacient: 'assets/images/default_patient_icon.png',
+                            numePacient: patientName,
                           ),
                         ),
                       );
+
+
                     } else {
                       print("🛑 Directly Navigating to Confirm Screen...");
                       navigateToConfirmScreen(alertMessage);
@@ -419,7 +411,7 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
 
     try {
       if (widget.page == "apel") {
-        CallService callService = CallService();
+        CallService callService = CallService(idClient: pIdPacient);
         callService.startPolling();
       } else if (widget.page == "întrebare") {
         await Navigator.pushReplacement(
@@ -459,69 +451,72 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   toolbarHeight: 90,
-      //   backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-      //   foregroundColor: Colors.white,
-      //   title: Text(
-      //     'Plata in asteptare',
-      //     style: GoogleFonts.rubik(
-      //       color: const Color.fromRGBO(255, 255, 255, 1),
-      //       fontSize: 16,
-      //       fontWeight: FontWeight.w500,
-      //     ),
-      //   ),
-      //   centerTitle: true,
-      // ),
-      body: WillPopScope(
-        onWillPop: () async {
-          return false;
-        },
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
+    return WillPopScope(
+       onWillPop: () async => false,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   toolbarHeight: 90,
+        //   backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+        //   foregroundColor: Colors.white,
+        //   title: Text(
+        //     'Plata in asteptare',
+        //     style: GoogleFonts.rubik(
+        //       color: const Color.fromRGBO(255, 255, 255, 1),
+        //       fontSize: 16,
+        //       fontWeight: FontWeight.w500,
+        //     ),
+        //   ),
+        //   centerTitle: true,
+        // ),
+        body: WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+              color: Colors.white,
             ),
-            color: Colors.white,
-          ),
-          child: const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Așteptați confirmarea plății',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Așteptați confirmarea plății',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 30),
-
-                  Text(
-                    'Aceasta operațiune poate dura \n maxim 3 minute',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.blueGrey,
+                    SizedBox(height: 30),
+    
+                    Text(
+                      'Aceasta operațiune poate dura \n maxim 3 minute',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.blueGrey,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  // CircularProgressIndicator(
-                  //   strokeWidth: 4,
-                  //   color: Colors.grey,
-                  // ),
-                ],
+                    // CircularProgressIndicator(
+                    //   strokeWidth: 4,
+                    //   color: Colors.grey,
+                    // ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -61,31 +61,34 @@ class _ThirdIntermediateScreenState extends State<ThirdIntermediateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-      body: WillPopScope(
-        onWillPop: () async => false,
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
+    return WillPopScope(
+       onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+        body: WillPopScope(
+          onWillPop: () async => false,
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+              color: Colors.white,
             ),
-            color: Colors.white,
-          ),
-          child: const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                'Vă rugăm să așteptați până când pacientul termină',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(
+                  'Vă rugăm să așteptați până când pacientul termină',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
           ),

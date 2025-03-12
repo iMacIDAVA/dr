@@ -23,7 +23,7 @@ class _IntroScreenState extends State<IntroScreen> {
   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
   String oneSignalId = '';
   TotaluriMedic? totaluriMedic;
-  CallService callService = CallService();
+  // CallService callService = CallService();
 
   Future<void> initOneSignal() async {
     await ensureDeviceToken();
@@ -177,7 +177,7 @@ class _IntroScreenState extends State<IntroScreen> {
 
   @override
   void dispose() {
-    callService.dispose();
+    // callService.dispose();
     super.dispose();
   }
 

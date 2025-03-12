@@ -56,18 +56,28 @@ class _RaspundeIntrebareDoarChatScreenState extends State<RaspundeIntrebareDoarC
     });
 
     OneSignal.Notifications.addForegroundWillDisplayListener(_onNotificationDisplayed);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
 
-  @override
-  void dispose() {
-    _messageUpdateTimer?.cancel();
-    _scrollController.dispose();
-    _messageController.dispose();
+@override
+void dispose() {
+  _messageUpdateTimer?.cancel();
 
-    OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
-
-    super.dispose();
+  if (mounted) {
+    _messageController.removeListener(() {});
   }
+
+  _messageController.dispose(); // ✅ Dispose safely
+  _scrollController.dispose();
+
+  OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
+
+  super.dispose();
+}
+
 
 
   int remainingTime = 180;
@@ -199,21 +209,35 @@ Navigator.pop(context);
   }
 
 // Method to Dispose Resources and Navigate
-  void _disposeAndNavigate() {
-    countdownTimer?.cancel();
-    _messageUpdateTimer?.cancel();
-    _scrollController.dispose();
+void _disposeAndNavigate() {
+  if (!mounted) return;
+
+  countdownTimer?.cancel();
+  _messageUpdateTimer?.cancel();
+
+  if (!_isExiting) {
+    _isExiting = true;
+
+    // ✅ Remove controller from TextField before disposing
+    setState(() {
+      _messageController.text = ""; // Clear text
+    });
+
+    _messageController.removeListener(() {});
     _messageController.dispose();
 
-    if (_isExiting) return; // Prevent duplicate navigation
-_isExiting = true;
+    if (_scrollController.hasClients) {
+      _scrollController.dispose();
+    }
 
-Future.delayed(const Duration(milliseconds: 300), () {
-  if (mounted) {
-    navigateToDashboard(context);
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        navigateToDashboard(context);
+      }
+    });
   }
-});
-  }
+}
+
 
 
   void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
@@ -268,21 +292,32 @@ Future<void> _loadMessagesFromList() async {
   setState(() {
     _messages.clear(); // ✅ Clear messages to avoid duplication
 
-    _messages.addAll(
-      listaMesaje.map((e) {
-        bool isDoctorMessage = e.idExpeditor.toString() == medicId; // ✅ Convert to string for comparison
- // ✅ Identify doctor messages
+_messages.addAll(
+  listaMesaje
+      .where((e) {
+        String text = e.comentariu.trim().toLowerCase(); // Normalize text
+        RegExp pattern = RegExp(r"^https?:\/\/sosbebe|^(file|photo)\s*attachment", caseSensitive: false);
+
+        // ✅ Exclude both attachment links AND the "medicul a părăsit consultația" message
+        return !pattern.hasMatch(text) && !text.contains("medicul a părăsit consultația");
+      })
+      .map((e) {
+        bool isDoctorMessage = e.idExpeditor.toString() == medicId; // ✅ Identify doctor messages
         return {
           "text": e.comentariu,
           "isDoctorMessage": isDoctorMessage,
         };
-      }).toList(),
-    );
+      })
+      .toList(),
+);
+
+
   });
 
   Future.delayed(const Duration(milliseconds: 100), () {
     if (mounted) _scrollToBottom();
   });
+
 }
 
   Future<void> navigateToDashboard(BuildContext context) async {
@@ -324,29 +359,33 @@ Future<void> _loadMessagesFromList() async {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!_scrollController.hasClients) return;
+
+    Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
   }
 
-  void _handleSendMessage() async {
-    if (_messageController.text.isEmpty) return;
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+void _handleSendMessage() async {
+  if (!mounted || _messageController.text.isEmpty) return;
 
-    String message = _messageController.text;
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String user = prefs.getString('user') ?? '';
+  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
 
-    await apiCallFunctions.adaugaMesajDinContMedic(
-      pUser: user,
-      pParola: userPassMD5,
-      pIdClient: widget.idClient.toString(),
-      pMesaj: message,
-    );
+  String message = _messageController.text;
 
+  await apiCallFunctions.adaugaMesajDinContMedic(
+    pUser: user,
+    pParola: userPassMD5,
+    pIdClient: widget.idClient.toString(),
+    pMesaj: message,
+  );
+
+  if (mounted) {
     setState(() {
       _messages.add({"text": message, "isDoctorMessage": true});
       _messageController.clear();
@@ -354,6 +393,8 @@ Future<void> _loadMessagesFromList() async {
 
     _scrollToBottom();
   }
+}
+
 
   bool _isExiting = false;
   Future<void> _sendExitMessage() async {
@@ -381,189 +422,192 @@ Future<void> _loadMessagesFromList() async {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-        toolbarHeight: 75,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.exit_to_app, color: Colors.black),
-        //   onPressed: () async {
-        //     // Show confirmation dialog before sending the exit message
-        //     final shouldExit = await showDialog<bool>(
-        //       context: context,
-        //       builder: (context) => AlertDialog(
-        //         title: const Text("Confirmați Ieșirea"),
-        //         content: const Text("Chiar vrei să părăsești chat-ul?"),
-        //         actions: [
-        //           TextButton(
-        //             onPressed: () => Navigator.pop(context, false),
-        //             child: const Text("Anula"),
-        //           ),
-        //           TextButton(
-        //             onPressed: () => Navigator.pop(context, true),
-        //             child: const Text("Da"),
-        //           ),
-        //         ],
-        //       ),
-        //     );
-        //
-        //     if (shouldExit == true) {
-        //       showDialog(
-        //         context: context,
-        //         barrierDismissible: false,
-        //         builder: (context) => const Center(
-        //           child: CircularProgressIndicator(),
-        //         ),
-        //       );
-        //
-        //       try {
-        //         // Send the exit message explicitly when the user confirms
-        //         await _sendExitMessage();
-        //
-        //         // Navigate to the dashboard
-        //         Navigator.pop(context); // Close the loading dialog
-        //         navigateToDashboard(context);
-        //       } catch (e) {
-        //         // Close the loading dialog
-        //         Navigator.pop(context);
-        //
-        //         // Show an error message
-        //         ScaffoldMessenger.of(context).showSnackBar(
-        //           SnackBar(content: Text("Failed to send exit message")),
-        //         );
-        //       }
-        //     }
-        //   },
-        // ),
-        leading: const SizedBox(),
-        title: Text(
-          widget.numePacient,
-          style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                final isDoctorMessage = message['isDoctorMessage'] as bool;
-
-                return Align(
-                  alignment: isDoctorMessage ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isDoctorMessage
-                          ? const Color.fromRGBO(14, 190, 127, 1)
-                          : const Color.fromRGBO(240, 240, 240, 1),
-                      borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(10),
-                        topRight: const Radius.circular(10),
-                        bottomLeft: Radius.circular(isDoctorMessage ? 10 : 0),
-                        bottomRight: Radius.circular(isDoctorMessage ? 0 : 10),
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          offset: Offset(0, 3),
-                          blurRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      message['text'] as String,
-                      style: TextStyle(
-                        color: isDoctorMessage ? Colors.white : Colors.black,
-                        fontSize: 18,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
+    return WillPopScope(
+       onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+          toolbarHeight: 75,
+          // leading: IconButton(
+          //   icon: const Icon(Icons.exit_to_app, color: Colors.black),
+          //   onPressed: () async {
+          //     // Show confirmation dialog before sending the exit message
+          //     final shouldExit = await showDialog<bool>(
+          //       context: context,
+          //       builder: (context) => AlertDialog(
+          //         title: const Text("Confirmați Ieșirea"),
+          //         content: const Text("Chiar vrei să părăsești chat-ul?"),
+          //         actions: [
+          //           TextButton(
+          //             onPressed: () => Navigator.pop(context, false),
+          //             child: const Text("Anula"),
+          //           ),
+          //           TextButton(
+          //             onPressed: () => Navigator.pop(context, true),
+          //             child: const Text("Da"),
+          //           ),
+          //         ],
+          //       ),
+          //     );
+          //
+          //     if (shouldExit == true) {
+          //       showDialog(
+          //         context: context,
+          //         barrierDismissible: false,
+          //         builder: (context) => const Center(
+          //           child: CircularProgressIndicator(),
+          //         ),
+          //       );
+          //
+          //       try {
+          //         // Send the exit message explicitly when the user confirms
+          //         await _sendExitMessage();
+          //
+          //         // Navigate to the dashboard
+          //         Navigator.pop(context); // Close the loading dialog
+          //         navigateToDashboard(context);
+          //       } catch (e) {
+          //         // Close the loading dialog
+          //         Navigator.pop(context);
+          //
+          //         // Show an error message
+          //         ScaffoldMessenger.of(context).showSnackBar(
+          //           SnackBar(content: Text("Failed to send exit message")),
+          //         );
+          //       }
+          //     }
+          //   },
+          // ),
+          leading: const SizedBox(),
+          title: Text(
+            widget.numePacient,
+            style: GoogleFonts.rubik(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
           ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Stack(
-                    children: [
-                      TextField(
-                        controller: _messageController,
-                        decoration: const InputDecoration(
-                          hintText: "Scrie text...",
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: InputBorder.none,
+          centerTitle: true,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  final isDoctorMessage = message['isDoctorMessage'] as bool;
+    
+                  return Align(
+                    alignment: isDoctorMessage ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: isDoctorMessage
+                            ? const Color.fromRGBO(14, 190, 127, 1)
+                            : const Color.fromRGBO(240, 240, 240, 1),
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(10),
+                          topRight: const Radius.circular(10),
+                          bottomLeft: Radius.circular(isDoctorMessage ? 10 : 0),
+                          bottomRight: Radius.circular(isDoctorMessage ? 0 : 10),
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            offset: Offset(0, 3),
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        message['text'] as String,
+                        style: TextStyle(
+                          color: isDoctorMessage ? Colors.white : Colors.black,
+                          fontSize: 18,
+                          height: 1.5,
                         ),
                       ),
-                      Positioned(
-                        right: 10,
-                        top: 5,
-                        bottom: 5,
-                        child: Visibility(
-                          visible: isTyping, // ✅ Hide when not typing
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: Color.fromRGBO(14, 190, 127, 1), // ✅ Green background (only when typing)
-                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            child: IconButton(
-                              onPressed: _handleSendMessage,
-                              icon: const Icon(
-                                Icons.send,
-                                color: Colors.white,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        TextField(
+                          controller: _messageController,
+                          decoration: const InputDecoration(
+                            hintText: "Scrie text...",
+                            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: InputBorder.none,
+                          ),
+                        ),
+                        Positioned(
+                          right: 10,
+                          top: 5,
+                          bottom: 5,
+                          child: Visibility(
+                            visible: isTyping, // ✅ Hide when not typing
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color.fromRGBO(14, 190, 127, 1), // ✅ Green background (only when typing)
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                              ),
+                              child: IconButton(
+                                onPressed: _handleSendMessage,
+                                icon: const Icon(
+                                  Icons.send,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        right: 10,
-                        top: 5,
-                        bottom: 5,
-                        child: Visibility(
-                          visible: !isTyping, // ✅ Hide "GATA" when typing
-                          child: GestureDetector(
-                            onTap: () async {
-                              await _sendExitMessage();
-                              _disposeAndNavigate();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                              child: const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                                  child: Text(
-                                    'GATA',
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),
+                        Positioned(
+                          right: 10,
+                          top: 5,
+                          bottom: 5,
+                          child: Visibility(
+                            visible: !isTyping, // ✅ Hide "GATA" when typing
+                            child: GestureDetector(
+                              onTap: () async {
+                                await _sendExitMessage();
+                                _disposeAndNavigate();
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                                child: const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                                    child: Text(
+                                      'GATA',
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 12),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-              ],
+                  const SizedBox(width: 10),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

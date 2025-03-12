@@ -21,16 +21,26 @@ import 'package:intl/intl.dart';
 /// Page with the [RangePicker].
 class RangePickerRatingFiltrat extends StatefulWidget {
   final List<RecenzieMobile> listaRecenziiByMedicRating;
+  final Function(DateTime, DateTime)? onDateSelected;
 
   ///
   const RangePickerRatingFiltrat(
-      {super.key, required this.listaRecenziiByMedicRating});
+      {super.key, required this.listaRecenziiByMedicRating ,   this.onDateSelected,});
 
   @override
   State<StatefulWidget> createState() => _RangePickerRatingFiltratState();
 }
 
 class _RangePickerRatingFiltratState extends State<RangePickerRatingFiltrat> {
+
+  void _onDateRangeSelected(DateTime start, DateTime end) {
+    if (widget.onDateSelected != null) {
+      widget.onDateSelected!(start, end); // Call the function
+    }
+  }
+
+
+
   final DateTime _firstDate =
       DateTime.now().subtract(const Duration(days: 4050));
   final DateTime _lastDate = DateTime.now().add(const Duration(days: 365));
@@ -150,7 +160,15 @@ class _RangePickerRatingFiltratState extends State<RangePickerRatingFiltrat> {
     setState(() {
       _selectedPeriod = newPeriod;
     });
+
+    // Debugging: Print selected date range
+    print("User selected date range: ${newPeriod.start} - ${newPeriod.end}");
+
+    // Call the callback function when a date is selected
+    _onDateRangeSelected(newPeriod.start, newPeriod.end);
   }
+
+
 
   // ignore: prefer_expression_function_bodies
   /*

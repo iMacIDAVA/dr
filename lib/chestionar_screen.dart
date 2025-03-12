@@ -229,524 +229,527 @@ class _ChestionarScreenState extends State<ChestionarScreen> {
   Widget build(BuildContext context) {
     LocalizationsApp l = LocalizationsApp.of(context)!;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-         
-          const TopIconsTextWidget(),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  //Text('Nume și Prenume Pacient', style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)), //old IGV
-                  Text(l.chestionarNumePrenumePacient,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(numePrenumeComplet,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  //Text('Vârsta', style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)), //old IGV
-                  //Text('Data de naștere', style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)), //old IGV
-                  Text(
-                      //l.chestionarVarsta,
-                      l.chestionarDataDeNastere,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(dataDeNastere,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Greutate', //old IGV
-                      l.chestionarGreutate,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(greutate,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Alergic la Paracetamol',  //old IGV
-                      //l.chestionarAlergicLaMedicament, //old IGV
-                      alergicLaMedicament,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              isVisibleAlergicLaMedicament
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CustomCheckBox(isChecked: isVisibleAlergicLaMedicament),
-                        const SizedBox(width: 25),
-                      ],
-                    )
-                  : const SizedBox(),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(width: 25),
-              Text(
-                  //'Simptome Pacient',  //old IGV
-                  l.chestionarSimptomePacient,
-                  style: GoogleFonts.rubik(
-                      color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w500)),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Febră', old IGV
-                      l.chestionarFebra,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: areFebra,
-                  ),
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Tuse', //old IGV
-                      l.chestionarTuse,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: tuseste,
-                  ), //onChecked: callbackTuse //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Dificultăți respiratorii',  //old IGV
-                      l.chestionarDificultatiRespiratorii,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: dificultatiRespiratorii,
-                  ), //onChecked: callbackRespiratie //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Astenie', //old IGV
-                      l.chestionarAstenie,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: astenie,
-                  ), // onChecked: callbackAstenie //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Cefalee',  old IGV
-                      l.chestionarCefalee,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: cefalee,
-                  ), //onChecked: callbackCefalee//old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Dureri în gât',
-                      l.chestionarDureriInGat,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: dureriGat,
-                  ), //onChecked: callbackDureriGat //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Grețuri/Vărsături',  //old IGV
-                      l.chestionarGreturiVarsaturi,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: greturiVarsaturi,
-                  ), //onChecked: callbackGreturiVarsaturi //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Diaree/Constipație', //old IGV
-                      l.chestionarDiareeConstipatie,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: diareeConstipatie,
-                  ), //onChecked: callbackDiareeConstipatie //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Iritații piele', //old IGV
-                      l.chestionarIritatiiPiele,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: iritatiiPiele,
-                  ), //onChecked: callbackIritatiiPiele //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Nas înfundat', //old IGV
-                      l.chestionarNasInfundat,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: nasInfundat,
-                  ), //onChecked: callbackNasInfundat //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          customPaddingChestionar(),
-          const SizedBox(height: 7),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(width: 25),
-                  Text(
-                      //'Rinoree', //old IGV
-                      l.chestionarRinoree,
-                      style: GoogleFonts.rubik(
-                          color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CustomCheckBox(
-                    isChecked: rinoree,
-                  ), //onChecked: callbackRinoree //old IGV
-                  const SizedBox(width: 25),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 35,
-          ),
-          if (widget.page == "apel")
-          SizedBox(
-            width: 330,
-            height: 54,
-            child: ElevatedButton(
-              onPressed: () {
-                print("🟢 Button Clicked in ChestionarScreen");
-                widget.onContinue();
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-                  minimumSize: const Size.fromHeight(50), // NEW
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    //'CONTINUĂ CU APEL VIDEO', //old IGV
-                    l.chestionarContinuaCuApelVideo,
+    return WillPopScope(
+       onWillPop: () async => false,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+           
+            const TopIconsTextWidget(),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    //Text('Nume și Prenume Pacient', style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)), //old IGV
+                    Text(l.chestionarNumePrenumePacient,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(numePrenumeComplet,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    //Text('Vârsta', style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)), //old IGV
+                    //Text('Data de naștere', style: GoogleFonts.rubik(color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)), //old IGV
+                    Text(
+                        //l.chestionarVarsta,
+                        l.chestionarDataDeNastere,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(dataDeNastere,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Greutate', //old IGV
+                        l.chestionarGreutate,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(greutate,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w300)),
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Alergic la Paracetamol',  //old IGV
+                        //l.chestionarAlergicLaMedicament, //old IGV
+                        alergicLaMedicament,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                isVisibleAlergicLaMedicament
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CustomCheckBox(isChecked: isVisibleAlergicLaMedicament),
+                          const SizedBox(width: 25),
+                        ],
+                      )
+                    : const SizedBox(),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(width: 25),
+                Text(
+                    //'Simptome Pacient',  //old IGV
+                    l.chestionarSimptomePacient,
                     style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
+                        color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w500)),
+              ],
+            ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Febră', old IGV
+                        l.chestionarFebra,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: areFebra,
+                    ),
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Tuse', //old IGV
+                        l.chestionarTuse,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: tuseste,
+                    ), //onChecked: callbackTuse //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Dificultăți respiratorii',  //old IGV
+                        l.chestionarDificultatiRespiratorii,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: dificultatiRespiratorii,
+                    ), //onChecked: callbackRespiratie //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Astenie', //old IGV
+                        l.chestionarAstenie,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: astenie,
+                    ), // onChecked: callbackAstenie //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Cefalee',  old IGV
+                        l.chestionarCefalee,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: cefalee,
+                    ), //onChecked: callbackCefalee//old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Dureri în gât',
+                        l.chestionarDureriInGat,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: dureriGat,
+                    ), //onChecked: callbackDureriGat //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Grețuri/Vărsături',  //old IGV
+                        l.chestionarGreturiVarsaturi,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: greturiVarsaturi,
+                    ), //onChecked: callbackGreturiVarsaturi //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Diaree/Constipație', //old IGV
+                        l.chestionarDiareeConstipatie,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: diareeConstipatie,
+                    ), //onChecked: callbackDiareeConstipatie //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Iritații piele', //old IGV
+                        l.chestionarIritatiiPiele,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: iritatiiPiele,
+                    ), //onChecked: callbackIritatiiPiele //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Nas înfundat', //old IGV
+                        l.chestionarNasInfundat,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: nasInfundat,
+                    ), //onChecked: callbackNasInfundat //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            customPaddingChestionar(),
+            const SizedBox(height: 7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: 25),
+                    Text(
+                        //'Rinoree', //old IGV
+                        l.chestionarRinoree,
+                        style: GoogleFonts.rubik(
+                            color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomCheckBox(
+                      isChecked: rinoree,
+                    ), //onChecked: callbackRinoree //old IGV
+                    const SizedBox(width: 25),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 35,
+            ),
+            if (widget.page == "apel")
+            SizedBox(
+              width: 330,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: () {
+                  print("🟢 Button Clicked in ChestionarScreen");
+                  widget.onContinue();
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+                    minimumSize: const Size.fromHeight(50), // NEW
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      //'CONTINUĂ CU APEL VIDEO', //old IGV
+                      l.chestionarContinuaCuApelVideo,
+                      style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          if (widget.page == "întrebare")
-          SizedBox(
-            width: 330,
-            height: 54,
-            child: ElevatedButton(
-              onPressed: () {
-                print("🟢 Button Clicked in ChestionarScreen");
-                widget.onContinue();
-
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) {
-                //     return const RaspundeIntrebareMedicScreen(
-                //       textNume: '',
-                //       textIntrebare: '',
-                //       textRaspuns: '',
-                //     );
-                //   }),
-                // );
-                //Navigator.push(
-                //context,
-                //MaterialPageRoute(
-                //builder: (context) => const ServiceSelectScreen(),
-                //builder: (context) => const TestimonialScreen(),
-                //));
-              },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
-                  minimumSize: const Size.fromHeight(50), // NEW
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    //'RĂSPUNDE LA ÎNTREBARE', //old IGV
-                    l.chestionarRaspundeLaIntrebare,
-                    style: GoogleFonts.rubik(
-                        color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
+            const SizedBox(
+              height: 8,
+            ),
+            if (widget.page == "întrebare")
+            SizedBox(
+              width: 330,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: () {
+                  print("🟢 Button Clicked in ChestionarScreen");
+                  widget.onContinue();
+    
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) {
+                  //     return const RaspundeIntrebareMedicScreen(
+                  //       textNume: '',
+                  //       textIntrebare: '',
+                  //       textRaspuns: '',
+                  //     );
+                  //   }),
+                  // );
+                  //Navigator.push(
+                  //context,
+                  //MaterialPageRoute(
+                  //builder: (context) => const ServiceSelectScreen(),
+                  //builder: (context) => const TestimonialScreen(),
+                  //));
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+                    minimumSize: const Size.fromHeight(50), // NEW
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      //'RĂSPUNDE LA ÎNTREBARE', //old IGV
+                      l.chestionarRaspundeLaIntrebare,
+                      style: GoogleFonts.rubik(
+                          color: const Color.fromRGBO(255, 255, 255, 1), fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -763,17 +766,17 @@ class TopIconsTextWidget extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 25),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(width: 25),
-            IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Image.asset('./assets/images/inapoi_gri_icon.png'),
-              color: const Color.fromRGBO(103, 114, 148, 1),
-            ),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.start,
+        //   children: [
+        //     const SizedBox(width: 25),
+        //     IconButton(
+        //       onPressed: () => Navigator.pop(context),
+        //       icon: Image.asset('./assets/images/inapoi_gri_icon.png'),
+        //       color: const Color.fromRGBO(103, 114, 148, 1),
+        //     ),
+        //   ],
+        // ),
             const SizedBox(height: 77),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
