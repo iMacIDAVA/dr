@@ -724,7 +724,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         widget.textNume,
@@ -735,7 +735,7 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                         ),
                       ),
                       const SizedBox(
-                        width: 10,
+                        width: 1,
                       ),
                       // const Icon(
                       //   Icons.notifications_none,
@@ -744,45 +744,40 @@ class _IconNumeRatingTextDataRaspunde extends State<IconNumeRatingTextDataRaspun
                       // ),
                     ],
                   ),
-                  const Row(
+                  (double.tryParse(widget.textRating) ?? 0.0) > 0.0
+                      ? Row(
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
+                      ...List.generate(5, (index) {
+                        double rating = double.tryParse(widget.textRating) ?? 0.0;
+                        if (index < rating.floor()) {
+                          return const Icon(Icons.star, color: Colors.yellow);
+                        } else if (index < rating) {
+                          return const Icon(Icons.star_half, color: Colors.yellow);
+                        } else {
+                          return const Icon(Icons.star_border, color: Colors.yellow);
+                        }
+                      }),
+                      const SizedBox(width: 5),
                       Text(
-                        '4.9',
-                        style: TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
-                      )
+                        widget.textRating,
+                        style: const TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
+                      ),
                     ],
+                  )
+                      : const SizedBox.shrink(),
+
+
+                  Text(
+                    widget.textComentariu == "TextEditingController" || widget.textComentariu.trim().isEmpty
+                        ? "Nu există date"
+                        : widget.textComentariu,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff677294),
+                    ),
                   ),
-                  // Text(
-                  //   widget.textComentariu,
-                  //   style: const TextStyle(
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.w500,
-                  //     color: Color(0xff677294),
-                  //   ),
-                  // ),
+
                   const SizedBox(
                     height: 20,
                   ),

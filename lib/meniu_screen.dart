@@ -61,13 +61,14 @@ class _MeniuScreenState extends State<MeniuScreen> {
     loadToggleState();
   }
 
-  Future<void> loadToggleState() async {
+  void loadToggleState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     setState(() {
       isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
-      isVisibleEstiOnline = isToggledEstiOnline;
     });
   }
+
 
   Future<void> updateToggleState(bool newValue) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -80,26 +81,34 @@ class _MeniuScreenState extends State<MeniuScreen> {
     await seteazaStatusuriMedic();
   }
 
+  void syncToggleState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool latestState = prefs.getBool('isOnline') ?? false;
+
+    if (mounted) {
+      setState(() {
+        isToggledEstiOnline = latestState;
+      });
+    }
+  }
+
+
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Update shared preferences
+    await prefs.setBool('isOnline', newIsVisibleEstiOnline);
+
     setState(() {
-      isVisibleEstiOnline = newIsVisibleEstiOnline;
       isToggledEstiOnline = newIsVisibleEstiOnline;
     });
 
-    await prefs.setBool('isOnline', newIsVisibleEstiOnline);
+    // Broadcast update to the other screen
+    syncToggleState();
 
-    String user = prefs.getString('user') ?? '';
-    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
-    await apiCallFunctions.seteazaStatusuriMedic(
-      pUser: user,
-      pParola: userPassMD5,
-      pEsteActiv: isToggledEstiOnline.toString(),
-      pPrimesteIntrebari: '',
-      pInterpreteazaAnalize: '',
-      pPermiteConsultVideo: '',
-    );
+    await seteazaStatusuriMedic(); // Keep API call unchanged
   }
+
 
   Future<http.Response?> seteazaStatusuriMedic() async {
     LocalizationsApp l = LocalizationsApp.of(context)!;

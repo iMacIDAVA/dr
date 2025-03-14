@@ -75,49 +75,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     setState(() {
       isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
-      isToggledPrimesteIntrebari = prefs.getBool(pref_keys.primesteIntrebari) ?? false;
-      isToggledInterpretareAnalize = prefs.getBool(pref_keys.interpreteazaAnalize) ?? false;
-      isToggledConsultatieVideo = prefs.getBool(pref_keys.permiteConsultVideo) ?? false;
-
-      if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
-        isToggledEstiOnline = false;
-        prefs.setBool('isOnline', false);
-      }
     });
   }
+
+  void syncToggleState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool latestState = prefs.getBool('isOnline') ?? false;
+
+    if (mounted) {
+      setState(() {
+        isToggledEstiOnline = latestState;
+      });
+    }
+  }
+
+
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Print the new toggle value
-    print('Toggled Online Status: $newIsVisibleEstiOnline');
+    // Update shared preferences
+    await prefs.setBool('isOnline', newIsVisibleEstiOnline);
 
-    if (!newIsVisibleEstiOnline) {
-      setState(() {
-        isToggledEstiOnline = false;
-        isToggledPrimesteIntrebari = false;
-        isToggledInterpretareAnalize = false;
-        isToggledConsultatieVideo = false;
-      });
+    setState(() {
+      isToggledEstiOnline = newIsVisibleEstiOnline;
+    });
 
-      prefs.setBool('isOnline', false);
-      prefs.setBool(pref_keys.primesteIntrebari, false);
-      prefs.setBool(pref_keys.interpreteazaAnalize, false);
-      prefs.setBool(pref_keys.permiteConsultVideo, false);
-    } else if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
-      setState(() {
-        isToggledEstiOnline = false;
-      });
-      prefs.setBool('isOnline', false);
-      return;
-    } else {
-      setState(() {
-        isToggledEstiOnline = newIsVisibleEstiOnline;
-      });
-      prefs.setBool('isOnline', newIsVisibleEstiOnline);
-    }
+    // Broadcast update to the other screen
+    syncToggleState();
 
-    await seteazaStatusuriMedic();
+    await seteazaStatusuriMedic(); // Keep API call unchanged
   }
+
 
 
   void callbackPrimesteIntrebari(bool newIsVisiblePrimesteIntrebari) async {
@@ -299,7 +287,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  Text(l.dashboardEstiON,
+                  Text(isToggledEstiOnline ? "Esți online" : "Esți offline",
                       style: GoogleFonts.rubik(
                           color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 12, fontWeight: FontWeight.w400)),
                   const SizedBox(width: 5),
