@@ -70,13 +70,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     loadToggleState();
   }
 
-  void loadToggleState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+ void loadToggleState() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    setState(() {
-      isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
-    });
-  }
+  setState(() {
+    isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
+    isToggledPrimesteIntrebari = prefs.getBool(pref_keys.primesteIntrebari) ?? false;
+    isToggledInterpretareAnalize = prefs.getBool(pref_keys.interpreteazaAnalize) ?? false;
+    isToggledConsultatieVideo = prefs.getBool(pref_keys.permiteConsultVideo) ?? false;
+  });
+}
+
 
   void syncToggleState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
