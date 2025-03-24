@@ -70,17 +70,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     loadToggleState();
   }
 
- void loadToggleState() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  void loadToggleState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  setState(() {
-    isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
-    isToggledPrimesteIntrebari = prefs.getBool(pref_keys.primesteIntrebari) ?? false;
-    isToggledInterpretareAnalize = prefs.getBool(pref_keys.interpreteazaAnalize) ?? false;
-    isToggledConsultatieVideo = prefs.getBool(pref_keys.permiteConsultVideo) ?? false;
-  });
-}
-
+    setState(() {
+      isToggledEstiOnline = prefs.getBool('isOnline') ?? false;
+      isToggledPrimesteIntrebari = prefs.getBool(pref_keys.primesteIntrebari) ?? false;
+      isToggledInterpretareAnalize = prefs.getBool(pref_keys.interpreteazaAnalize) ?? false;
+      isToggledConsultatieVideo = prefs.getBool(pref_keys.permiteConsultVideo) ?? false;
+    });
+  }
 
   void syncToggleState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -93,96 +92,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Update shared preferences
     await prefs.setBool('isOnline', newIsVisibleEstiOnline);
 
     setState(() {
       isToggledEstiOnline = newIsVisibleEstiOnline;
+
+      if (newIsVisibleEstiOnline) {
+
+        isToggledPrimesteIntrebari = true;
+        isToggledInterpretareAnalize = true;
+        isToggledConsultatieVideo = true;
+
+
+        prefs.setBool(pref_keys.primesteIntrebari, true);
+        prefs.setBool(pref_keys.interpreteazaAnalize, true);
+        prefs.setBool(pref_keys.permiteConsultVideo, true);
+      } else {
+
+        isToggledPrimesteIntrebari = false;
+        isToggledInterpretareAnalize = false;
+        isToggledConsultatieVideo = false;
+
+
+        prefs.setBool(pref_keys.primesteIntrebari, false);
+        prefs.setBool(pref_keys.interpreteazaAnalize, false);
+        prefs.setBool(pref_keys.permiteConsultVideo, false);
+      }
     });
 
-    // Broadcast update to the other screen
     syncToggleState();
-
-    await seteazaStatusuriMedic(); // Keep API call unchanged
+    await seteazaStatusuriMedic();
   }
 
 
-
   void callbackPrimesteIntrebari(bool newIsVisiblePrimesteIntrebari) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!isToggledEstiOnline) return; // Disable toggle if "Online" is OFF
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isToggledPrimesteIntrebari = newIsVisiblePrimesteIntrebari;
     });
 
     prefs.setBool(pref_keys.primesteIntrebari, newIsVisiblePrimesteIntrebari);
-
-    if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
-      setState(() {
-        isToggledEstiOnline = false;
-      });
-      prefs.setBool('isOnline', false);
-    } else if (!isToggledEstiOnline) {
-      setState(() {
-        isToggledEstiOnline = true;
-      });
-      prefs.setBool('isOnline', true);
-    }
-
     await seteazaStatusuriMedic();
   }
 
   void callbackInterpretareAnalize(bool newIsVisibleInterpretareAnalize) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!isToggledEstiOnline) return; // Disable toggle if "Online" is OFF
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isToggledInterpretareAnalize = newIsVisibleInterpretareAnalize;
     });
 
     prefs.setBool(pref_keys.interpreteazaAnalize, newIsVisibleInterpretareAnalize);
-
-    if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
-      setState(() {
-        isToggledEstiOnline = false;
-      });
-      prefs.setBool('isOnline', false);
-    } else if (!isToggledEstiOnline) {
-      setState(() {
-        isToggledEstiOnline = true;
-      });
-      prefs.setBool('isOnline', true);
-    }
-
     await seteazaStatusuriMedic();
   }
 
   void callbackConsultatieVideo(bool newIsVisibleConsultatieVideo) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!isToggledEstiOnline) return; // Disable toggle if "Online" is OFF
 
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isToggledConsultatieVideo = newIsVisibleConsultatieVideo;
     });
 
     prefs.setBool(pref_keys.permiteConsultVideo, newIsVisibleConsultatieVideo);
-
-    if (!isToggledPrimesteIntrebari && !isToggledInterpretareAnalize && !isToggledConsultatieVideo) {
-      setState(() {
-        isToggledEstiOnline = false;
-      });
-      prefs.setBool('isOnline', false);
-    } else if (!isToggledEstiOnline) {
-      setState(() {
-        isToggledEstiOnline = true;
-      });
-      prefs.setBool('isOnline', true);
-    }
-
     await seteazaStatusuriMedic();
   }
+
+
 
   Future<http.Response?> seteazaStatusuriMedic() async {
     LocalizationsApp l = LocalizationsApp.of(context)!;

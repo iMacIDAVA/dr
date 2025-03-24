@@ -67,7 +67,7 @@ class ApiCallFunctions {
   }
 
   Future<void> TrimitePushPrinOneSignalCatrePacient({
-    required String pCheie, // API key
+    // required String pCheie, // API key
     required int pIdPacient, // Doctor's ID
     required String pTip, // Type of service
     required String pMesaj, // Notification message
@@ -75,7 +75,7 @@ class ApiCallFunctions {
   }) async {
     // Prepare parameters
     final Map<String, String> parametriiApiCall = {
-      'pCheie': pCheie,
+      // 'pCheie': pCheie,
       'pIdPacient': pIdPacient.toString(),
       'pTip': pTip,
       'pMesaj': pMesaj,

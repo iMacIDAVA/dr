@@ -75,6 +75,7 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
     isActive = false;
     // _timeoutTimer?.cancel(); // Cancel the timer
 
+    countdownTimer?.cancel();
     remainingTimeNotifier.dispose();
 
     super.dispose();
@@ -174,6 +175,9 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
               MaterialPageRoute(
                 builder: (context) => SecondIntermediateScreen(
                   onContinueToConfirm: () {
+
+
+
                     print("✅ SecondIntermediateScreen Completed. Checking if ThirdIntermediateScreen is needed...");
 
                     if (widget.page == "întrebare" || widget.page == "apel") {
@@ -195,6 +199,7 @@ class _WaitingForPaymentScreenState extends State<WaitingForPaymentScreen> {
                                     onContinue: () async {
                                       print("✅ ChestionarScreen Completed. Moving to Confirm Screen...");
                                   if (widget.page == "apel"){
+
                                     CallService callService = CallService(idClient: pIdPacient);
                                     callService.startPolling();
 

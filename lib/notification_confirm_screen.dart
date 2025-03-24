@@ -62,7 +62,7 @@ void handleTimeout() async {
 
   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
   await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-    pCheie: pCheie,
+    // pCheie: pCheie,
     pIdPacient: int.tryParse(body) ?? 0,
     pTip: tip,
     pMesaj: pMesaj,
@@ -298,7 +298,7 @@ void handleTimeout() async {
 
                                   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
                                   await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-                                    pCheie: pCheie,
+                                    // pCheie: pCheie,
                                     pIdPacient: pIdPacient,
                                     pTip: pTip,
                                     pMesaj: pMesaj,
@@ -361,14 +361,26 @@ void handleTimeout() async {
                                   String pMesaj =
                                       'Răspunsul doctorului ${widget.contMedicMobile.titulatura} ${widget.contMedicMobile.numeComplet} : Respingere';
 
+
+                                  print("📤 Sending Notification with:");
+                                  print("🔑 pCheie: $pCheie");
+                                  print("👤 pIdPacient: $pIdPacient");
+                                  print("📌 pTip: $pTip");
+                                  print("📩 pMesaj: $pMesaj");
+                                  print("📝 pObservatii: $pObservatii");
+
+
+
                                   ApiCallFunctions apiCallFunctions = ApiCallFunctions();
-                                  await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-                                    pCheie: pCheie,
+                           await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
+                                    // pCheie: pCheie,
                                     pIdPacient: pIdPacient,
                                     pTip: pTip,
                                     pMesaj: pMesaj,
                                     pObservatii: pObservatii,
                                   );
+
+
 
                                   await Future.delayed(const Duration(seconds: 2));
 

@@ -109,6 +109,14 @@ class _IntroScreenState extends State<IntroScreen> {
     } else {}
   }
 
+  aa()async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? deviceToken = prefs.getString('deviceToken');
+
+    print('bbbb : ${deviceToken}');
+  }
+
   Future<TotaluriMedic?> getTotaluriDashboardMedic() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -173,6 +181,8 @@ class _IntroScreenState extends State<IntroScreen> {
   void initState() {
     super.initState();
     initOneSignal();
+
+    aa();
   }
 
   @override

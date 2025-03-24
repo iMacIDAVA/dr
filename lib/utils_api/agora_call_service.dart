@@ -21,20 +21,24 @@ class CallService {
   Future<void> startPolling() async {
     await _initAgora();
 
-    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
       if (_remoteUid != null) {
         _stopPolling();
 
-        navigatorKey.currentState?.pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ApelVideoMedicScreen(
-              idClient: idClient,
-              remoteUid: 1,
+        if (navigatorKey.currentState?.mounted ?? false) {
+          navigatorKey.currentState?.popUntil((route) => route.isFirst);
+          navigatorKey.currentState?.pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => ApelVideoMedicScreen(
+                idClient: idClient,
+                remoteUid: _remoteUid!,
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     });
+
   }
 
   Future<void> _initAgora() async {

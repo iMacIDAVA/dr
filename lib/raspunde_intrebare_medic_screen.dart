@@ -53,7 +53,10 @@ class _RaspundeIntrebareMedicScreenState extends State<RaspundeIntrebareMedicScr
 
   String medicId = '';
 
-@override
+  bool _isDialogVisible = false;
+
+
+  @override
 void initState() {  // ✅ Remove 'async' from initState()
     super.initState();
 
@@ -127,21 +130,21 @@ Future<void> _initializeData() async {
   //   }
   // }
 
-@override
-void dispose() {
-  _messageUpdateTimer?.cancel();
+  @override
+  void dispose() {
+    _messageUpdateTimer?.cancel();
 
-  if (mounted) {
-    _messageController.removeListener(() {});
+    if (mounted) {
+      _messageController.removeListener(() {});
+    }
+
+    _messageController.dispose(); // ✅ Dispose safely
+    _scrollController.dispose();
+
+    OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
+
+    super.dispose();
   }
-
-  _messageController.dispose(); // ✅ Dispose safely
-  _scrollController.dispose();
-
-  OneSignal.Notifications.removeForegroundWillDisplayListener(_onNotificationDisplayed);
-  
-  super.dispose();
-}
 
 
  void _onNotificationDisplayed(OSNotificationWillDisplayEvent event) {
@@ -186,8 +189,8 @@ void dispose() {
     remainingTimeNotifier.value = 180;
     countdownTimer?.cancel(); // Prevent multiple timers
     if (countdownTimer == null || !countdownTimer!.isActive) {
-  startTimer();
-}
+      startTimer();
+    }
 
     showDialog(
       context: context,
@@ -264,20 +267,20 @@ void dispose() {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
-                   actions: [
-              TextButton(
-                onPressed: () {
-                  _closeDialogAndNavigate(); // ✅ Close dialog when button is pressed
-                },
-                child: const Text(
-                  "Închide", // "Close" in Romanian
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _closeDialogAndNavigate(); // ✅ Close dialog when button is pressed
+                  },
+                  child: const Text(
+                    "Închide", // "Close" in Romanian
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
             );
           },
         );
@@ -287,39 +290,43 @@ void dispose() {
 
 // Method to close the dialog and navigate to Dashboard
   void _closeDialogAndNavigate() {
-    countdownTimer?.cancel(); // Stop the timer
-    Navigator.pop(context); // Close dialog
-    _disposeAndNavigate(); // Dispose resources and navigate
-  }
-
-void _disposeAndNavigate() {
-  if (!mounted) return;
-
-  countdownTimer?.cancel();
-  _messageUpdateTimer?.cancel();
-
-  if (!_isExiting) {
-    _isExiting = true;
-
-    // ✅ Clear and remove TextField controller before disposal
-    setState(() {
-      _messageController.text = ""; // Clear text
-    });
-
-    _messageController.removeListener(() {});
-    _messageController.dispose();
-
-    if (_scrollController.hasClients) {
-      _scrollController.dispose();
+    if (countdownTimer != null && countdownTimer!.isActive) {
+      countdownTimer?.cancel();
     }
+    Navigator.pop(context);
 
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        navigateToDashboard(context);
-      }
-    });
   }
-}
+
+// Method to Dispose Resources and Navigate
+  void _disposeAndNavigate() {
+    if (!mounted) return;
+
+    countdownTimer?.cancel();
+    _messageUpdateTimer?.cancel();
+
+    if (!_isExiting) {
+      _isExiting = true;
+
+      // ✅ Remove controller from TextField before disposing
+      setState(() {
+        _messageController.text = ""; // Clear text
+      });
+
+      _messageController.removeListener(() {});
+      _messageController.dispose();
+
+      if (_scrollController.hasClients) {
+        _scrollController.dispose();
+      }
+
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          navigateToDashboard(context);
+        }
+      });
+    }
+  }
+
 
 
 
@@ -350,7 +357,8 @@ Future<void> _loadMessagesFromList() async {
           listaMesaje.where((e) => 
             e.comentariu.trim() != "Pacientul a părăsit consultația" &&
             e.comentariu.trim() != "Vă rugăm să așteptați plata pacientului" &&
-            e.comentariu.trim() != "medicul a părăsit consultația"
+            e.comentariu.trim() != "medicul a părăsit consultația" &&
+                !e.comentariu.trim().contains("Photo Attachment")
           ).toList()
         );
       });
@@ -371,13 +379,19 @@ Future<void> _loadMessagesFromList() async {
 }
 
 
+  bool _hasScrolledInitially = false; // ✅ Add this at the top of _RaspundeIntrebareMedicScreenState
+
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      }
-    });
+    if (!_hasScrolledInitially) {  // ✅ Scroll only if it's the first time
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
+      });
+      _hasScrolledInitially = true;  // ✅ Prevent future forced scrolling
+    }
   }
+
 
   void _handleFileOpen(String fileUrl) async {
     try {

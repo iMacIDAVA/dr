@@ -28,7 +28,7 @@ final expireTimestamp = currentTimestamp + expirationInSeconds;
 
 class ApelVideoMedicScreen extends StatefulWidget {
   final int remoteUid;
-    final int idClient;
+  final int idClient;
 
   const ApelVideoMedicScreen({Key? key, required this.remoteUid, required this.idClient}) : super(key: key);
 
@@ -39,12 +39,14 @@ class ApelVideoMedicScreen extends StatefulWidget {
 class _ApelVideoMedicScreenState extends State<ApelVideoMedicScreen> {
   RtcEngine? _engine;
 
-int? _remoteUid; 
+  int? _remoteUid;
 
-    int remainingTime = 180;
+  int remainingTime = 180;
   Timer? countdownTimer;
 
   ValueNotifier<int> remainingTimeNotifier = ValueNotifier(900);
+
+
 
   void startTimer() {
     countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
@@ -52,16 +54,15 @@ int? _remoteUid;
         remainingTimeNotifier.value--;
       } else {
         timer.cancel();
-            _stopTimer();
-                        if (_engine != null) {
-                          await _engine!.leaveChannel();
-                          await _engine!.release();
-                        }
-                        // getUserData();
+        _stopTimer();
+        if (_engine != null) {
+          await _engine!.leaveChannel();
+          await _engine!.release();
+        }
+        // getUserData();
       }
     });
   }
-
 
   bool isVideoEnabled = true;
   bool isMicEnabled = true;
@@ -84,59 +85,66 @@ int? _remoteUid;
     return totaluriMedic;
   }
 
- Future<void> getUserData() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  String user = prefs.getString('user') ?? '';
-  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
-  String deviceToken = prefs.getString('deviceToken') ?? '';
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+    String deviceToken = prefs.getString('deviceToken') ?? '';
 
-  TotaluriMedic? resGetTotaluriDashboardMedic = await getTotaluriDashboardMedic();
+    TotaluriMedic? resGetTotaluriDashboardMedic = await getTotaluriDashboardMedic();
 
-  ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
-    pUser: user,
-    pParola: userPassMD5,
-    pDeviceToken: deviceToken,
-    pTipDispozitiv: Platform.isAndroid ? '1' : '2',
-    pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
-    pTokenVoip: '',
-  );
-
-  if (resGetCont != null && resGetTotaluriDashboardMedic != null && mounted) {
-    debugPrint("Navigating to DashboardScreen...");
-    
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    }
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DashboardScreen(
-          contMedicMobile: resGetCont,
-          totaluriMedic: resGetTotaluriDashboardMedic,
-        ),
-      ),
+    ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
+      pUser: user,
+      pParola: userPassMD5,
+      pDeviceToken: deviceToken,
+      pTipDispozitiv: Platform.isAndroid ? '1' : '2',
+      pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
+      pTokenVoip: '',
     );
+
+    if (resGetCont != null && resGetTotaluriDashboardMedic != null && mounted) {
+      debugPrint("Navigating to DashboardScreen...");
+
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DashboardScreen(
+            contMedicMobile: resGetCont,
+            totaluriMedic: resGetTotaluriDashboardMedic,
+          ),
+        ),
+      );
+    }
   }
-}
 
   String token = '';
 
   final Stopwatch _stopwatch = Stopwatch();
-  late Timer _timer;
- 
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
 
-
-
     isVideoEnabled = true;
     isMicEnabled = true;
 
-     startTimer();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (remainingTimeNotifier.value > 0) {
+        remainingTimeNotifier.value--;
+      } else {
+        timer.cancel();
+        _stopTimer();
+      }
+    });
+
+
+    startTimer();
 
     _initializeAgora();
     // _startTimer();
@@ -150,160 +158,156 @@ int? _remoteUid;
 
   bool _localUserJoined = false;
 
+  Future<void> sendDoctorNotification(String message) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-Future<void> sendDoctorNotification(String message) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  
-  String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
-  Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
-  String body = additionalData['body'] ?? '0';
-  String tip = additionalData['tip']?.toString() ?? 'unknown';
+    String rawData = prefs.getString(pref_keys.notificationData) ?? '{}';
+    Map<String, dynamic> additionalData = _parseAdditionalData(rawData);
+    String body = additionalData['body'] ?? '0';
+    String tip = additionalData['tip']?.toString() ?? 'unknown';
 
-  String patientId = prefs.getString(pref_keys.userId) ?? '';
-  String patientNume = prefs.getString(pref_keys.userNume) ?? '';
-  String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
+    String patientId = prefs.getString(pref_keys.userId) ?? '';
+    String patientNume = prefs.getString(pref_keys.userNume) ?? '';
+    String patientPrenume = prefs.getString(pref_keys.userPrenume) ?? '';
 
-  int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
-  String pTip = tip;
-  String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
+    int pIdPacient = int.tryParse(body.replaceAll('\$', '').trim()) ?? 0;
+    String pTip = tip;
+    String pObservatii = '$patientId\$#\$$patientPrenume $patientNume';
 
-  String pCheie = keyAppPacienti;
+    String pCheie = keyAppPacienti;
 
-  ApiCallFunctions apiCallFunctions = ApiCallFunctions();
-  
-  await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
-    pCheie: pCheie,
-    pIdPacient: pIdPacient,
-    pTip: pTip,
-    pMesaj: message,  // ✅ Message to send
-    pObservatii: pObservatii,
-  );
-}
+    ApiCallFunctions apiCallFunctions = ApiCallFunctions();
 
-Map<String, dynamic> _parseAdditionalData(String rawData) {
-  try {
-    return jsonDecode(rawData) as Map<String, dynamic>;
-  } catch (e) {
-    print("Error parsing notification data: $e");
-    return {};
+    await apiCallFunctions.TrimitePushPrinOneSignalCatrePacient(
+      // pCheie: pCheie,
+      pIdPacient: pIdPacient,
+      pTip: pTip,
+      pMesaj: message, // ✅ Message to send
+      pObservatii: pObservatii,
+    );
   }
-}
 
-Future<void> _initializeAgora() async {
-  await [Permission.microphone, Permission.camera].request();
+  Map<String, dynamic> _parseAdditionalData(String rawData) {
+    try {
+      return jsonDecode(rawData) as Map<String, dynamic>;
+    } catch (e) {
+      print("Error parsing notification data: $e");
+      return {};
+    }
+  }
 
-  _engine = createAgoraRtcEngine();
-  if (_engine == null) return;
+  Future<void> _initializeAgora() async {
+    await [Permission.microphone, Permission.camera].request();
 
-  await _engine!.initialize(
-    const RtcEngineContext(
-      appId: appId,
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ),
-  );
+    _engine = createAgoraRtcEngine();
+    if (_engine == null) return;
 
-  await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
-  await _engine!.enableVideo();
-  await _engine!.startPreview(); // ✅ This must be before joining channel
-
-  _engine?.registerEventHandler(
-    RtcEngineEventHandler(
-      onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-        debugPrint("Doctor joined the channel successfully ✅");
-        setState(() {
-          _localUserJoined = true; // ✅ Ensure it's updated
-        });
-      },
-      onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-        debugPrint("Patient joined with UID: $remoteUid");
-        setState(() {
-          _remoteUid = remoteUid; // ✅ Ensure we store remote user UID
-        });
-      },
-        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) async {
-      debugPrint("Patient (UID: $remoteUid) left the call ❌");
-
-      setState(() {
-        _remoteUid = null;  // Remove patient video
-      });
-
-      // Ensure doctor also leaves
-      await _engine?.leaveChannel();
-      await _engine?.release();
-
-      // Navigate to dashboard or a safe screen
-      if (mounted) {
-        getUserData(); // Redirect doctor to dashboard
-      }
-    },
-    ),
-  );
-
-  token = RtcTokenBuilder.build(
-    appId: appId,
-    channelName: channelName,
-    appCertificate: appCertificate,
-    uid: '0',
-    role: role,
-    expireTimestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400,
-  );
-
-  await _engine!.joinChannel(
-    token: token,
-    channelId: channelName,
-    uid: 0,
-    options: const ChannelMediaOptions(),
-  );
-}
-
-
-Future<void> _sendFile(File file) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String user = prefs.getString('user') ?? '';
-  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
-
-  List<int> fileBytes = await file.readAsBytes();
-  String base64File = base64Encode(fileBytes);
-  String fileName = path.basename(file.path);
-  String extension = path.extension(file.path);
-
-  try {
-    String? fileUrl = await apiCallFunctions.adaugaMesajCuAtasamentDinContMedic(
-      pCheie: keyAppPacienti,
-      pUser: user,
-      pParolaMD5: userPassMD5,
-      IdClient: widget.idClient.toString(),
-      pMesaj: "File Attachment: $fileName$extension",
-      pDenumireFisier: fileName,
-      pExtensie: extension,
-      pSirBitiDocument: base64File,
+    await _engine!.initialize(
+      const RtcEngineContext(
+        appId: appId,
+        channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
+      ),
     );
 
-    if (fileUrl != null) {
-      await apiCallFunctions.adaugaMesajDinContMedic(
+    await _engine!.setClientRole(role: ClientRoleType.clientRoleBroadcaster);
+    await _engine!.enableVideo();
+    await _engine!.startPreview(); // ✅ This must be before joining channel
+
+    _engine?.registerEventHandler(
+      RtcEngineEventHandler(
+        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+          debugPrint("Doctor joined the channel successfully ✅");
+          setState(() {
+            _localUserJoined = true; // ✅ Ensure it's updated
+          });
+        },
+        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          debugPrint("Patient joined with UID: $remoteUid");
+          setState(() {
+            _remoteUid = remoteUid; // ✅ Ensure we store remote user UID
+          });
+        },
+        onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) async {
+          debugPrint("Patient (UID: $remoteUid) left the call ❌");
+
+          setState(() {
+            _remoteUid = null; // Remove patient video
+          });
+
+          // Ensure doctor also leaves
+          await _engine?.leaveChannel();
+          await _engine?.release();
+
+          // Navigate to dashboard or a safe screen
+          if (mounted) {
+            getUserData(); // Redirect doctor to dashboard
+          }
+        },
+      ),
+    );
+
+    token = RtcTokenBuilder.build(
+      appId: appId,
+      channelName: channelName,
+      appCertificate: appCertificate,
+      uid: '0',
+      role: role,
+      expireTimestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000 + 86400,
+    );
+
+    await _engine!.joinChannel(
+      token: token,
+      channelId: channelName,
+      uid: 0,
+      options: const ChannelMediaOptions(),
+    );
+  }
+
+  Future<void> _sendFile(File file) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+
+    List<int> fileBytes = await file.readAsBytes();
+    String base64File = base64Encode(fileBytes);
+    String fileName = path.basename(file.path);
+    String extension = path.extension(file.path);
+
+    try {
+      String? fileUrl = await apiCallFunctions.adaugaMesajCuAtasamentDinContMedic(
+        pCheie: keyAppPacienti,
         pUser: user,
-        pParola: userPassMD5,
-        pIdClient: widget.idClient.toString(),
-        pMesaj: fileUrl,
+        pParolaMD5: userPassMD5,
+        IdClient: widget.idClient.toString(),
+        pMesaj: "File Attachment: $fileName$extension",
+        pDenumireFisier: fileName,
+        pExtensie: extension,
+        pSirBitiDocument: base64File,
       );
 
-      setState(() {
-        _selectedFile = null; // Clear the selection
-      });
+      if (fileUrl != null) {
+        await apiCallFunctions.adaugaMesajDinContMedic(
+          pUser: user,
+          pParola: userPassMD5,
+          pIdClient: widget.idClient.toString(),
+          pMesaj: fileUrl,
+        );
 
-      print("✅ File sent successfully!");
-    } else {
-      print("❌ File upload failed.");
+        setState(() {
+          _selectedFile = null; // Clear the selection
+        });
+
+        print("✅ File sent successfully!");
+      } else {
+        print("❌ File upload failed.");
+      }
+    } catch (e) {
+      print("⚠️ Error sending file: $e");
     }
-  } catch (e) {
-    print("⚠️ Error sending file: $e");
   }
-}
 
-
-
-File _selectedImage = File('');
-final ImagePicker _picker = ImagePicker();
+  File _selectedImage = File('');
+  final ImagePicker _picker = ImagePicker();
 
 // Future<void> _chooseFromGallery() async {
 //   final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
@@ -327,14 +331,19 @@ final ImagePicker _picker = ImagePicker();
 //   }
 // }
 
+  void _stopTimer() {
+    if (_timer != null) {
+      print("⏳ Stopping Timer...");
+      _timer!.cancel();
+      _timer = null; // ✅ Set it to null to prevent further issues
+      print("✅ Timer Stopped!");
+    } else {
+      print("⚠️ Timer was already null.");
+    }
+  }
 
 
 
-
- void _stopTimer() {
-  _timer?.cancel(); // Use null-aware operator to prevent crash
-  _stopwatch.stop();
-}
   @override
   void dispose() {
     _stopTimer();
@@ -344,156 +353,148 @@ final ImagePicker _picker = ImagePicker();
       _engine?.release();
       _engine = null; // Prevents potential memory leaks
     }
-    
+
     remainingTimeNotifier.dispose();
     // getUserData();
     super.dispose();
   }
 
-
-void _showChatOptionsBottomSheet() {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-    ),
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  "Atașează un fișier",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 15),
-
-                // File Selection Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Pick File Button
-                    ElevatedButton.icon(
-                      onPressed: () => _pickFile(setState),
-                      icon: const Icon(Icons.attach_file, color: Colors.black),
-                      label: const Text("Alege Fișier", style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        elevation: 1, // Minimal shadow
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-
-                    // Pick Image Button
-                    ElevatedButton.icon(
-                      onPressed: () => _chooseFromGallery(setState),
-                      icon: const Icon(Icons.photo_library, color: Colors.black),
-                      label: const Text("Galerie", style: TextStyle(color: Colors.black)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        elevation: 1,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 15),
-
-                // Show Selected File Preview (Centered)
-                if (_selectedFile != null)
-                  Container(
-                    height: 120,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: GestureDetector(
-                      onTap: () => _previewFile(_selectedFile!),
-                      child: Center(
-                        child: _selectedFile!.path.endsWith(".pdf")
-                            ? const Icon(Icons.picture_as_pdf, size: 50, color: Colors.red)
-                            : Image.file(_selectedFile!, fit: BoxFit.cover),
-                      ),
-                    ),
-                  ),
-
-                const SizedBox(height: 15),
-
-                // Send Button
-                ElevatedButton(
-                  onPressed: _selectedFile != null
-                      ? () async {
-                          await _sendFile(_selectedFile!);
-                          Navigator.pop(context); // Close bottom sheet after sending
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text("Trimite", style: TextStyle(color: Colors.white)),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-
-
-
-
-File? _selectedFile; // Stores selected file
-
-Future<void> _pickFile(Function setState) async {
-  final result = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
-  );
-
-  if (result != null && result.files.single.path != null) {
-    setState(() {
-      _selectedFile = File(result.files.single.path!);
-    });
-  }
-}
-
-Future<void> _chooseFromGallery(Function setState) async {
-  final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
-  if (photo != null) {
-    setState(() {
-      _selectedFile = File(photo.path);
-    });
-  }
-}
-
-
-void _previewFile(File file) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => FileViewerScreen(
-        file: file,
-        onSend: () async {
-          Navigator.pop(context); // Close preview screen
-          _sendFile(file); // Send file after confirmation
-        },
+  void _showChatOptionsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
       ),
-    ),
-  );
-}
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Atașează un fișier",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 15),
 
+                  // File Selection Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Pick File Button
+                      ElevatedButton.icon(
+                        onPressed: () => _pickFile(setState),
+                        icon: const Icon(Icons.attach_file, color: Colors.black),
+                        label: const Text("Alege Fișier", style: TextStyle(color: Colors.black)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          elevation: 1, // Minimal shadow
+                        ),
+                      ),
+                      const SizedBox(width: 10),
 
+                      // Pick Image Button
+                      ElevatedButton.icon(
+                        onPressed: () => _chooseFromGallery(setState),
+                        icon: const Icon(Icons.photo_library, color: Colors.black),
+                        label: const Text("Galerie", style: TextStyle(color: Colors.black)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          elevation: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  // Show Selected File Preview (Centered)
+                  if (_selectedFile != null)
+                    Container(
+                      height: 120,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: GestureDetector(
+                        onTap: () => _previewFile(_selectedFile!),
+                        child: Center(
+                          child: _selectedFile!.path.endsWith(".pdf")
+                              ? const Icon(Icons.picture_as_pdf, size: 50, color: Colors.red)
+                              : Image.file(_selectedFile!, fit: BoxFit.cover),
+                        ),
+                      ),
+                    ),
+
+                  const SizedBox(height: 15),
+
+                  // Send Button
+                  ElevatedButton(
+                    onPressed: _selectedFile != null
+                        ? () async {
+                            await _sendFile(_selectedFile!);
+                            Navigator.pop(context); // Close bottom sheet after sending
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text("Trimite", style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  File? _selectedFile; // Stores selected file
+
+  Future<void> _pickFile(Function setState) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+      });
+    }
+  }
+
+  Future<void> _chooseFromGallery(Function setState) async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
+    if (photo != null) {
+      setState(() {
+        _selectedFile = File(photo.path);
+      });
+    }
+  }
+
+  void _previewFile(File file) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FileViewerScreen(
+          file: file,
+          onSend: () async {
+            Navigator.pop(context); // Close preview screen
+            _sendFile(file); // Send file after confirmation
+          },
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -508,32 +509,28 @@ void _previewFile(File file) {
             //  Center(
             //   child: Text('ss'),
             // ),
-Padding(
-  padding: const EdgeInsets.only(right: 18.0 , top: 58.0),
-  child:   Align(
-    alignment: Alignment.topRight,
-    child: SizedBox(
-      width: 120, // Adjust size if needed
-      height: 160,
-      child: Center(
-        child:AgoraVideoView(
-                controller: VideoViewController(
-                  rtcEngine: _engine!,
-                  canvas: const VideoCanvas(
-                    uid: 0,
-                    sourceType: VideoSourceType.videoSourceCameraPrimary, // ✅ Forces primary camera
-                  ),
+            Padding(
+              padding: const EdgeInsets.only(right: 18.0, top: 58.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: SizedBox(
+                  width: 120, // Adjust size if needed
+                  height: 160,
+                  child: Center(
+                      child: AgoraVideoView(
+                    controller: VideoViewController(
+                      rtcEngine: _engine!,
+                      canvas: const VideoCanvas(
+                        uid: 0,
+                        sourceType: VideoSourceType.videoSourceCameraPrimary, // ✅ Forces primary camera
+                      ),
+                    ),
+                  )),
                 ),
-              )
+              ),
+            ),
 
-      ),
-    ),
-  ),
-),
-
-
-
-        Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const SizedBox(height: 480),
@@ -560,55 +557,54 @@ Padding(
                       //     fontWeight: FontWeight.w500,
                       //   ),
                       // ),
-                                Padding(
-                padding: const EdgeInsets.only(left: 128.0, right: 128.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.red,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 128.0, right: 128.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 500),
+                                width: 10,
+                                height: 10,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              ValueListenableBuilder<int>(
+                                valueListenable: remainingTimeNotifier,
+                                builder: (context, remainingTime, _) {
+                                  return Text(
+                                    "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}", // Format as MM:SS
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.timer,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      ValueListenableBuilder<int>(
-                        valueListenable: remainingTimeNotifier,
-                        builder: (context, remainingTime, _) {
-                          return Text(
-                            "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}", // Format as MM:SS
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.timer,
-                        color: Colors.red,
-                        size: 20,
-                      ),
                     ],
                   ),
                 ),
-              ),
-              
-                    ],
-                  ),
-                ),
-                 const SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -670,59 +666,75 @@ Padding(
                     ),
                     // End Call Button
                     GestureDetector(
- onTap: () async {
-  debugPrint("Doctor is ending the call...");
+                      onTap: () async {
+                        print("📞 Ending call...");
 
-  _stopTimer();
+                        _stopTimer();
 
-  if (_engine != null) {
-    await _engine!.leaveChannel();
-    await _engine!.release();
-    _engine = null; // Prevent memory leaks
-    debugPrint("Doctor has left the Agora channel ✅");
-  }
+                        if (_engine != null) {
+                          print("⏳ Leaving Agora channel...");
+                          await _engine!.leaveChannel();
+                          print("✅ Left channel!");
 
-  // Ensure navigation happens only if the widget is still active
-  if (!mounted) return;
+                          print("⏳ Releasing Agora engine...");
+                          await _engine!.release();
+                          print("✅ Released engine!");
 
-  debugPrint("Navigating back to Dashboard...");
+                          _engine = null;
+                        } else {
+                          print("⚠️ Agora engine was already null!");
+                        }
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String user = prefs.getString('user') ?? '';
-  String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
-  String deviceToken = prefs.getString('deviceToken') ?? '';
+                        if (!mounted) {
+                          print("❌ Widget is not mounted! Navigation will not happen.");
+                          return;
+                        }
 
-  TotaluriMedic? resGetTotaluriDashboardMedic = await getTotaluriDashboardMedic();
-  ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
-    pUser: user,
-    pParola: userPassMD5,
-    pDeviceToken: deviceToken,
-    pTipDispozitiv: Platform.isAndroid ? '1' : '2',
-    pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
-    pTokenVoip: '',
-  );
+                        print("🔄 Fetching user data before navigation...");
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        String user = prefs.getString('user') ?? '';
+                        String userPassMD5 = prefs.getString(pref_keys.userPassMD5) ?? '';
+                        String deviceToken = prefs.getString('deviceToken') ?? '';
 
-  if (resGetCont != null && resGetTotaluriDashboardMedic != null && mounted) {
-    debugPrint("Navigating to DashboardScreen...");
-    
-    // Ensure previous screen is removed from navigation stack
-    Navigator.of(context).popUntil((route) => route.isFirst);
+                        print("⏳ Fetching TotaluriMedic...");
+                        TotaluriMedic? resGetTotaluriDashboardMedic = await getTotaluriDashboardMedic();
+                        print("✅ TotaluriMedic fetched: ${resGetTotaluriDashboardMedic != null}");
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DashboardScreen(
-          contMedicMobile: resGetCont,
-          totaluriMedic: resGetTotaluriDashboardMedic,
-        ),
-      ),
-    );
-  } else {
-    debugPrint("Failed to retrieve doctor account details.");
-  }
-},
+                        print("⏳ Fetching ContMedicMobile...");
+                        ContMedicMobile? resGetCont = await apiCallFunctions.getContMedic(
+                          pUser: user,
+                          pParola: userPassMD5,
+                          pDeviceToken: deviceToken,
+                          pTipDispozitiv: Platform.isAndroid ? '1' : '2',
+                          pModelDispozitiv: await apiCallFunctions.getDeviceInfo(),
+                          pTokenVoip: '',
+                        );
+                        print("✅ ContMedicMobile fetched: ${resGetCont != null}");
 
+                        if (resGetCont == null || resGetTotaluriDashboardMedic == null) {
+                          print("❌ Error fetching user data! Navigation canceled.");
+                          return;
+                        }
 
+                        print("🔄 Checking if navigation is possible...");
+                        if (Navigator.canPop(context)) {
+                          print("🔙 Popping current screen...");
+                          Navigator.pop(context);
+                        }
+
+                        print("🚀 Navigating to DashboardScreen...");
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DashboardScreen(
+                              contMedicMobile: resGetCont,
+                              totaluriMedic: resGetTotaluriDashboardMedic,
+                            ),
+                          ),
+                        );
+
+                        print("✅ Navigation successful!");
+                      },
                       child: Container(
                         width: 70,
                         height: 70,
@@ -793,8 +805,8 @@ Padding(
     );
   }
 
-Widget _remoteVideo() {
-  // if (_remoteUid != null) {
+  Widget _remoteVideo() {
+    // if (_remoteUid != null) {
     return AgoraVideoView(
       controller: VideoViewController.remote(
         rtcEngine: _engine!,
@@ -802,13 +814,8 @@ Widget _remoteVideo() {
         connection: const RtcConnection(channelId: channelName),
       ),
     );
-  // } else {
-  //   return const Center(child: CircularProgressIndicator());
-  // }
-}
-
-
-
-
-
+    // } else {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
+  }
 }

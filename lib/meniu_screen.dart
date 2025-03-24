@@ -96,18 +96,29 @@ class _MeniuScreenState extends State<MeniuScreen> {
   void callbackEstiOnline(bool newIsVisibleEstiOnline) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Update shared preferences
     await prefs.setBool('isOnline', newIsVisibleEstiOnline);
 
     setState(() {
       isToggledEstiOnline = newIsVisibleEstiOnline;
     });
 
-    // Broadcast update to the other screen
+    if (newIsVisibleEstiOnline) {
+
+      await prefs.setBool(pref_keys.primesteIntrebari, true);
+      await prefs.setBool(pref_keys.interpreteazaAnalize, true);
+      await prefs.setBool(pref_keys.permiteConsultVideo, true);
+    } else {
+
+      await prefs.setBool(pref_keys.primesteIntrebari, false);
+      await prefs.setBool(pref_keys.interpreteazaAnalize, false);
+      await prefs.setBool(pref_keys.permiteConsultVideo, false);
+    }
+
     syncToggleState();
 
-    await seteazaStatusuriMedic(); // Keep API call unchanged
+    await seteazaStatusuriMedic();
   }
+
 
 
   Future<http.Response?> seteazaStatusuriMedic() async {

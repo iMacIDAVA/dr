@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/firebase_options.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
@@ -18,25 +19,33 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = 'https://28348af376e7d2a0347d6ab007685fa3@o4509014972366848.ingest.de.sentry.io/4509015124541520';
+      options.tracesSampleRate = 1.0; 
+      options.debug = true;
+      options.sendDefaultPii = true;
+    },
+    appRunner: () async {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
+      OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+      OneSignal.initialize('bf049046-edaf-41f1-bb07-e2ac883af161');
+      await OneSignal.Notifications.requestPermission(true);
+
+
+      OneSignal.Notifications.addForegroundWillDisplayListener((event) {
+        handleNotification(event.notification);
+      });
+      OneSignal.Notifications.addClickListener((event) {
+        handleNotification(event.notification);
+      });
+
+      runApp(const MyApp());
+    },
   );
-  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  OneSignal.initialize('bf049046-edaf-41f1-bb07-e2ac883af161');
-  await OneSignal.Notifications.requestPermission(true);
-
-
-
-  // Add global notification listeners
-  OneSignal.Notifications.addForegroundWillDisplayListener((event) {
-    handleNotification(event.notification);
-  });
-  OneSignal.Notifications.addClickListener((event) {
-    handleNotification(event.notification);
-  });
-
-
-  runApp(const MyApp());
 }
 
 ApiCallFunctions apiCallFunctions = ApiCallFunctions();
