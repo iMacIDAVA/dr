@@ -12,6 +12,14 @@
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Această aplicație are nevoie de acces la cameră pentru apeluri video.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Această aplicație are nevoie de acces la biblioteca foto pentru a încărca imagini.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Această aplicație are nevoie de acces la biblioteca foto pentru a salva imagini.</string>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>Această aplicație folosește notificări pentru a te ține la curent.</string>
     <key>CFBundleName</key>
     <string>sos_bebe_profil_bebe_doctor</string>
     <key>CFBundlePackageType</key>

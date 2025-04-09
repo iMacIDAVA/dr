@@ -26,7 +26,7 @@ class _IntroScreenState extends State<IntroScreen> {
   // CallService callService = CallService();
 
   Future<void> initOneSignal() async {
-    await ensureDeviceToken();
+    // await ensureDeviceToken();
     await getUserData();
 
     // OneSignal.Notifications.addForegroundWillDisplayListener((event) {
@@ -95,19 +95,19 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
 
-  Future<void> ensureDeviceToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    String? deviceToken = prefs.getString('deviceToken');
-
-    if (deviceToken == null || deviceToken.isEmpty) {
-      final String? newToken = OneSignal.User.pushSubscription.id;
-
-      if (newToken != null) {
-        await prefs.setString('deviceToken', newToken);
-      } else {}
-    } else {}
-  }
+  // Future<void> ensureDeviceToken() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   String? deviceToken = prefs.getString('deviceToken');
+  //
+  //   if (deviceToken == null || deviceToken.isEmpty) {
+  //     final String? newToken = OneSignal.User.pushSubscription.id;
+  //
+  //     if (newToken != null) {
+  //       await prefs.setString('deviceToken', newToken);
+  //     } else {}
+  //   } else {}
+  // }
 
   aa()async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -182,7 +182,7 @@ class _IntroScreenState extends State<IntroScreen> {
     super.initState();
     initOneSignal();
 
-    aa();
+    // aa();
   }
 
   @override

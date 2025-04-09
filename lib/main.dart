@@ -16,6 +16,27 @@ import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as 
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+Future<void> ensureDeviceToken({int retries = 5}) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  for (int i = 0; i < retries; i++) {
+    final String? newToken = OneSignal.User.pushSubscription.id;
+
+    if (newToken != null && newToken.isNotEmpty) {
+      await prefs.setString('deviceToken', newToken);
+      print('✅ Device token saved: $newToken');
+      return;
+    }
+
+    print('⏳ Waiting for device token... (attempt ${i + 1})');
+    await Future.delayed(const Duration(seconds: 2));
+  }
+
+  print('❌ Failed to get OneSignal token after $retries retries.');
+}
+
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -34,6 +55,8 @@ void main() async {
       OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
       OneSignal.initialize('bf049046-edaf-41f1-bb07-e2ac883af161');
       await OneSignal.Notifications.requestPermission(true);
+
+      await ensureDeviceToken();
 
 
       OneSignal.Notifications.addForegroundWillDisplayListener((event) {
