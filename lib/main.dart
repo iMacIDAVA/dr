@@ -162,7 +162,8 @@ class MyApp extends StatelessWidget {
         Locale('ro', 'RO'),
       ],
       locale: const Locale('ro'),
-      home:ConsultationScreen(doctorId: 2) // ChatScreen(isDoctor: false) //const IntroScreen(),
+      home:ConsultationScreen(doctorId: 2) // const IntroScreen(), //
+      // home: const IntroScreen(), //
     );
   }
 }

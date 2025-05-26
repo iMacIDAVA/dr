@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../servises /services.dart'; // Added for Rubik font
 
 
 
 class ConsultationScreen extends StatefulWidget {
   final int doctorId;
-
   const ConsultationScreen({Key? key, required this.doctorId}) : super(key: key);
 
   @override
@@ -16,7 +14,7 @@ class ConsultationScreen extends StatefulWidget {
 }
 
 class _ConsultationScreenState extends State<ConsultationScreen> {
-  static const int _initialTime = 180; // Constant for timer duration
+  static const int _initialTime = 180; // Constant for timer durationfaile
   final ConsultationService _consultationService = ConsultationService();
   Map<String, dynamic>? _currentConsultation;
   bool _isLoading = true;
@@ -41,12 +39,19 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   }
 
   void _startPolling() {
-    _pollingTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (_currentConsultation != null) {
         _loadCurrentConsultation();
       }
     });
   }
+  // void _startPolling() {
+  //   _pollingTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
+  //     if (_currentConsultation != null) {
+  //       _loadCurrentConsultation();
+  //     }
+  //   });
+  // }
 
   void _startTimer() {
     _countdownTimer?.cancel(); // Cancel any existing timer
@@ -77,18 +82,22 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       });
     }
   }
-
   Future<void> _loadCurrentConsultation() async {
     try {
       final response = await _consultationService.getCurrentConsultation(widget.doctorId);
 
       if (response['has_active_session']) {
+        final newStatus = response['data']['status'];
+        final oldStatus = _currentConsultation?['status'];
+
         setState(() {
           _currentConsultation = response['data'];
           _isLoading = false;
         });
-        if (_currentConsultation!['status'] == 'Requested') {
-          _startTimer(); // Start timer for new requests
+
+        // Only start timer if we just received a new 'Requested' status
+        if (newStatus == 'Requested' && oldStatus != 'Requested') {
+          _startTimer();
         }
       } else {
         setState(() {
@@ -104,6 +113,33 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       });
     }
   }
+
+  // Future<void> _loadCurrentConsultation() async {
+  //   try {
+  //     final response = await _consultationService.getCurrentConsultation(widget.doctorId);
+  //
+  //     if (response['has_active_session']) {
+  //       setState(() {
+  //         _currentConsultation = response['data'];
+  //         _isLoading = false;
+  //       });
+  //       if (_currentConsultation!['status'] == 'Requested') {
+  //         _startTimer(); // Start timer for new requests
+  //       }
+  //     } else {
+  //       setState(() {
+  //         _currentConsultation = null;
+  //         _isLoading = false;
+  //       });
+  //       _countdownTimer?.cancel(); // Stop timer if no active consultation
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _error = e.toString();
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
 
   Future<void> _updateStatus(String action) async {
     if (_currentConsultation == null) return;
@@ -370,7 +406,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     if (_error != null) {
       return Center(
         child: Text(
-          'Error: $_error',
+          'Errorxxx: $_error',
           style: const TextStyle(color: Colors.red),
         ),
       );
@@ -433,244 +469,3 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   }
 }
 
-// // accept or reject
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-//
-// import '../servises /services.dart';
-//
-//
-// class ConsultationScreen extends StatefulWidget {
-//   final int doctorId;
-//
-//   const ConsultationScreen({Key? key, required this.doctorId}) : super(key: key);
-//
-//   @override
-//   _ConsultationScreenState createState() => _ConsultationScreenState();
-// }
-//
-// class _ConsultationScreenState extends State<ConsultationScreen> {
-//   final ConsultationService _consultationService = ConsultationService();
-//   Map<String, dynamic>? _currentConsultation;
-//   bool _isLoading = true;
-//   String? _error;
-//   Timer? _pollingTimer;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadCurrentConsultation();
-//     _startPolling();
-//   }
-//
-//   @override
-//   void dispose() {
-//     _pollingTimer?.cancel();
-//     super.dispose();
-//   }
-//
-//   void _startPolling() {
-//     _pollingTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
-//       if (_currentConsultation != null) {
-//         _loadCurrentConsultation();
-//       }
-//     });
-//   }
-//
-//   Future<void> _loadCurrentConsultation() async {
-//     try {
-//       final response = await _consultationService.getCurrentConsultation(widget.doctorId);
-//
-//       if (response['has_active_session']) {
-//         setState(() {
-//           _currentConsultation = response['data'];
-//           _isLoading = false;
-//         });
-//       } else {
-//         setState(() {
-//           _currentConsultation = null;
-//           _isLoading = false;
-//         });
-//       }
-//     } catch (e) {
-//       setState(() {
-//         _error = e.toString();
-//         _isLoading = false;
-//       });
-//     }
-//   }
-//
-//   Future<void> _updateStatus(String action) async {
-//     try {
-//       if (_currentConsultation == null) return;
-//
-//       final response = await _consultationService.updateConsultationStatus(
-//         _currentConsultation!['id'],
-//         action,
-//       );
-//
-//       setState(() {
-//         _currentConsultation = response['data'];
-//       });
-//     } catch (e) {
-//       setState(() {
-//         _error = e.toString();
-//       });
-//     }
-//   }
-//
-//   Widget _buildRequestedScreen() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Text(
-//             'New ${_currentConsultation!['session_type']} request',
-//             style: Theme.of(context).textTheme.headlineSmall,
-//           ),
-//           const SizedBox(height: 20),
-//           ElevatedButton(
-//             onPressed: () => _updateStatus('accept'),
-//             child: const Text('Accept'),
-//           ),
-//           const SizedBox(height: 10),
-//           ElevatedButton(
-//             onPressed: () => _updateStatus('reject'),
-//             style: ElevatedButton.styleFrom(
-//               backgroundColor: Colors.red,
-//             ),
-//             child: const Text('Reject'),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildPaymentPendingScreen() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           const Text(
-//             'Payment Pending',
-//             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-//           ),
-//           const SizedBox(height: 20),
-//           const CircularProgressIndicator(),
-//           const SizedBox(height: 20),
-//           const Text(
-//             'Waiting for patient to complete payment',
-//             textAlign: TextAlign.center,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildPaymentAcceptedScreen() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           const Text(
-//             'Payment Accepted',
-//             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-//           ),
-//           const SizedBox(height: 20),
-//           const Text(
-//             'Waiting for patient to submit form',
-//             textAlign: TextAlign.center,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildFormPendingScreen() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           const Text(
-//             'Form Pending',
-//             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-//           ),
-//           const SizedBox(height: 20),
-//           const CircularProgressIndicator(),
-//           const SizedBox(height: 20),
-//           const Text(
-//             'Waiting for patient to complete and submit the form',
-//             textAlign: TextAlign.center,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildFormSubmittedScreen() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           const Text(
-//             'Form Submitted',
-//             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-//           ),
-//           const SizedBox(height: 20),
-//           ElevatedButton(
-//             onPressed: () => _updateStatus('callReady'),
-//             child: const Text('Proceed'),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _buildContent() {
-//     if (_isLoading) {
-//       return const Center(child: CircularProgressIndicator());
-//     }
-//
-//     if (_error != null) {
-//       return Center(
-//         child: Text(
-//           'Error: $_error',
-//           style: const TextStyle(color: Colors.red),
-//         ),
-//       );
-//     }
-//
-//     if (_currentConsultation == null) {
-//       return const Center(
-//         child: Text('No active consultations'),
-//       );
-//     }
-//
-//     switch (_currentConsultation!['status']) {
-//       case 'Requested':
-//         return _buildRequestedScreen();
-//       case 'PaymentPending':
-//         return _buildPaymentPendingScreen();
-//       case 'PaymentCompleted':
-//         return _buildPaymentAcceptedScreen();
-//       case 'FormPending':
-//         return _buildFormPendingScreen();
-//       case 'FormSubmitted':
-//         return _buildFormSubmittedScreen();
-//       default:
-//         return Center(
-//           child: Text('Unknown status: ${_currentConsultation!['status']}'),
-//         );
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Consultation'),
-//       ),
-//       body: _buildContent(),
-//     );
-//   }
-// }
