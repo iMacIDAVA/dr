@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,22 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAMO_7L9bjkMZP7kEyqyOgEHH7PkKgG0s0',
-    appId: '1:629418451122:android:ab37d0ca5c735f81caa9ab',
-    messagingSenderId: '629418451122',
-    projectId: 'sos-bebe-pacient',
-    storageBucket: 'sos-bebe-pacient.appspot.com',
+    apiKey: 'AIzaSyCqTO6Z01b88YM36w1qpns8pnkJ7xhQxBQ',
+    appId: '1:1078998892043:android:7caf1c076b4d7d9225d10e',
+    messagingSenderId: '1078998892043',
+    projectId: 'sos-ffc0c',
+    storageBucket: 'sos-ffc0c.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBJ1T4V6i3QzXQYePAQDkL5SzwDqxovNaA',
-    appId: '1:629418451122:ios:1a405639a0a9012dcaa9ab',
-    messagingSenderId: '629418451122',
-    projectId: 'sos-bebe-pacient',
-    storageBucket: 'sos-bebe-pacient.appspot.com',
-    androidClientId: '629418451122-0a0mttatvosruoc955ro87ajeal5r8oq.apps.googleusercontent.com',
-    iosClientId: '629418451122-n2ivor36630aorsmdab8hcpnibo3sbds.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBR7IfqndJnE1cGi5BJCVkU4_Ks2PXGsu8',
+    appId: '1:1078998892043:ios:f137bbd6e3a8aea225d10e',
+    messagingSenderId: '1078998892043',
+    projectId: 'sos-ffc0c',
+    storageBucket: 'sos-ffc0c.firebasestorage.app',
     iosBundleId: 'com.example.sosBebeProfilBebeDoctor',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCvFRlUqoTfG9e0-oqHgPfJKPldB1ukaMc',
+    appId: '1:1078998892043:web:f43075107d51198c25d10e',
+    messagingSenderId: '1078998892043',
+    projectId: 'sos-ffc0c',
+    authDomain: 'sos-ffc0c.firebaseapp.com',
+    storageBucket: 'sos-ffc0c.firebasestorage.app',
+    measurementId: 'G-51J2QC08DZ',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBR7IfqndJnE1cGi5BJCVkU4_Ks2PXGsu8',
+    appId: '1:1078998892043:ios:f137bbd6e3a8aea225d10e',
+    messagingSenderId: '1078998892043',
+    projectId: 'sos-ffc0c',
+    storageBucket: 'sos-ffc0c.firebasestorage.app',
+    iosBundleId: 'com.example.sosBebeProfilBebeDoctor',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCvFRlUqoTfG9e0-oqHgPfJKPldB1ukaMc',
+    appId: '1:1078998892043:web:ed753ce298cd87b225d10e',
+    messagingSenderId: '1078998892043',
+    projectId: 'sos-ffc0c',
+    authDomain: 'sos-ffc0c.firebaseapp.com',
+    storageBucket: 'sos-ffc0c.firebasestorage.app',
+    measurementId: 'G-BHYFMTHZ3J',
   );
 
 }

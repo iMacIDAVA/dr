@@ -7,12 +7,15 @@ import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/firebase_options.dart';
+import 'package:sos_bebe_profil_bebe_doctor/fix/chat.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
 import 'package:sos_bebe_profil_bebe_doctor/notification_confirm_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/api_call_functions.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/classes.dart';
 import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as pref_keys;
+
+import 'fix/screens/requeste_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -43,7 +46,7 @@ void main() async {
   await SentryFlutter.init(
     (options) {
       options.dsn = 'https://28348af376e7d2a0347d6ab007685fa3@o4509014972366848.ingest.de.sentry.io/4509015124541520';
-      options.tracesSampleRate = 1.0; 
+      options.tracesSampleRate = 1.0;
       options.debug = true;
       options.sendDefaultPii = true;
     },
@@ -159,8 +162,11 @@ class MyApp extends StatelessWidget {
         Locale('ro', 'RO'),
       ],
       locale: const Locale('ro'),
-      home: const IntroScreen(),
+      home:ConsultationScreen(doctorId: 2) // ChatScreen(isDoctor: false) //const IntroScreen(),
     );
   }
 }
+
+
+
 

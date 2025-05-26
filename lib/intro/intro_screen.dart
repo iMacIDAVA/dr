@@ -13,7 +13,8 @@ import 'package:sos_bebe_profil_bebe_doctor/utils_api/shared_pref_keys.dart' as 
 import '../notification_confirm_screen.dart';
 
 class IntroScreen extends StatefulWidget {
-  const IntroScreen({super.key});
+  const
+  IntroScreen({super.key});
 
   @override
   State<IntroScreen> createState() => _IntroScreenState();

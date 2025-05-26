@@ -92,6 +92,8 @@ dependencies:
   fluttertoast: ^8.2.5
   flutter_isolate : ^2.0.4
   flutter_local_notifications: ^14.0.0
+  cloud_firestore: ^4.8.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
