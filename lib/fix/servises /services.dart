@@ -26,7 +26,8 @@ class ConsultationService {
   Future<Map<String, dynamic>> updateConsultationStatus(
       int consultationId,
       String action,
-      ) async {
+      ) async
+  {
     try {
       final response = await http.put(
         Uri.parse('$baseUrl/consultation/$consultationId/$action/'),
@@ -42,4 +43,31 @@ class ConsultationService {
       throw Exception('Error: $e');
     }
   }
+
+
+
+    // Get questionnaire for a specific consultation
+    Future<Map<String, dynamic>> getQuestionnaire(int sessionId) async {
+      try {
+        //http://127.0.0.1:8000/consultation/19/questionnaire/
+        final response = await http.get(
+          Uri.parse('http://10.0.2.2:8000/consultation/19/questionnaire/'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        );
+
+        if (response.statusCode == 200) {
+          print(response.body);
+          return json.decode(response.body);
+        } else {
+          final error = json.decode(response.body);
+          throw Exception(error ?? 'Failed to get questionnaire');
+        }
+      } catch (e) {
+        throw Exception('Error: $e');
+      }
+    }
+
+
 }

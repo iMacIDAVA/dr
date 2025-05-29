@@ -163,7 +163,7 @@ class MyApp extends StatelessWidget {
       ],
       locale: const Locale('ro'),
       home:ConsultationScreen(doctorId: 2) // const IntroScreen(), //
-      // home: const IntroScreen(), //
+     //  home: const IntroScreen(), //
     );
   }
 }

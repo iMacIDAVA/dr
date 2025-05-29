@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sos_bebe_profil_bebe_doctor/fix/screens/form_screen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/fix/screens/videoCallScreen.dart';
 import '../servises /services.dart'; // Added for Rubik font
-
+import 'package:http/http.dart' as http;
 
 
 class ConsultationScreen extends StatefulWidget {
@@ -40,18 +43,18 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
   void _startPolling() {
     _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (_currentConsultation != null) {
-        _loadCurrentConsultation();
+      print('_startPolling ... IS CALLED ') ;
+      _loadCurrentConsultation();
+
+      if (_currentConsultation != null ) {
+        // if(_currentConsultation!['status'] ==  'FormSubmitted')
+        //   return ;
+    //    _loadCurrentConsultation();
+
       }
     });
   }
-  // void _startPolling() {
-  //   _pollingTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
-  //     if (_currentConsultation != null) {
-  //       _loadCurrentConsultation();
-  //     }
-  //   });
-  // }
+
 
   void _startTimer() {
     _countdownTimer?.cancel(); // Cancel any existing timer
@@ -84,7 +87,10 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   }
   Future<void> _loadCurrentConsultation() async {
     try {
+      print("_loadCurrentConsultation ... is called ");
       final response = await _consultationService.getCurrentConsultation(widget.doctorId);
+      print("response090");
+      print(response);
 
       if (response['has_active_session']) {
         final newStatus = response['data']['status'];
@@ -114,34 +120,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     }
   }
 
-  // Future<void> _loadCurrentConsultation() async {
-  //   try {
-  //     final response = await _consultationService.getCurrentConsultation(widget.doctorId);
-  //
-  //     if (response['has_active_session']) {
-  //       setState(() {
-  //         _currentConsultation = response['data'];
-  //         _isLoading = false;
-  //       });
-  //       if (_currentConsultation!['status'] == 'Requested') {
-  //         _startTimer(); // Start timer for new requests
-  //       }
-  //     } else {
-  //       setState(() {
-  //         _currentConsultation = null;
-  //         _isLoading = false;
-  //       });
-  //       _countdownTimer?.cancel(); // Stop timer if no active consultation
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _error = e.toString();
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
-
   Future<void> _updateStatus(String action) async {
+
     if (_currentConsultation == null) return;
     setState(() {
       _isLoading = true;
@@ -380,22 +360,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   }
 
   Widget _buildFormSubmittedScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Form Submitted',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () => _updateStatus('callReady'),
-            child: const Text('Proceed'),
-          ),
-        ],
-      ),
-    );
+    return Form_Screen(sessionId: _currentConsultation!['id'] ) ;
+
   }
 
   Widget _buildContent() {
@@ -405,12 +371,62 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
     if (_error != null) {
       return Center(
-        child: Text(
-          'Errorxxx: $_error',
-          style: const TextStyle(color: Colors.red),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 60, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              'A apărut o eroare:',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.redAccent,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                _error!,
+                style: const TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _isLoading = true;
+                  _error = null;
+                });
+                _loadCurrentConsultation();
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text("Reîncearcă"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }
+
+    //
+    // if (_error != null) {
+    //   return Center(
+    //     child: Text(
+    //       'Errorxxx: $_error',
+    //       style: const TextStyle(color: Colors.red),
+    //     ),
+    //   );
+    // }
 
     if (_currentConsultation == null) {
       return const Center(
@@ -429,11 +445,100 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         return _buildFormPendingScreen();
       case 'FormSubmitted':
         return _buildFormSubmittedScreen();
+
+      case 'CallReady':
+        return  _buildCallReadyScreen() ;
+
       default:
         return Center(
           child: Text('Unknown status: ${_currentConsultation!['status']}'),
         );
     }
+  }
+
+  Widget _buildCallReadyScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.video_call,
+            size: 80,
+            color: Color(0xFF2196F3),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Ready to Join',
+            style: GoogleFonts.rubik(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFF2196F3),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'The Paient is ready to start the consultation',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.rubik(
+              fontSize: 16,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton(
+            onPressed: () {
+              print('_currentConsultation!');
+              print(_currentConsultation);
+              // Navigate to call screen
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => TestVideoCallScreen(isDoctor: true  , channelName: _currentConsultation!['channel_name']  ,)),
+              ).then((value) async {
+
+
+                try {
+                  // This is the specific line that ends the call
+                  await _consultationService.updateConsultationStatus(_currentConsultation!['id'], 'callEnded');
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Call ended successfully')),
+                    );
+
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    print('Error ending call: ${e.toString()}');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error ending call: ${e.toString()}')),
+                    );
+                  }
+                }
+              });
+
+
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2196F3),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 32,
+                vertical: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'Join Session',
+              style: GoogleFonts.rubik(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -467,5 +572,9 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       ],
     );
   }
+
+
+
+
 }
 
