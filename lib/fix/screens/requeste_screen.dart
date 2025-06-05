@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/screens/form_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/screens/videoCallScreen.dart';
+import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
 import '../servises /services.dart'; // Added for Rubik font
 import 'package:http/http.dart' as http;
 
@@ -47,6 +48,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       _loadCurrentConsultation();
 
       if (_currentConsultation != null ) {
+
         // if(_currentConsultation!['status'] ==  'FormSubmitted')
         //   return ;
     //    _loadCurrentConsultation();
@@ -79,6 +81,13 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       setState(() {
         _currentConsultation = null; // Clear consultation after timeout
       });
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const IntroScreen()),
+              (route) => false,
+        );
+      }
     } catch (e) {
       setState(() {
         _error = e.toString();
@@ -136,6 +145,13 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           _currentConsultation = response['data'];
           _isLoading = false;
         });
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const IntroScreen()),
+                (route) => false,
+          );
+        }
       }
       if (action == 'reject') {
         _countdownTimer?.cancel();
@@ -150,6 +166,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           _isLoading = false;
         });
       }
+
     }
   }
 
@@ -429,9 +446,31 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     // }
 
     if (_currentConsultation == null) {
-      return const Center(
-        child: Text('No active consultations'),
-      );
+
+      return Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            elevation: 4,
+            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const IntroScreen()),
+                  (route) => false,
+            );
+          },
+          child: const Text("Go Back" , style: TextStyle(color: Color.fromRGBO(30, 214, 158, 1,),
+        ),
+      )));
+
+
     }
 
     switch (_currentConsultation!['status']) {
@@ -464,7 +503,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           const Icon(
             Icons.video_call,
             size: 80,
-            color: Color(0xFF2196F3),
+            color: Colors.white,
           ),
           const SizedBox(height: 24),
           Text(
@@ -472,7 +511,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
             style: GoogleFonts.rubik(
               fontSize: 24,
               fontWeight: FontWeight.w500,
-              color: const Color(0xFF2196F3),
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 12),
@@ -481,7 +520,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.rubik(
               fontSize: 16,
-              color: Colors.black87,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 32),
@@ -518,7 +557,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2196F3),
+              backgroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(
                 horizontal: 32,
                 vertical: 12,
@@ -531,7 +570,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
               'Join Session',
               style: GoogleFonts.rubik(
                 fontSize: 16,
-                color: Colors.white,
+                color: Color(0xFF0EBE7F),
                 fontWeight: FontWeight.bold,
               ),
             ),

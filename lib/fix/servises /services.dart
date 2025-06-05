@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sos_bebe_profil_bebe_doctor/fix/appConfig.dart';
 
 class ConsultationService {
-  static const String baseUrl = 'http://10.0.2.2:8000/api'; //10.0.2.2
+  // static const String baseUrl = 'http://10.0.2.2:8000/api'; //10.0.2.2
+  static const String baseUrl = ApiConfig.baseUrl;
 
   // Get current consultation for doctor
   Future<Map<String, dynamic>> getCurrentConsultation(int doctorId) async {

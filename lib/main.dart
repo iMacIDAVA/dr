@@ -8,6 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sos_bebe_profil_bebe_doctor/firebase_options.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/chat.dart';
+import 'package:sos_bebe_profil_bebe_doctor/fix/screens/videoCallScreen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/localizations/1_localizations.dart';
 import 'package:sos_bebe_profil_bebe_doctor/notification_confirm_screen.dart';
@@ -162,11 +163,12 @@ class MyApp extends StatelessWidget {
         Locale('ro', 'RO'),
       ],
       locale: const Locale('ro'),
-      home:ConsultationScreen(doctorId: 2) // const IntroScreen(), //
-     //  home: const IntroScreen(), //
+      //home:ConsultationScreen(doctorId: 9) // const IntroScreen(), //
+      home :const IntroScreen(), //
     );
   }
 }
+
 
 
 

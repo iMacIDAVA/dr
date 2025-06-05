@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:sos_bebe_profil_bebe_doctor/fix/appConfig.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/servises%20/services.dart';
 
 class Form_Screen extends StatefulWidget {
@@ -32,7 +33,7 @@ class _Form_ScreenState extends State<Form_Screen> {
   Future<Map<String, dynamic>> getQuestionnaire(int sessionId) async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/consultation/$sessionId/questionnaire/'),
+        Uri.parse('${ApiConfig.baseUrl2}/consultation/$sessionId/questionnaire/'),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
