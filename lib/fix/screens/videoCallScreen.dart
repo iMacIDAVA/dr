@@ -159,7 +159,7 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
               ),
             ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 const SizedBox(height: 480), // Consider making this responsive
                 Container(
@@ -167,56 +167,56 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                   height: 45,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
+               //     color: Colors.white,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 2),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 500),
-                                width: 10,
-                                height: 10,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              ValueListenableBuilder<int>(
-                                valueListenable: remainingTimeNotifier,
-                                builder: (context, remainingTime, _) {
-                                  return Text(
-                                    "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}",
-                                    style: const TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                              const Icon(
-                                Icons.timer,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(5),
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.red.withOpacity(0.3),
+                      //       borderRadius: BorderRadius.circular(15),
+                      //     ),
+                      //     padding: const EdgeInsets.symmetric(
+                      //         vertical: 2, horizontal: 2),
+                      //     child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         AnimatedContainer(
+                      //           duration: const Duration(milliseconds: 500),
+                      //           width: 10,
+                      //           height: 10,
+                      //           decoration: const BoxDecoration(
+                      //             shape: BoxShape.circle,
+                      //             color: Colors.red,
+                      //           ),
+                      //         ),
+                      //         const SizedBox(width: 8),
+                      //         ValueListenableBuilder<int>(
+                      //           valueListenable: remainingTimeNotifier,
+                      //           builder: (context, remainingTime, _) {
+                      //             return Text(
+                      //               "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}",
+                      //               style: const TextStyle(
+                      //                 color: Colors.red,
+                      //                 fontSize: 16,
+                      //                 fontWeight: FontWeight.w600,
+                      //               ),
+                      //             );
+                      //           },
+                      //         ),
+                      //         const SizedBox(width: 8),
+                      //         const Icon(
+                      //           Icons.timer,
+                      //           color: Colors.red,
+                      //           size: 20,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

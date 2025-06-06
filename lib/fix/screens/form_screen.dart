@@ -208,7 +208,7 @@ class _Form_ScreenState extends State<Form_Screen> {
                           ),
                         ),
                         child: Text(
-                          'CONTINUA CU APEL VIDEO',
+                          'CONTINUA',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

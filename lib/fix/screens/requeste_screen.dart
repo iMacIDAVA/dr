@@ -183,7 +183,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         icon = Icons.phone;
         break;
       default:
-        icon = Icons.help;
+        icon = Icons.add_alert;
     }
     return Icon(
       icon,
@@ -212,7 +212,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                 _getRequestIcon(_currentConsultation!['session_type']),
                 const SizedBox(height: 20),
                 Text(
-                  'New ${_currentConsultation!['session_type']} request',
+                  'Ai o nouă cerere de ${_currentConsultation!['session_type']} ',
                   style: GoogleFonts.rubik(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -317,64 +317,204 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
   Widget _buildPaymentPendingScreen() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Payment Pending',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      child: Card(
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Plată în așteptare',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF0EBE7F),
+                  letterSpacing: 0.5,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+              const SizedBox(height: 20),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+                strokeWidth: 3,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Se așteaptă finalizarea plății de către pacient',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF0EBE7F),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          const CircularProgressIndicator(),
-          const SizedBox(height: 20),
-          const Text(
-            'Waiting for patient to complete payment',
-            textAlign: TextAlign.center,
-          ),
-        ],
+        ),
       ),
     );
   }
+
+  // Widget _buildPaymentPendingScreen() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         const Text(
+  //           'Payment Pending',
+  //           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //         ),
+  //         const SizedBox(height: 20),
+  //         const CircularProgressIndicator(),
+  //         const SizedBox(height: 20),
+  //         const Text(
+  //           'Waiting for patient to complete payment',
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildPaymentAcceptedScreen() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Payment Accepted',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      child: Card(
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Plată acceptată',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF0EBE7F),
+                  letterSpacing: 0.5,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+              const SizedBox(height: 20),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+                strokeWidth: 3,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Se așteaptă trimiterea formularului de către pacient',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF0EBE7F),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          const Text(
-            'Waiting for patient to submit form',
-            textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+  // Widget _buildPaymentAcceptedScreen() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         const Text(
+  //           'Payment Accepted',
+  //           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //         ),
+  //         const SizedBox(height: 20),
+  //         const Text(
+  //           'Waiting for patient to submit form',
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildFormPendingScreen() {
+    return Center(
+      child: Card(
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Formular în așteptare',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF0EBE7F),
+                  letterSpacing: 0.5,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+              const SizedBox(height: 20),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+                strokeWidth: 3,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Se așteaptă completarea și trimiterea formularului de către pacient',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF0EBE7F),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildFormPendingScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Form Pending',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          const CircularProgressIndicator(),
-          const SizedBox(height: 20),
-          const Text(
-            'Waiting for patient to complete and submit the form',
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildFormPendingScreen() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         const Text(
+  //           'Form Pendingxx',
+  //           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  //         ),
+  //         const SizedBox(height: 20),
+  //         const CircularProgressIndicator(),
+  //         const SizedBox(height: 20),
+  //         const Text(
+  //           'Waiting for patient to complete and submit the form',
+  //           textAlign: TextAlign.center,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildFormSubmittedScreen() {
     return Form_Screen(sessionId: _currentConsultation!['id'] ) ;
@@ -472,6 +612,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
 
     }
+    print('Unknown status: ${_currentConsultation!['status']}');
 
     switch (_currentConsultation!['status']) {
       case 'Requested':
@@ -488,6 +629,38 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       case 'CallReady':
         return  _buildCallReadyScreen() ;
 
+        case 'Accepted':
+        return     Center(
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Cererea a fost acceptată și așteptăm finalizarea plății.",
+                    style: TextStyle(
+                      color: Color(0xFF0EBE7F),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 16),
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )  ;
+
       default:
         return Center(
           child: Text('Unknown status: ${_currentConsultation!['status']}'),
@@ -501,13 +674,13 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(
-            Icons.video_call,
+            Icons.check_circle,
             size: 80,
             color: Colors.white,
           ),
           const SizedBox(height: 24),
           Text(
-            'Ready to Join',
+            'Gata să te alături',
             style: GoogleFonts.rubik(
               fontSize: 24,
               fontWeight: FontWeight.w500,
@@ -516,7 +689,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'The Paient is ready to start the consultation',
+            'Pacientul este gata să înceapă consultația',
             textAlign: TextAlign.center,
             style: GoogleFonts.rubik(
               fontSize: 16,
@@ -567,7 +740,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
               ),
             ),
             child: Text(
-              'Join Session',
+              'Intră în sesiune',
               style: GoogleFonts.rubik(
                 fontSize: 16,
                 color: Color(0xFF0EBE7F),
