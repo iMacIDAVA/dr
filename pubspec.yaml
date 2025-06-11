@@ -59,6 +59,7 @@ dependencies:
   flutter_image_compress: ^2.2.0
   sentry_flutter: ^8.2.0
   pdf: ^3.10.4
+
   #pdfx: ^2.5.0
   pdfx: 
     git:
