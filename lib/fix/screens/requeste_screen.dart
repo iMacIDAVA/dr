@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/screens/form_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/screens/videoCallScreen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
+import '../chat.dart';
 import '../servises /services.dart'; // Added for Rubik font
 import 'package:http/http.dart' as http;
 
@@ -627,39 +628,11 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         return _buildFormSubmittedScreen();
 
       case 'CallReady':
-        return  _buildCallReadyScreen() ;
+        return  _buildSessionScreen() ;
 
         case 'Accepted':
-        return     Center(
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Cererea a fost acceptată și așteptăm finalizarea plății.",
-                    style: TextStyle(
-                      color: Color(0xFF0EBE7F),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16),
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        )  ;
+        return   acceptedScreen() ;
+
 
       default:
         return Center(
@@ -667,6 +640,108 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         );
     }
   }
+
+  /// Swich screen
+  Widget _buildSessionScreen() {
+    switch (_currentConsultation!['session_type']) {
+      case 'Call':
+        return _buildCallReadyScreen();
+      case 'Chat' || 'Recommendation' :
+        return _buildChatScreen();
+
+      default:
+        return const Center(child: Text('Unknown Status'));
+    }
+  }
+
+
+
+  /// Navigate to Chat screen
+  Widget _buildChatScreen() {
+    return Scaffold(
+      backgroundColor: Colors.blueGrey[900], // Matches the dark background of _buildCallReadyScreen
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.chat_bubble,
+              size: 80,
+              color: Colors.white,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Gata să începi chat-ul',
+              style: GoogleFonts.rubik(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Pacientul te așteaptă acum în chat',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.rubik(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+
+                Navigator.pushAndRemoveUntil(
+                  context, MaterialPageRoute(builder: (context) =>  ChatScreen(
+                    isDoctor: true,
+                        doctorId: _currentConsultation!['doctor_id'].toString(),
+                        patientId: _currentConsultation!['patient_id'].toString(),
+                        doctorName: _currentConsultation!['doctor_name'],
+                        patientName: _currentConsultation!['patient_name'],
+                        chatRoomId: _currentConsultation!['channel_name'],
+                        sessionID: _currentConsultation!['id']
+
+                )), (Route<dynamic> route) => false,  );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => ChatScreen(
+                //       isDoctor: true,
+                //       doctorId: _currentConsultation!['doctor_id'].toString(),
+                //       patientId: _currentConsultation!['patient_id'].toString(),
+                //       doctorName: _currentConsultation!['doctor_name'],
+                //       patientName: _currentConsultation!['patient_name'],
+                //       chatRoomId: _currentConsultation!['channel_name'],
+                //       sessionID: _currentConsultation!['id']
+                //     ),
+                //   ),
+                // );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'Intră în chat',
+                style: GoogleFonts.rubik(
+                  fontSize: 16,
+                  color: const Color(0xFF0EBE7F),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildCallReadyScreen() {
     return Center(
@@ -760,6 +835,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         Scaffold(
           backgroundColor: const Color.fromRGBO(30, 214, 158, 1), // Green background
           appBar: AppBar(
+
             title: Text(
               'Confirmare',
               style: GoogleFonts.rubik(
@@ -768,7 +844,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            backgroundColor: const Color.fromRGBO(30, 214, 158, 1),
+            backgroundColor: Colors.blueGrey[900] ,
             foregroundColor: Colors.white,
             centerTitle: true,
           ),
@@ -785,8 +861,45 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     );
   }
 
+}
 
+class acceptedScreen extends StatelessWidget {
+  const acceptedScreen({
+    super.key,
+  });
 
-
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Cererea a fost acceptată și așteptăm finalizarea plății.",
+                style: TextStyle(
+                  color: Color(0xFF0EBE7F),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 

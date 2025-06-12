@@ -163,8 +163,13 @@ class MyApp extends StatelessWidget {
         Locale('ro', 'RO'),
       ],
       locale: const Locale('ro'),
-     home:ChatScreen(isDoctor: true,)  //ConsultationScreen(doctorId: 9) // const IntroScreen(), //
-     // home :const IntroScreen(), //
+     // home:ChatScreen(isDoctor: true,doctorId: 'DOCTOR_12345',
+     //   patientId: 'PATIENT_67890',
+     //   doctorName: 'Dr. Smith',
+     //   patientName: 'John Doe',
+     //   chatRoomId: 'DOCTOR_12345_PATIENT_67891',)
+
+     home :const IntroScreen(), //
     );
   }
 }

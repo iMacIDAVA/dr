@@ -123,6 +123,7 @@ flutter:
     - assets/images/
     - assets/pdfs/
     - assets/messages.json
+    - assets/
 
 #lansarea logo-ului Sos Bebe la inițializarea aplicației
 
