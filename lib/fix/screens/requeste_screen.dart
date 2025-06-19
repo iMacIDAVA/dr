@@ -659,7 +659,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   /// Navigate to Chat screen
   Widget _buildChatScreen() {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[900], // Matches the dark background of _buildCallReadyScreen
+      backgroundColor: Color(0xFF0EBE7F), // Matches the dark background of _buildCallReadyScreen
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -774,23 +774,50 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           const SizedBox(height: 32),
           ElevatedButton(
             onPressed: () {
-              print('_currentConsultation!');
-              print(_currentConsultation);
-              // Navigate to call screen
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => TestVideoCallScreen(isDoctor: true  , channelName: _currentConsultation!['channel_name']  ,)),
+              // print('_currentConsultation!');
+              // print(_currentConsultation);
+              // // Navigate to call screen
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(builder: (context) => TestVideoCallScreen(isDoctor: true  , channelName: _currentConsultation!['channel_name']  ,)),
+              // ).then((value) async {
+              //   try {
+              //     // This is the specific line that ends the call
+              //     await _consultationService.updateConsultationStatus(_currentConsultation!['id'], 'callEnded');
+              //
+              //     if (mounted) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         const SnackBar(content: Text('Call ended successfully')),
+              //       );
+              //
+              //     }
+              //   } catch (e) {
+              //     if (mounted) {
+              //       print('Error ending call: ${e.toString()}');
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         SnackBar(content: Text('Error ending call: ${e.toString()}')),
+              //       );
+              //     }
+              //   }
+              // });
+
+              // Navigate to call screen and remove all previous routes
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => TestVideoCallScreen(
+                    isDoctor: true,
+                    channelName: _currentConsultation!['channel_name'],
+                    sessionId: _currentConsultation!['id'],
+                  ),
+                ),
+                    (route) => false, // Remove all routes
               ).then((value) async {
-
-
                 try {
                   // This is the specific line that ends the call
                   await _consultationService.updateConsultationStatus(_currentConsultation!['id'], 'callEnded');
-
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Call ended successfully')),
                     );
-
                   }
                 } catch (e) {
                   if (mounted) {
@@ -801,7 +828,6 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                   }
                 }
               });
-
 
             },
             style: ElevatedButton.styleFrom(
@@ -836,18 +862,17 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           backgroundColor: const Color.fromRGBO(30, 214, 158, 1), // Green background
           appBar: AppBar(
 
-            title: Text(
-              'Confirmare',
-              style: GoogleFonts.rubik(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+            title: Center(
+              child: Text(
+                'Confirmare',
+                style: GoogleFonts.rubik(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-            backgroundColor: Colors.blueGrey[900] ,
-            foregroundColor: Colors.white,
-            centerTitle: true,
-          ),
+            backgroundColor: Color(0xFF0EBE7F)) ,
           body: WillPopScope(
             onWillPop: () async => false, // Prevent back navigation
             child: _buildContent(),

@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../intro/intro_screen.dart';
+import '../servises /services.dart';
+
 class TestVideoCallScreen extends StatefulWidget {
   final bool isDoctor;
   final String channelName; // <-- Added channelName parameter
+  final int sessionId ;
 
   const TestVideoCallScreen({
     Key? key,
     required this.isDoctor,
-    required this.channelName, // <-- Required in constructor
+    required this.channelName,
+    required this.sessionId
+    // <-- Required in constructor
   }) : super(key: key);
 
   @override
@@ -32,6 +38,8 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
   static const appId = "da37c68ec4f64cd1af4093c758f20869";
   // static const channelName = "test_room_123"; // <-- Removed static channelName
   static const appCertificate = '69b34ac5d15044a7906063342cc15471';
+
+  final ConsultationService _consultationService = ConsultationService();
 
   @override
   void initState() {
@@ -282,10 +290,18 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                     ),
                     // End Call Button
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         _engine?.leaveChannel();
                         // _engine?.release(); // Consider delaying release if you might rejoin quickly or handle errors
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
+                        await _consultationService.updateConsultationStatus(widget.sessionId, 'callEnded');
+
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => IntroScreen()),
+                              (route) => false,
+                        );
+
+
                       },
                       child: Container(
                         width: 70,
