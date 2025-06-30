@@ -145,16 +145,18 @@ class _EditareProfilScreenState extends State<EditareProfilScreen> {
                 iconCV: './assets/images/profil_navigare_icon.png',
                 contMedicMobile: widget.contMedicMobile,
               ),
-              customPaddingProfilulMeu(),
+              // customPaddingProfilulMeu(),
               //TextAndSwitchWidget(isToggled: deconectareActivat, text: "Deconectare", callback: callbackDeconectare), //old IGV
               //const IconTextLogOut(text:'Deconectare'), //old IGV
-              IconTextAndSwitchWidget(
-                  isToggled: notificariActivat,
-                  //text: "Notificări", //old IGV
-                  text: l.editareProfilNotificari,
-                  callback: callbackNotificari,
-                  icon: './assets/images/notificare_icon.png'),
-              customPaddingProfilulMeu(),
+              // IconTextAndSwitchWidget(
+              //     isToggled: notificariActivat,
+              //     //text: "Notificări", //old IGV
+              //     text: l.editareProfilNotificari,
+              //     callback: callbackNotificari,
+              //     icon: './assets/images/notificare_icon.png'),
+
+              SizedBox(height: 30,) ,
+              // customPaddingProfilulMeu(),
               IconTextLogOut(text: l.editareProfilDeconectare),
 
               IconTextTermeniConditii(
@@ -513,9 +515,7 @@ class _IconTextAndSwitchWidgetState extends State<IconTextAndSwitchWidget> {
                   value: widget.isToggled,
                   height: 20,
                   width: 40,
-
                   //activeColor: const Color.fromARGB(255, 103, 197, 108),
-
                   //added by George Valentin Iordache
                   activeColor: const Color.fromRGBO(30, 214, 158, 1),
 

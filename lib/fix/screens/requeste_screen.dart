@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sos_bebe_profil_bebe_doctor/fix/CountdownWrapper.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/screens/form_screen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/fix/screens/videoCallScreen.dart';
 import 'package:sos_bebe_profil_bebe_doctor/intro/intro_screen.dart';
@@ -19,7 +20,7 @@ class ConsultationScreen extends StatefulWidget {
 }
 
 class _ConsultationScreenState extends State<ConsultationScreen> {
-  static const int _initialTime = 180; // Constant for timer durationfaile
+  static const int _initialTime = 1800; // Constant for timer durationfaile
   final ConsultationService _consultationService = ConsultationService();
   Map<String, dynamic>? _currentConsultation;
   bool _isLoading = true;
@@ -27,6 +28,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   Timer? _pollingTimer;
   Timer? _countdownTimer;
   final ValueNotifier<int> _remainingTimeNotifier = ValueNotifier(_initialTime);
+
 
   @override
   void initState() {
@@ -318,46 +320,39 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
   Widget _buildPaymentPendingScreen() {
     return Center(
-      child: Card(
-        elevation: 6,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Plată în așteptare',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0EBE7F),
-                  letterSpacing: 0.5,
-                  fontFamily: 'Roboto',
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Plată în așteptare',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0EBE7F),
+                letterSpacing: 0.5,
+                fontFamily: 'Roboto',
               ),
-              const SizedBox(height: 20),
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
-                strokeWidth: 3,
+            ),
+            const SizedBox(height: 20),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+              strokeWidth: 3,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Se așteaptă finalizarea plății de către pacient',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFF0EBE7F),
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Roboto',
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Se așteaptă finalizarea plății de către pacient',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF0EBE7F),
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Roboto',
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -451,46 +446,39 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
   Widget _buildFormPendingScreen() {
     return Center(
-      child: Card(
-        elevation: 6,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Formular în așteptare',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF0EBE7F),
-                  letterSpacing: 0.5,
-                  fontFamily: 'Roboto',
-                ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Formular în așteptare',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF0EBE7F),
+                letterSpacing: 0.5,
+                fontFamily: 'Roboto',
               ),
-              const SizedBox(height: 20),
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
-                strokeWidth: 3,
+            ),
+            const SizedBox(height: 20),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0EBE7F)),
+              strokeWidth: 3,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Se așteaptă completarea și trimiterea formularului de către pacient',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Color(0xFF0EBE7F),
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Roboto',
               ),
-              const SizedBox(height: 20),
-              Text(
-                'Se așteaptă completarea și trimiterea formularului de către pacient',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF0EBE7F),
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Roboto',
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -859,20 +847,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: const Color.fromRGBO(30, 214, 158, 1), // Green background
-          appBar: AppBar(
-
-            title: Center(
-              child: Text(
-                'Confirmare',
-                style: GoogleFonts.rubik(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            backgroundColor: Color(0xFF0EBE7F)) ,
+          backgroundColor: Colors.white, // Green background
           body: WillPopScope(
             onWillPop: () async => false, // Prevent back navigation
             child: _buildContent(),
@@ -889,19 +864,23 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 }
 
 class acceptedScreen extends StatelessWidget {
+  //final ConsultationService _consultationService = ConsultationService();
+
   const acceptedScreen({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        color: Colors.white,
+    return CountdownWrapper(
+      onTimeout: (){
+
+        // await _consultationService.updateConsultationStatus(
+        //   _currentConsultation!['id'],
+        //   'callEnded',
+        // );
+      },
+      child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
