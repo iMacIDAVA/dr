@@ -95,6 +95,7 @@ class _Form_ScreenState extends State<Form_Screen> {
       final key = entry.key;
       final label = entry.value;
       final isChecked = data[key] == true;
+
       symptomWidgets.add(
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -149,6 +150,9 @@ class _Form_ScreenState extends State<Form_Screen> {
           final age = calculateAge(data['data_nastere']);
           final isAllergic = data['alergic_la_vreun_medicament'] == true;
 
+          print("data");
+          print(data);
+
           // Patient information widgets with dividers
           List<Widget> patientInfoWidgets = [
             buildInfoRow('Nume și Prenume Pacient:', data['nume_si_prenume']),
@@ -156,6 +160,8 @@ class _Form_ScreenState extends State<Form_Screen> {
             buildInfoRow('Vârsta:', age),
             Divider(color: Colors.grey[300]),
             buildInfoRow('Greutate:', '${data['greutate']} kg'),
+            Divider(color: Colors.grey[300]),
+            buildInfoRow('Alergic la:', '${data['la_ce_medicament_este_alergic']}'),
             Divider(color: Colors.grey[300]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),

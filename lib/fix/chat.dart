@@ -211,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (!_hasSentMessage) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You must send at least one message before completing the session.')),
+          const SnackBar(content: Text('Trebuie să trimiți cel puțin un mesaj înainte de a încheia sesiunea')),
         );
       }
       return;
@@ -226,7 +226,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'senderId': currentUserId,
         'senderName': currentUserName,
         'type': 'text',
-        'message': 'The doctor has completed this session. Please exit or make a payment to ask another question.',
+        'message': 'Medicul a încheiat sesiunea 🩺. Poți ieși din chat 🚪 sau face o plată 💳 dacă vrei să pui o altă întrebare',
         'messageStatus': 'completed',
         'completionTimestamp': 0,
       });
@@ -252,6 +252,9 @@ class _ChatScreenState extends State<ChatScreen> {
       final actualCompletionTime = (snap.data()!['completionTimestamp'] as Timestamp).toDate();
       _startVisibleTimer(actualCompletionTime);
 
+
+
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Session marked as completed')),
@@ -270,7 +273,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _autoCloseTimer?.cancel();
     _sessionCompletionTime = completionTime; // Cache the completion time
     _timerText.value = '01:00'; // Initial timer value
-    _autoCloseTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _autoCloseTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!mounted) {
         timer.cancel();
         return;
@@ -282,9 +285,14 @@ class _ChatScreenState extends State<ChatScreen> {
       final remainingSeconds = timeDifference.inSeconds.clamp(0, 60);
 
       if (timeDifference.isNegative) {
+        bool isCompleted = (await _firestore.collection('chat_rooms').doc(widget.chatRoomId).get()).data()?['conversationCompleted'] ?? false;
+        if(isCompleted == false )
+          return;
+
         timer.cancel();
         _timerText.value = '00:00';
         if (mounted) {
+          await _consultationService.updateConsultationStatus(widget.sessionID, 'callEnded');
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const IntroScreen()),
@@ -520,6 +528,7 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
+            
             children: [
               Text(
                 widget.isDoctor ? widget.patientName : widget.doctorName,
@@ -530,7 +539,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(width: 16),
+              
+               SizedBox(width: 16),
               if (widget.isDoctor) ...[
                 StreamBuilder<DocumentSnapshot>(
                   stream: _firestore
@@ -600,29 +610,50 @@ class _ChatScreenState extends State<ChatScreen> {
                     // }
                     if(isCompleted)
                       return SizedBox() ;
-                     return  SizedBox(
-                      width: 150,
-                      child: ElevatedButton(
-                        onPressed: _markSessionCompleted,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 2,
-                        ),
-                        child: Text(
-                          'Complete Session',
-                          style: GoogleFonts.rubik(
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    );
+                     return  TextButton.icon(
+                       onPressed: _markSessionCompleted,
+                       icon: const Icon(Icons.check_circle_outline, size: 18, color: Color(0xFF62CD9C)),
+                       label: Text(
+                         'Finalizează sesiunea',
+                         style: GoogleFonts.rubik(
+                           fontSize: 13,
+                           fontWeight: FontWeight.w500,
+                           color: Color(0xFF62CD9C),
+                         ),
+                         overflow: TextOverflow.ellipsis,
+                       ),
+                       style: TextButton.styleFrom(
+                         foregroundColor: Colors.white,
+                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                         shape: RoundedRectangleBorder(
+                           borderRadius: BorderRadius.circular(20),
+                         ),
+                         backgroundColor: Colors.white,
+                       ),
+                     );
+                    //    SizedBox(
+                    //   width: 150,
+                    //   child: ElevatedButton(
+                    //     onPressed: _markSessionCompleted,
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.blueAccent,
+                    //       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(8),
+                    //       ),
+                    //       elevation: 2,
+                    //     ),
+                    //     child: Text(
+                    //       'Complete Session',
+                    //       style: GoogleFonts.rubik(
+                    //         fontSize: 12,
+                    //         color: Colors.white,
+                    //         fontWeight: FontWeight.w600,
+                    //       ),
+                    //       overflow: TextOverflow.ellipsis,
+                    //     ),
+                    //   ),
+                    // );
                   },
                 ),
               ],
@@ -736,8 +767,11 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    minLines: 1, // Minimum lines to start with
+                    maxLines: null, // Allows it to grow vertically
                     controller: _messageController,
                     decoration: InputDecoration(
+
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                         borderSide: BorderSide(color: Color(0xFF62CD9C)),

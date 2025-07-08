@@ -211,7 +211,20 @@ class _LoginMedicScreenState extends State<LoginMedicScreen> {
                       */
                       // end added by George Valentin Iordache
                       const SizedBox(height: 10),
-                      Center(child: Image.asset('./assets/images/Sos_Bebe_logo.png', height: 198, width: 158)),
+                      Container(
+                        height: 200,
+                        width: 208,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(150),
+                          image: DecorationImage(
+                            image: AssetImage('./assets/8.png'),
+                            fit: BoxFit.cover,
+                          ),
+
+                        ),
+
+                      ),
+                      //Center(child: Image.asset('./assets/images/Sos_Bebe_logo.png', height: 198, width: 158)),
                       const SizedBox(height: 40),
                       Form(
                         key: loginKey,

@@ -197,7 +197,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
   Widget _buildRequestedScreen() {
     return Padding(
-      padding: const EdgeInsets.only(top: 88.0),
+      padding: const EdgeInsets.only(top: 0.0),
       child: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -211,7 +211,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 150),
                 _getRequestIcon(_currentConsultation!['session_type']),
                 const SizedBox(height: 20),
                 Text(
@@ -381,12 +381,13 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
   Widget _buildPaymentAcceptedScreen() {
     return Center(
-      child: Card(
-        elevation: 6,
-        shape: RoundedRectangleBorder(
+      child: Container(
+
+        decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
+          color: Colors.white,
+
         ),
-        color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -739,7 +740,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           const Icon(
             Icons.check_circle,
             size: 80,
-            color: Colors.white,
+            color: Color(0xFF0EBE7F),
           ),
           const SizedBox(height: 24),
           Text(
@@ -747,7 +748,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
             style: GoogleFonts.rubik(
               fontSize: 24,
               fontWeight: FontWeight.w500,
-              color: Colors.white,
+              color: Color(0xFF0EBE7F),
             ),
           ),
           const SizedBox(height: 12),
@@ -756,7 +757,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.rubik(
               fontSize: 16,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           const SizedBox(height: 32),
@@ -819,7 +820,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
+              backgroundColor: Color(0xFF0EBE7F),
               padding: const EdgeInsets.symmetric(
                 horizontal: 32,
                 vertical: 12,
@@ -832,7 +833,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
               'Intră în sesiune',
               style: GoogleFonts.rubik(
                 fontSize: 16,
-                color: Color(0xFF0EBE7F),
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
