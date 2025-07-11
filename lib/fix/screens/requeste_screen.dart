@@ -20,7 +20,7 @@ class ConsultationScreen extends StatefulWidget {
 }
 
 class _ConsultationScreenState extends State<ConsultationScreen> {
-  static const int _initialTime = 1800; // Constant for timer durationfaile
+  static const int _initialTime = 180; // Constant for timer durationfaile
   final ConsultationService _consultationService = ConsultationService();
   Map<String, dynamic>? _currentConsultation;
   bool _isLoading = true;

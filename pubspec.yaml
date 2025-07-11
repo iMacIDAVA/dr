@@ -128,7 +128,7 @@ flutter:
 #lansarea logo-ului Sos Bebe la inițializarea aplicației
 
 flutter_icons:
-  image_path: "assets/images/Sos_Bebe_logo.png" 
+  image_path: "assets/newicon.png"
   android: true
   ios: true
 
