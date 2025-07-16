@@ -68,6 +68,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     getKey();
     loadToggleState();
+    callbackEstiOnline(true) ;
+
   }
 
   void loadToggleState() async {
