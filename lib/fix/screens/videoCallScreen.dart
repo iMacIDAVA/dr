@@ -229,66 +229,8 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                   ),
                 ),
                 const SizedBox(height: 15), // Added some spacing
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
                   children: [
-                    // Video On/Off Button
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isVideoEnabled = !isVideoEnabled;
-                          if (_engine != null) {
-                            if (isVideoEnabled) {
-                              _engine!.enableVideo();
-                            } else {
-                              _engine!.disableVideo();
-                            }
-                          }
-                        });
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.withOpacity(0.3),
-                        ),
-                        child: Icon(
-                          isVideoEnabled ? Icons.videocam : Icons.videocam_off,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                    // Microphone On/Off Button
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isMicEnabled = !isMicEnabled;
-                          if (_engine != null) {
-                            if (isMicEnabled) {
-                              _engine!.enableLocalAudio(true);
-                            } else {
-                              _engine!.enableLocalAudio(false);
-                            }
-                          }
-                        });
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.withOpacity(0.3),
-                        ),
-                        child: Icon(
-                          isMicEnabled ? Icons.mic : Icons.mic_off,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                    // End Call Button
                     GestureDetector(
                       onTap: () async {
                         _engine?.leaveChannel();
@@ -317,34 +259,76 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                         ),
                       ),
                     ),
-                    // Switch Camera Button
-                    GestureDetector(
-                      onTap: () async {
-                        await _engine?.switchCamera();
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.withOpacity(0.3),
+                    SizedBox(height: 50,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Video On/Off Button
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isVideoEnabled = !isVideoEnabled;
+                              if (_engine != null) {
+                                if (isVideoEnabled) {
+                                  _engine!.enableVideo();
+                                } else {
+                                  _engine!.disableVideo();
+                                }
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.3),
+                            ),
+                            child: Icon(
+                              isVideoEnabled ? Icons.videocam : Icons.videocam_off,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.cameraswitch,
-                          color: Colors.white,
-                          size: 30,
+                        SizedBox(width: 50,),
+
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isMicEnabled = !isMicEnabled;
+                              if (_engine != null) {
+                                if (isMicEnabled) {
+                                  _engine!.enableLocalAudio(true);
+                                } else {
+                                  _engine!.enableLocalAudio(false);
+                                }
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.3),
+                            ),
+                            child: Icon(
+                              isMicEnabled ? Icons.mic : Icons.mic_off,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    // Chat Button
-                    GestureDetector(
-                      onTap: () {
-                        // Implement chat functionality
-                        print("Chat button tapped. Channel: ${widget.channelName}");
-                      },
-                      child: Stack(
-                        children: [
-                          Container(
+                        // End Call Button
+                        SizedBox(width: 50,),
+
+                        // Switch Camera Button
+                        GestureDetector(
+                          onTap: () async {
+                            await _engine?.switchCamera();
+                          },
+                          child: Container(
                             width: 50,
                             height: 50,
                             decoration: BoxDecoration(
@@ -352,32 +336,56 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                               color: Colors.grey.withOpacity(0.3),
                             ),
                             child: const Icon(
-                              Icons.chat,
+                              Icons.cameraswitch,
                               color: Colors.white,
                               size: 30,
                             ),
                           ),
-                          if (receivedFilesCount > 0)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
+                        ),
+                        // Chat Button
+                        GestureDetector(
+                          onTap: () {
+                            // Implement chat functionality
+                            print("Chat button tapped. Channel: ${widget.channelName}");
+                          },
+                          child: Stack(
+                            children: [
+                              // Container(
+                              //   width: 50,
+                              //   height: 50,
+                              //   decoration: BoxDecoration(
+                              //     shape: BoxShape.circle,
+                              //     color: Colors.grey.withOpacity(0.3),
+                              //   ),
+                              //   child: const Icon(
+                              //     Icons.chat,
+                              //     color: Colors.white,
+                              //     size: 30,
+                              //   ),
+                              // ),
+                              if (receivedFilesCount > 0)
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      "$receivedFilesCount",
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                                 ),
-                                child: Text(
-                                  "$receivedFilesCount",
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -389,21 +397,7 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                 const SizedBox(height: 20), // Ensure controls are not too close to the bottom
               ],
             ),
-            // Status Message Overlay (Optional)
-            // Positioned(
-            //   top: 100,
-            //   left: 20,
-            //   right: 20,
-            //   child: Container(
-            //     padding: EdgeInsets.all(8),
-            //     color: Colors.black54,
-            //     child: Text(
-            //       _statusMessage,
-            //       style: TextStyle(color: Colors.white),
-            //       textAlign: TextAlign.center,
-            //     ),
-            //   ),
-            // )
+
           ],
         ),
       ),

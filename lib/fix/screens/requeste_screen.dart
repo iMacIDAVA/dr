@@ -653,6 +653,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Spacer(),
+
             const Icon(
               Icons.chat_bubble,
               size: 80,
@@ -679,7 +681,6 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-
                 Navigator.pushAndRemoveUntil(
                   context, MaterialPageRoute(builder: (context) =>  ChatScreen(
                     isDoctor: true,
@@ -725,6 +726,72 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                 ),
               ),
             ),
+            Spacer(),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.redAccent),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Atenție, doctorule:\nNu apăsa „Am răspuns” până nu ai terminat complet de scris. '
+                              'Poți trimite mai multe mesaje și fișiere înainte de a marca conversația ca finalizată. '
+                              'După ce apeși, începe un cronometru de 1 minut. În acest timp, pacientul poate fie să plătească pentru o nouă întrebare, fie să închidă chatul. '
+                              'Vei fi notificat în ambele cazuri – așa că relaxează-te și lasă procesul să-și urmeze cursul.',
+                          style: GoogleFonts.rubik(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                  SizedBox(height: 10,),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.check_circle_outline,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'AM RĂSPUNS',
+                          style: GoogleFonts.rubik(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  )
+
+                ],
+              ),
+            ),
+
+
           ],
         ),
       ),

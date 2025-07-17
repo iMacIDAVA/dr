@@ -147,7 +147,7 @@ class _Form_ScreenState extends State<Form_Screen> {
           return Center(child: Text('No data available'));
         } else {
           final data = snapshot.data!['data'];
-          final age = calculateAge(data['data_nastere']);
+        //  final age = calculateAge(data['data_nastere']);
           final isAllergic = data['alergic_la_vreun_medicament'] == true;
 
           print("data");
@@ -157,11 +157,13 @@ class _Form_ScreenState extends State<Form_Screen> {
           List<Widget> patientInfoWidgets = [
             buildInfoRow('Nume și Prenume Pacient:', data['nume_si_prenume']),
             Divider(color: Colors.grey[300]),
-            buildInfoRow('Vârsta:', age),
+            buildInfoRow('Reprezentant legal:', data['nume_si_prenume_reprezentant_legal']),
+            Divider(color: Colors.grey[300]),
+            buildInfoRow('Vârsta:', data['data_nastere'] ?? ""),
             Divider(color: Colors.grey[300]),
             buildInfoRow('Greutate:', '${data['greutate']} kg'),
             Divider(color: Colors.grey[300]),
-            buildInfoRow('Alergic la:', '${data['la_ce_medicament_este_alergic']}'),
+            buildInfoRow('Alergic la:', '${data['la_ce_medicament_este_alergic'] ?? '-'}'),
             Divider(color: Colors.grey[300]),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
