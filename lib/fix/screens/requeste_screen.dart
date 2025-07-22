@@ -565,43 +565,85 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       );
     }
 
-    //
-    // if (_error != null) {
-    //   return Center(
-    //     child: Text(
-    //       'Errorxxx: $_error',
-    //       style: const TextStyle(color: Colors.red),
-    //     ),
-    //   );
-    // }
 
     if (_currentConsultation == null) {
-
       return Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.timer_off, size: 60, color: Color.fromRGBO(30, 214, 158, 1)),
+            const SizedBox(height: 16),
+            const Text(
+              "Timpul sesiunii a expirat",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color.fromRGBO(30, 214, 158, 1),
+              ),
+              textAlign: TextAlign.center,
             ),
-            elevation: 4,
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => const IntroScreen()),
-                  (route) => false,
-            );
-          },
-          child: const Text("Go Back" , style: TextStyle(color: Color.fromRGBO(30, 214, 158, 1,),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor:Color.fromRGBO(30, 214, 158, 1),
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 4,
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const IntroScreen()),
+                      (route) => false,
+                );
+              },
+              child: const Text(
+                "Înapoi",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
         ),
-      )));
-
-
+      );
     }
+
+    // if (_currentConsultation == null) {
+    //
+    //   return Center(
+    //     child: Column(
+    //       children: [
+    //         ElevatedButton(
+    //           style: ElevatedButton.styleFrom(
+    //             backgroundColor: Colors.white,
+    //             foregroundColor: Colors.black,
+    //             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+    //             shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.circular(16),
+    //             ),
+    //             elevation: 4,
+    //             textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    //           ),
+    //           onPressed: () {
+    //             Navigator.pushAndRemoveUntil(
+    //               context,
+    //               MaterialPageRoute(builder: (context) => const IntroScreen()),
+    //                   (route) => false,
+    //             );
+    //           },
+    //           child: const Text("Go Back" , style: TextStyle(color: Color.fromRGBO(30, 214, 158, 1,),
+    //         ),
+    //   )),
+    //       ],
+    //     ));
+    //
+    //
+    // }
     print('Unknown status: ${_currentConsultation!['status']}');
 
     switch (_currentConsultation!['status']) {

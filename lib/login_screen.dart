@@ -217,7 +217,7 @@ class _LoginMedicScreenState extends State<LoginMedicScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(150),
                           image: DecorationImage(
-                            image: AssetImage('./assets/8.png'),
+                            image: AssetImage('./assets/12n.png'),
                             fit: BoxFit.cover,
                           ),
 
