@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:sos_bebe_profil_bebe_doctor/fix/servises%20/services.dart';
@@ -315,27 +316,62 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  Future<void> _pickFile() async {
+
+  void _showPickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Fă o poză'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _pickFile(fromCamera: true);
+                  if (_fileBase64 != null) {
+                    await _uploadFile();
+                  }
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Alege din galerie'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _pickFile(fromCamera: false);
+                  if (_fileBase64 != null) {
+                    await _uploadFile();
+                  }
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickFile({bool fromCamera = false}) async {
+    final picker = ImagePicker();
+    XFile? pickedFile;
+
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-      );
-
-      if (result != null && result.files.single.path != null) {
-        File file = File(result.files.single.path!);
-        _fileName = path.basenameWithoutExtension(file.path);
-        _fileExtension = path.extension(file.path);
-
-        List<int> fileBytes = await file.readAsBytes();
-        _fileBase64 = base64Encode(fileBytes);
-
-        setState(() {
-          _errorMessage = null;
-        });
+      if (fromCamera) {
+        pickedFile = await picker.pickImage(source: ImageSource.camera);
       } else {
+        pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      }
+
+      if (pickedFile != null) {
+        final file = File(pickedFile.path);
+        final fileBytes = await file.readAsBytes();
         setState(() {
-          _errorMessage = 'No file selected';
+          _fileBase64 = base64Encode(fileBytes);
+          _fileName = pickedFile?.name.split('.').first;
+          _fileExtension = '.' + pickedFile!.name.split('.').last;
+          _errorMessage = null;
         });
       }
     } catch (e) {
@@ -392,41 +428,84 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
   }
+  // Future<void> _pickFile() async {
+  //   try {
+  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom,
+  //       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+  //     );
+  //
+  //     if (result != null && result.files.single.path != null) {
+  //       File file = File(result.files.single.path!);
+  //       _fileName = path.basenameWithoutExtension(file.path);
+  //       _fileExtension = path.extension(file.path);
+  //
+  //       List<int> fileBytes = await file.readAsBytes();
+  //       _fileBase64 = base64Encode(fileBytes);
+  //
+  //       setState(() {
+  //         _errorMessage = null;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         _errorMessage = 'No file selected';
+  //       });
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _errorMessage = 'Error picking file: $e';
+  //     });
+  //   }
+  // }
+  //
+  // Future<void> _uploadFile() async {
+  //   if (_fileBase64 == null || _fileName == null || _fileExtension == null) {
+  //     setState(() {
+  //       _errorMessage = 'Please select a file first';
+  //     });
+  //     return;
+  //   }
+  //   setState(() {
+  //     _isLoading = true;
+  //     _errorMessage = null;
+  //   });
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String user = "dr@d.com"; // TODO: Replace with dynamic value
+  //     String userPassMD5 = "e10adc3949ba59abbe56e057f20f883e"; // TODO: Replace with dynamic value
+  //     String idClient = "9"; // TODO: Replace with dynamic value
+  //
+  //     String? fileUrl = await apiCallFunctions.adaugaMesajCuAtasamentDinContMedic(
+  //       pCheie: '6nDjtwV4kPUsIuBtgLhV4bTZNerrxzThPGImSsFa',
+  //       pUser: user,
+  //       pParolaMD5: userPassMD5,
+  //       IdClient: idClient,
+  //       pMesaj: "File Attachment: $_fileName$_fileExtension",
+  //       pDenumireFisier: _fileName!,
+  //       pExtensie: _fileExtension!,
+  //       pSirBitiDocument: _fileBase64!,
+  //     );
+  //
+  //     setState(() {
+  //       _isLoading = false;
+  //       if (fileUrl != null) {
+  //         fileUrl = fileUrl?.trim();
+  //         fileUrl = Uri.encodeFull(fileUrl!);
+  //         _uploadedFileUrl = fileUrl;
+  //         _errorMessage = null;
+  //         _sendMessage(fileUrl: fileUrl, fileName: '$_fileName$_fileExtension', visibility: 'both');
+  //       } else {
+  //         _errorMessage = 'Upload failed - no URL returned';
+  //       }
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       _isLoading = false;
+  //       _errorMessage = 'Error uploading file: $e';
+  //     });
+  //   }
+  // }
 
-  Future<void> _openFile(String? url, String fileName, BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('File: $fileName'),
-        content: const Text('Would you like to view or download the file?'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final cleanUrl = url?.trim() ?? url ?? '';
-              final uri = Uri.parse(cleanUrl);
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-              } else {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Could not open file')),
-                  );
-                }
-              }
-            },
-            child: const Text('View'),
-          ),
-          TextButton(
-            onPressed: () async {
-              // Implement download logic if needed
-            },
-            child: const Text('Download'),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildMessage(Map<String, dynamic> message, bool isMe) {
     final timestamp = (message['timestamp'] as Timestamp?)?.toDate();
@@ -728,10 +807,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: IconButton(
                     icon: Icon(Icons.attach_file, color: Colors.white),
                     onPressed: () async {
-                      await _pickFile();
-                      if (_fileBase64 != null) {
-                        await _uploadFile();
-                      }
+                      _showPickerOptions();
+                      // await _pickFile();
+                      // if (_fileBase64 != null) {
+                      //   await _uploadFile();
+                      // }
                     },
                   ),
                 ),

@@ -786,7 +786,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Atenție, doctorule:\nNu apăsa „Am răspuns” până nu ai terminat complet de scris. '
+                          'Atenție !\nNu apăsa „Am răspuns” până nu ai terminat complet de scris. '
                               'Poți trimite mai multe mesaje și fișiere înainte de a marca conversația ca finalizată. '
                               'După ce apeși, începe un cronometru de 1 minut. În acest timp, pacientul poate fie să plătească pentru o nouă întrebare, fie să închidă chatul. '
                               'Vei fi notificat în ambele cazuri – așa că relaxează-te și lasă procesul să-și urmeze cursul.',

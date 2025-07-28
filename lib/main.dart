@@ -60,6 +60,8 @@ void main() async {
       OneSignal.initialize('bf049046-edaf-41f1-bb07-e2ac883af161');
       await OneSignal.Notifications.requestPermission(true);
 
+
+
       await ensureDeviceToken();
 
 
