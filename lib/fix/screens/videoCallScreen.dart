@@ -390,10 +390,7 @@ class _TestVideoCallScreenState extends State<TestVideoCallScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Glisați în sus pentru a afișa chatul', // "Swipe up to show chat"
-                  style: TextStyle(color: Colors.grey),
-                ),
+
                 const SizedBox(height: 20), // Ensure controls are not too close to the bottom
               ],
             ),
