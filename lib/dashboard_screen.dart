@@ -932,6 +932,7 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
             const Spacer(),
             GestureDetector(
               onTap: () async {
+                return ;
                 if (tipSectiune == 3) {
                   await getPuncteTotaluriDashboardMedicZi();
                 } else if (tipSectiune == 4) {
@@ -964,7 +965,7 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
               child: Text(
                 l.dashboardDetaliiIncasariSumaDeIncasat,
                 style: GoogleFonts.rubik(
-                    color: const Color.fromRGBO(103, 114, 148, 1), fontSize: 9, fontWeight: FontWeight.w400),
+                    color:Colors.white ,) //const Color.fromRGBO(103, 114, 148, 1), fontSize: 9, fontWeight: FontWeight.w400),
               ),
             ),
           ],
