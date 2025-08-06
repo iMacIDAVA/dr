@@ -850,6 +850,7 @@ class RaportIconTextNumarLeiDetaliiWidget extends StatelessWidget {
         }
 
         if (context.mounted) {
+          return ;
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) {
