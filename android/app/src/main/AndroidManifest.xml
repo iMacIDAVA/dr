@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <application
         android:label="SOS Bebe Dr"
         android:name="${applicationName}"
@@ -6,7 +6,7 @@
         android:hardwareAccelerated="true"
         >
         <activity
-            android:name=".MainActivity"
+            android:name="ro.crmonline.sosbebedoctor.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
@@ -42,4 +42,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- The Agora SDK requires Bluetooth permissions in case users are using Bluetooth devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
+        <!-- Remove unwanted permission added by a transitive dependency (no screen sharing used) -->
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" tools:node="remove" />
+<!--    &lt;!&ndash; Keep photos only; remove video/audio media permissions added by a plugin &ndash;&gt;-->
+   <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
+   <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
 </manifest>

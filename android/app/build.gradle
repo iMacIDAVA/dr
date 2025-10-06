@@ -36,18 +36,18 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    compileSdkVersion 34  // This can stay the latest for future-proofing
+    compileSdkVersion 35  // This can stay the latest for future-proofing
 
-    namespace "com.example.sos_bebe_profil_bebe_doctor"
+    namespace "ro.crmonline.sosbebedoctor"
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
     defaultConfig {
-        applicationId "com.example.sos_bebe_profil_bebe_doctor"
+        applicationId "ro.crmonline.sosbebedoctor"
         minSdkVersion 21  // Minimum SDK level, keep it to support more devices
-        targetSdkVersion 30  // Set target to Android 11 API level (30) to match Android 11 compatibility
+        targetSdkVersion 35  // Set target to Android 11 API level (30) to match Android 11 compatibility
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 

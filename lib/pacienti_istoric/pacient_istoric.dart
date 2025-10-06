@@ -173,45 +173,45 @@ class _PacientIstoricState extends State<PacientIstoric> {
                       const SizedBox(
                         height: 10,
                       ),
-                      if (snapshot.data![index].tipConsultatie ==
-                              consultVideo.value ||
-                          snapshot.data![index].tipConsultatie ==
-                              interpretareAnalize.value ||
-                          snapshot.data![index].tipConsultatie ==
-                              intrebare.value)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            // color: Color(0xff0EBE7F),
-                            color: snapshot.data![index].tipConsultatie ==
-                                    consultVideo.value
-                                ? Color(0xff0EBE7F)
-                                : snapshot.data![index].tipConsultatie ==
-                                        interpretareAnalize.value
-                                    ? Color.fromRGBO(241, 201, 0, 1)
-                                    : snapshot.data![index].tipConsultatie ==
-                                            intrebare.value
-                                        ? Color.fromRGBO(30, 166, 219, 1)
-                                        : Color(0xff0EBE7F),
-                          ),
-                          child: Text(
-                            snapshot.data![index].tipConsultatie ==
-                                    consultVideo.value
-                                ? l.numarPacientiApelVideo
-                                : snapshot.data![index].tipConsultatie ==
-                                        interpretareAnalize.value
-                                    ? l.numarPacientiRecomandare
-                                    : snapshot.data![index].tipConsultatie ==
-                                            intrebare.value
-                                        ? l.numarPacientiIntrebare
-                                        : "",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
+                      // if (snapshot.data![index].tipConsultatie ==
+                      //         consultVideo.value ||
+                      //     snapshot.data![index].tipConsultatie ==
+                      //         interpretareAnalize.value ||
+                      //     snapshot.data![index].tipConsultatie ==
+                      //         intrebare.value)
+                      //   Container(
+                      //     padding: const EdgeInsets.symmetric(
+                      //         horizontal: 10, vertical: 5),
+                      //     decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(8),
+                      //       // color: Color(0xff0EBE7F),
+                      //       color: snapshot.data![index].tipConsultatie ==
+                      //               consultVideo.value
+                      //           ? Color(0xff0EBE7F)
+                      //           : snapshot.data![index].tipConsultatie ==
+                      //                   interpretareAnalize.value
+                      //               ? Color.fromRGBO(241, 201, 0, 1)
+                      //               : snapshot.data![index].tipConsultatie ==
+                      //                       intrebare.value
+                      //                   ? Color.fromRGBO(30, 166, 219, 1)
+                      //                   : Color(0xff0EBE7F),
+                      //     ),
+                      //     child: Text(
+                      //       snapshot.data![index].tipConsultatie ==
+                      //               consultVideo.value
+                      //           ? l.numarPacientiApelVideo
+                      //           : snapshot.data![index].tipConsultatie ==
+                      //                   interpretareAnalize.value
+                      //               ? l.numarPacientiRecomandare
+                      //               : snapshot.data![index].tipConsultatie ==
+                      //                       intrebare.value
+                      //                   ? l.numarPacientiIntrebare
+                      //                   : "",
+                      //       style: TextStyle(
+                      //           color: Colors.white,
+                      //           fontWeight: FontWeight.w500),
+                      //     ),
+                      //   ),
                     ],
                   ),
                 ),

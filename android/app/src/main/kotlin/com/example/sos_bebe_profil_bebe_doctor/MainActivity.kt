@@ -1,4 +1,4 @@
-package com.example.sos_bebe_profil_bebe_doctor
+package ro.crmonline.sosbebedoctor
 
 import io.flutter.embedding.android.FlutterActivity
 

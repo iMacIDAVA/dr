@@ -389,35 +389,35 @@ class IconNumeOrasProgramApelareRecomandareTextAndSwitchWidget
             const SizedBox(
               height: 10,
             ),
-            if (tipCerere == consultVideo.value ||
-                tipCerere == interpretareAnalize.value ||
-                tipCerere == intrebare.value)
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  // color: Color(0xff0EBE7F),
-                  color: tipCerere == consultVideo.value
-                      ? Color(0xff0EBE7F)
-                      : tipCerere == interpretareAnalize.value
-                          ? Color.fromRGBO(241, 201, 0, 1)
-                          : tipCerere == intrebare.value
-                              ? Color.fromRGBO(30, 166, 219, 1)
-                              : Color(0xff0EBE7F),
-                ),
-                child: Text(
-                  tipCerere == consultVideo.value
-                      ? l.numarPacientiApelVideo
-                      : tipCerere == interpretareAnalize.value
-                          ? l.numarPacientiRecomandare
-                          : tipCerere == intrebare.value
-                              ? l.numarPacientiIntrebare
-                              : "",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w500),
-                ),
-              ),
+            // if (tipCerere == consultVideo.value ||
+            //     tipCerere == interpretareAnalize.value ||
+            //     tipCerere == intrebare.value)
+            //   Container(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(8),
+            //       // color: Color(0xff0EBE7F),
+            //       color: tipCerere == consultVideo.value
+            //           ? Color(0xff0EBE7F)
+            //           : tipCerere == interpretareAnalize.value
+            //               ? Color.fromRGBO(241, 201, 0, 1)
+            //               : tipCerere == intrebare.value
+            //                   ? Color.fromRGBO(30, 166, 219, 1)
+            //                   : Color(0xff0EBE7F),
+            //     ),
+            //     child: Text(
+            //       tipCerere == consultVideo.value
+            //           ? l.numarPacientiApelVideo
+            //           : tipCerere == interpretareAnalize.value
+            //               ? l.numarPacientiRecomandare
+            //               : tipCerere == intrebare.value
+            //                   ? l.numarPacientiIntrebare
+            //                   : "",
+            //       style: TextStyle(
+            //           color: Colors.white, fontWeight: FontWeight.w500),
+            //     ),
+            //   ),
           ],
         ),
       ),
